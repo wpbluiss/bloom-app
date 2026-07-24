@@ -19,6 +19,7 @@ export interface Profile {
 export interface Household {
   id: string;
   name: string | null;
+  invite_code?: string | null; // added by migration 002 — absent until applied
   created_at?: string;
 }
 
@@ -211,6 +212,28 @@ export async function updatePregnancy(id: string, patch: Partial<Pregnancy>) {
   if (error) throw error;
 }
 
+/** Number of members in a household (drives the "invite your partner" card). */
+export async function fetchHouseholdMemberCount(householdId: string): Promise<number | null> {
+  const { count, error } = await supabase
+    .from('household_members')
+    .select('user_id', { count: 'exact', head: true })
+    .eq('household_id', householdId);
+  if (error) return null;
+  return count;
+}
+
+/** Best-effort profile lookup (RLS may scope profiles to self; degrade to []). */
+export async function fetchProfilesByIds(ids: string[]): Promise<Profile[]> {
+  if (ids.length === 0) return [];
+  try {
+    const { data, error } = await supabase.from('profiles').select('*').in('id', ids);
+    if (error) return [];
+    return (data ?? []) as Profile[];
+  } catch {
+    return [];
+  }
+}
+
 // ---------- Check-ins ----------
 
 export async function fetchTodayCheckin(pregnancyId: string, userId: string): Promise<Checkin | null> {
@@ -329,6 +352,74 @@ export async function fetchFoodLogs(pregnancyId: string, kind?: FoodKind): Promi
 export async function createFoodLog(log: FoodLog): Promise<void> {
   const { error } = await supabase.from('food_logs').insert(log);
   if (error) throw error;
+}
+
+// ---------- Partner ping-pong ("For you both") ----------
+
+export type PartnerActivity =
+  | { kind: 'mood'; mood: string; note: string | null; date: string; userId: string }
+  | { kind: 'craving'; food: string; date: string; userId: string }
+  | { kind: 'journal'; snippet: string; date: string; userId: string };
+
+/**
+ * The other person's freshest trace in this pregnancy — latest mood check-in,
+ * craving, or journal note — so each open reveals what your partner just did.
+ * Returns null when nothing exists yet or the query isn't permitted.
+ */
+export async function fetchLatestPartnerActivity(
+  pregnancyId: string,
+  householdId: string,
+  myUserId: string
+): Promise<PartnerActivity | null> {
+  try {
+    const [checkins, cravings, journal] = await Promise.all([
+      supabase
+        .from('checkins')
+        .select('user_id, mood, notes, checkin_date')
+        .eq('pregnancy_id', pregnancyId)
+        .neq('user_id', myUserId)
+        .order('checkin_date', { ascending: false })
+        .limit(1),
+      supabase
+        .from('food_logs')
+        .select('user_id, food_name, log_date')
+        .eq('pregnancy_id', pregnancyId)
+        .eq('kind', 'craving')
+        .neq('user_id', myUserId)
+        .order('log_date', { ascending: false })
+        .limit(1),
+      supabase
+        .from('journal_entries')
+        .select('author_id, title, body, entry_date')
+        .eq('household_id', householdId)
+        .neq('author_id', myUserId)
+        .order('entry_date', { ascending: false })
+        .limit(1),
+    ]);
+
+    const candidates: PartnerActivity[] = [];
+    const c = checkins.data?.[0];
+    if (c?.mood) {
+      candidates.push({ kind: 'mood', mood: c.mood as string, note: (c.notes as string) ?? null, date: c.checkin_date as string, userId: c.user_id as string });
+    }
+    const f = cravings.data?.[0];
+    if (f) {
+      candidates.push({ kind: 'craving', food: f.food_name as string, date: f.log_date as string, userId: f.user_id as string });
+    }
+    const j = journal.data?.[0];
+    if (j) {
+      const snippet = ((j.title as string) || (j.body as string) || '').slice(0, 80);
+      if (snippet) {
+        candidates.push({ kind: 'journal', snippet, date: j.entry_date as string, userId: j.author_id as string });
+      }
+    }
+    if (candidates.length === 0) return null;
+    candidates.sort((a, b) => (a.date < b.date ? 1 : -1));
+    return candidates[0];
+  } catch (e) {
+    console.warn('partner activity unavailable', e);
+    return null;
+  }
 }
 
 // ---------- Storage ----------
