@@ -80,10 +80,10 @@ export const copy = {
     { label: "Baby's here", prompt: "Everything. Write down everything. You'll want it all back someday." },
   ],
   today: {
-    greeting: (name: string) => {
+    greeting: (name?: string | null) => {
       const h = new Date().getHours();
       const part = h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
-      return `Good ${part}, ${name}`;
+      return name ? `Good ${part}, ${name}` : `Good ${part}`;
     },
     sizeLine: (comparison: string) => `This week, your baby is the size of ${comparison}.`,
     checkinEyebrow: 'DAILY CHECK-IN',
