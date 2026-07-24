@@ -1,0 +1,574 @@
+{
+  "avoid": [
+    {
+      "name": "Raw or undercooked eggs",
+      "why": "Risk of salmonella; choose fully cooked eggs or pasteurized products like most store-bought mayo.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Unpasteurized (raw) milk and juices",
+      "why": "Can carry listeria and other bacteria that pregnancy makes you more vulnerable to.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Soft cheeses from unpasteurized milk",
+      "why": "Brie, Camembert, queso fresco and similar can harbor listeria unless labeled pasteurized.",
+      "severity": "avoid"
+    },
+    {
+      "name": "High-mercury fish (shark, swordfish, king mackerel, tilefish, bigeye tuna)",
+      "why": "Mercury can affect your baby's developing nervous system; low-mercury fish are still encouraged.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Raw or undercooked fish and shellfish",
+      "why": "Sushi-grade raw fish, raw oysters and ceviche carry bacteria and parasites best avoided now.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Deli meats and hot dogs (unless steaming hot)",
+      "why": "Can carry listeria; heating until steaming makes them safe to enjoy.",
+      "severity": "limit"
+    },
+    {
+      "name": "Refrigerated p\u00e2t\u00e9s and meat spreads",
+      "why": "Listeria risk; canned or shelf-stable versions are a safe alternative.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Refrigerated smoked seafood",
+      "why": "Listeria risk unless it's cooked into a dish; canned smoked fish is fine.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Alcohol",
+      "why": "No amount is known to be safe during pregnancy \u2014 this is the one firm rule.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Unwashed produce",
+      "why": "Soil residue can carry toxoplasma; a good rinse under running water solves it.",
+      "severity": "limit"
+    },
+    {
+      "name": "Raw sprouts (alfalfa, clover, mung bean)",
+      "why": "Bacteria can hide inside the seed where washing can't reach; cooked sprouts are fine.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Excess caffeine (over ~200 mg/day)",
+      "why": "High intake is linked to lower birth weight; one small coffee a day is generally considered fine.",
+      "severity": "limit"
+    },
+    {
+      "name": "Energy drinks",
+      "why": "High caffeine plus unstudied stimulant blends \u2014 skip them for now.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Liver and liver products",
+      "why": "Very high in preformed vitamin A, which can be harmful in large amounts.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Cod liver oil supplements",
+      "why": "Same vitamin A concern as liver; choose a prenatal-safe omega-3 instead.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Raw cookie dough or cake batter",
+      "why": "Raw egg and raw flour both carry bacteria; bake first, then lick the spoon.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Homemade or deli-counter salads",
+      "why": "Chicken, tuna, and egg salads sitting at temperature are a classic listeria risk.",
+      "severity": "limit"
+    },
+    {
+      "name": "Unpasteurized honey (raw honey in large amounts)",
+      "why": "Fine for adults, but pasteurized honey is the cautious choice during pregnancy.",
+      "severity": "limit"
+    },
+    {
+      "name": "Herbal teas without a safety check",
+      "why": "Some herbs (like licorice root, chamomile in quantity, raspberry leaf early on) aren't well studied in pregnancy.",
+      "severity": "limit"
+    },
+    {
+      "name": "Licorice root (candy and tea)",
+      "why": "Regular consumption has been linked to effects on the baby's development.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Undercooked meat and poultry",
+      "why": "Toxoplasma and bacteria risk; use a thermometer and cook through.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Buffet or picnic food left out over 2 hours",
+      "why": "Bacteria multiply quickly at room temperature \u2014 when in doubt, skip it.",
+      "severity": "limit"
+    },
+    {
+      "name": "Excess vitamin A supplements",
+      "why": "Stick to your prenatal's formulation; more is not better for fat-soluble vitamins.",
+      "severity": "limit"
+    },
+    {
+      "name": "Sushi with raw fish",
+      "why": "Same raw-seafood risk; cooked rolls (tempura, eel, California) are a lovely workaround.",
+      "severity": "avoid"
+    },
+    {
+      "name": "Saccharine and unstudied sweeteners in quantity",
+      "why": "Most common sweeteners are considered fine in moderation, but saccharine crosses the placenta and data is thin.",
+      "severity": "limit"
+    }
+  ],
+  "powerFoods": [
+    {
+      "name": "Lentils",
+      "benefit": "Neural tube and early brain development",
+      "nutrients": [
+        "folate",
+        "iron",
+        "protein",
+        "fiber"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Spinach",
+      "benefit": "Spine and neural tube formation",
+      "nutrients": [
+        "folate",
+        "iron",
+        "vitamin K",
+        "calcium"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Asparagus",
+      "benefit": "Neural tube development in the first weeks",
+      "nutrients": [
+        "folate",
+        "vitamin K",
+        "fiber"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Fortified whole-grain cereal",
+      "benefit": "Early brain and spine development",
+      "nutrients": [
+        "folate",
+        "iron",
+        "B vitamins"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Chickpeas",
+      "benefit": "Brain development and steady energy",
+      "nutrients": [
+        "folate",
+        "choline",
+        "protein",
+        "iron"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Salmon",
+      "benefit": "Baby's brain and eye development",
+      "nutrients": [
+        "DHA",
+        "omega-3",
+        "vitamin D",
+        "protein"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Eggs",
+      "benefit": "Brain development and memory centers",
+      "nutrients": [
+        "choline",
+        "protein",
+        "vitamin D",
+        "B12"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Greek yogurt",
+      "benefit": "Baby's growing bones and teeth",
+      "nutrients": [
+        "calcium",
+        "protein",
+        "probiotics",
+        "B12"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Sardines (canned, with bones)",
+      "benefit": "Bone development and brain growth",
+      "nutrients": [
+        "calcium",
+        "DHA",
+        "vitamin D"
+      ],
+      "trimester": 2
+    },
+    {
+      "name": "Sweet potato",
+      "benefit": "Baby's cell growth and immune system",
+      "nutrients": [
+        "beta-carotene",
+        "fiber",
+        "vitamin C",
+        "potassium"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Lean beef",
+      "benefit": "Blood volume expansion and oxygen delivery",
+      "nutrients": [
+        "iron",
+        "B12",
+        "zinc",
+        "protein"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Pumpkin seeds",
+      "benefit": "Bone development and healthy blood pressure",
+      "nutrients": [
+        "magnesium",
+        "zinc",
+        "iron",
+        "omega-3"
+      ],
+      "trimester": 2
+    },
+    {
+      "name": "Avocado",
+      "benefit": "Brain tissue and healthy fat development",
+      "nutrients": [
+        "folate",
+        "healthy fats",
+        "potassium",
+        "fiber"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Oranges",
+      "benefit": "Iron absorption and immune support",
+      "nutrients": [
+        "vitamin C",
+        "folate",
+        "potassium"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Strawberries",
+      "benefit": "Iron absorption and tissue growth",
+      "nutrients": [
+        "vitamin C",
+        "folate",
+        "fiber"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Tofu",
+      "benefit": "Bone and muscle development",
+      "nutrients": [
+        "calcium",
+        "protein",
+        "iron",
+        "magnesium"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Milk (or fortified alternative)",
+      "benefit": "Bones, teeth, and muscle function",
+      "nutrients": [
+        "calcium",
+        "vitamin D",
+        "protein"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Walnuts",
+      "benefit": "Brain development",
+      "nutrients": [
+        "omega-3 (ALA)",
+        "magnesium",
+        "protein"
+      ],
+      "trimester": 2
+    },
+    {
+      "name": "Quinoa",
+      "benefit": "Overall growth and blood health",
+      "nutrients": [
+        "protein",
+        "iron",
+        "magnesium",
+        "folate"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Kale",
+      "benefit": "Bone development and blood health",
+      "nutrients": [
+        "vitamin K",
+        "calcium",
+        "folate",
+        "vitamin C"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Beans (black, kidney, pinto)",
+      "benefit": "Neural tube support and steady blood sugar",
+      "nutrients": [
+        "folate",
+        "iron",
+        "fiber",
+        "protein"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Edamame",
+      "benefit": "Brain and spine development",
+      "nutrients": [
+        "folate",
+        "protein",
+        "choline",
+        "iron"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Oatmeal",
+      "benefit": "Energy, digestion, and blood health",
+      "nutrients": [
+        "iron",
+        "fiber",
+        "B vitamins",
+        "magnesium"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Berries (blueberries, raspberries)",
+      "benefit": "Cell protection and iron absorption",
+      "nutrients": [
+        "vitamin C",
+        "antioxidants",
+        "fiber"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Chicken",
+      "benefit": "Muscle growth and blood production",
+      "nutrients": [
+        "protein",
+        "iron",
+        "B12",
+        "choline"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Cheese (pasteurized)",
+      "benefit": "Bone and teeth development",
+      "nutrients": [
+        "calcium",
+        "protein",
+        "vitamin B12"
+      ],
+      "trimester": 3
+    },
+    {
+      "name": "Fortified orange juice",
+      "benefit": "Bone development and folate top-up",
+      "nutrients": [
+        "calcium",
+        "vitamin D",
+        "folate",
+        "vitamin C"
+      ],
+      "trimester": 1
+    },
+    {
+      "name": "Broccoli",
+      "benefit": "Bone development and iron absorption",
+      "nutrients": [
+        "calcium",
+        "vitamin C",
+        "folate",
+        "fiber"
+      ],
+      "trimester": "all"
+    },
+    {
+      "name": "Almonds",
+      "benefit": "Bone health and healthy birth weight",
+      "nutrients": [
+        "magnesium",
+        "calcium",
+        "vitamin E",
+        "protein"
+      ],
+      "trimester": 2
+    },
+    {
+      "name": "Dried apricots",
+      "benefit": "Blood health during the third trimester",
+      "nutrients": [
+        "iron",
+        "potassium",
+        "fiber"
+      ],
+      "trimester": 3
+    },
+    {
+      "name": "Trout",
+      "benefit": "Brain and nervous system development",
+      "nutrients": [
+        "DHA",
+        "omega-3",
+        "protein",
+        "vitamin D"
+      ],
+      "trimester": 2
+    },
+    {
+      "name": "Whole eggs with yolk, hard boiled",
+      "benefit": "Choline powerhouse for baby's brain",
+      "nutrients": [
+        "choline",
+        "vitamin D",
+        "protein"
+      ],
+      "trimester": 1
+    }
+  ],
+  "cravingSwaps": [
+    {
+      "craving": "Ice cream by the pint",
+      "healthierSwap": "Greek yogurt with honey and frozen berries",
+      "why": "Same cold, creamy satisfaction with protein and calcium your baby's bones will use tonight."
+    },
+    {
+      "craving": "Potato chips",
+      "healthierSwap": "Salted popcorn or roasted chickpeas",
+      "why": "Crunch and salt, with fiber that keeps energy steadier than a chip bag can."
+    },
+    {
+      "craving": "Candy bars",
+      "healthierSwap": "Dark chocolate squares with almonds",
+      "why": "A little dark chocolate satisfies deeply; the almonds add magnesium and staying power."
+    },
+    {
+      "craving": "Soda",
+      "healthierSwap": "Sparkling water with a splash of real juice",
+      "why": "Bubbles and sweetness without the sugar spike \u2014 and it hydrates you both."
+    },
+    {
+      "craving": "French fries",
+      "healthierSwap": "Oven-baked sweet potato wedges",
+      "why": "Crispy edges, plus beta-carotene that supports your baby's cell growth."
+    },
+    {
+      "craving": "Pickles straight from the jar",
+      "healthierSwap": "Pickles, just mind the sodium elsewhere that day",
+      "why": "This one's actually fine \u2014 vinegar cravings are classic; balance salt across your meals."
+    },
+    {
+      "craving": "White bread and butter",
+      "healthierSwap": "Whole-grain toast with avocado",
+      "why": "Keeps the comfort, adds folate and healthy fats for the brain."
+    },
+    {
+      "craving": "Milkshakes",
+      "healthierSwap": "Banana smoothie with milk and peanut butter",
+      "why": "Thick and sweet with protein, calcium, and potassium instead of a sugar crash."
+    },
+    {
+      "craving": "Instant noodles",
+      "healthierSwap": "Soba or whole-grain noodles with soft-boiled egg and greens",
+      "why": "Ten more minutes, infinitely more iron, choline, and folate."
+    },
+    {
+      "craving": "Doughnuts",
+      "healthierSwap": "Whole-grain toast with ricotta, honey, and cinnamon",
+      "why": "Warm, sweet, and creamy \u2014 with protein that carries you past mid-morning."
+    },
+    {
+      "craving": "Cheese straight from the block",
+      "healthierSwap": "Cheese, paired with apple slices or whole-grain crackers",
+      "why": "Keep the cheese (pasteurized) \u2014 just add fiber so it's a snack, not a vanishing act."
+    },
+    {
+      "craving": "Cake",
+      "healthierSwap": "Baked oatmeal with berries and a drizzle of maple",
+      "why": "Feels like dessert for breakfast and quietly delivers iron and fiber."
+    },
+    {
+      "craving": "Sour gummies",
+      "healthierSwap": "Frozen grapes or tart dried mango",
+      "why": "Sharp, sweet, and fun to eat \u2014 with actual vitamin C along for the ride."
+    },
+    {
+      "craving": "Fast-food burger",
+      "healthierSwap": "Homemade lean beef or bean burger with all the toppings",
+      "why": "You control the cook temperature and get clean iron and protein, not just salt."
+    },
+    {
+      "craving": "Whipped cream on everything",
+      "healthierSwap": "Coconut yogurt or lightly whipped ricotta with vanilla",
+      "why": "Still clouds-on-a-spoon, with a little protein underneath."
+    },
+    {
+      "craving": "Iced coffee all afternoon",
+      "healthierSwap": "One morning coffee, then iced rooibos or decaf with milk",
+      "why": "Keeps the ritual while staying comfortably under the caffeine line."
+    },
+    {
+      "craving": "Cereal at midnight",
+      "healthierSwap": "Fortified whole-grain cereal with milk \u2014 genuinely a good call",
+      "why": "This craving is your body asking for folate and iron; say yes."
+    },
+    {
+      "craving": "Lemons and sour candy",
+      "healthierSwap": "Greek yogurt with lemon zest and a little honey",
+      "why": "Sour cravings are common in pregnancy; this one adds calcium to the fix."
+    },
+    {
+      "craving": "Pizza every night",
+      "healthierSwap": "Whole-wheat pita pizzas loaded with vegetables",
+      "why": "Same melty comfort, faster than delivery, and you sneak in folate-rich greens."
+    },
+    {
+      "craving": "Bacon",
+      "healthierSwap": "Crispy mushrooms or a little well-cooked turkey bacon",
+      "why": "Smoky and savory with less saturated fat and sodium on repeat days."
+    }
+  ]
+}
