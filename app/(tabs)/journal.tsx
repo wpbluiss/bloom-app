@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Image, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -108,9 +108,17 @@ export default function JournalScreen() {
                           m.signedUrl && m.media_type === 'photo' ? (
                             <Image key={m.id} source={{ uri: m.signedUrl }} style={styles.thumb} />
                           ) : m.signedUrl ? (
-                            <View key={m.id} style={[styles.thumb, styles.videoThumb]}>
+                            <Pressable
+                              key={m.id}
+                              style={[styles.thumb, styles.videoThumb]}
+                              onPress={() =>
+                                router.push({ pathname: '/journal/player', params: { uri: m.signedUrl! } })
+                              }
+                              accessibilityLabel="Play video"
+                              accessibilityRole="button"
+                            >
                               <Ionicons name="play" size={22} color={colors.accent.onAccent} />
-                            </View>
+                            </Pressable>
                           ) : null
                         )}
                       </ScrollView>

@@ -54,6 +54,7 @@ export default function RootLayout() {
           <Stack.Screen name="(onboarding)" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="journal/compose" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="journal/player" options={{ presentation: 'fullScreenModal' }} />
           <Stack.Screen name="wishlist/new" options={{ presentation: 'modal' }} />
           <Stack.Screen name="wishlist/[id]" />
           <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
