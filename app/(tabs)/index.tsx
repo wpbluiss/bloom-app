@@ -65,6 +65,15 @@ export default function TodayScreen() {
     if (week) scheduleGentleReminders(week).catch(() => {});
   }, [week]);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await load();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [load]);
+
   const save = async () => {
     if (!pregnancy || !session?.user) return;
     setSaving(true);
@@ -113,7 +122,7 @@ export default function TodayScreen() {
       <ScrollView
         contentContainerStyle={styles.scroll}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={load} tintColor={colors.accent.terracotta} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent.terracotta} />
         }
       >
         <FadeIn index={0}>
