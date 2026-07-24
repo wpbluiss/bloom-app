@@ -58,6 +58,7 @@ export default function RootLayout() {
           <Stack.Screen name="wishlist/new" options={{ presentation: 'modal' }} />
           <Stack.Screen name="wishlist/[id]" />
           <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="week-unlock" options={{ presentation: 'fullScreenModal' }} />
         </Stack>
       </AppProvider>
     </GestureHandlerRootView>

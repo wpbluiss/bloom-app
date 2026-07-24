@@ -1,0 +1,535 @@
+[
+  {
+    "id": "d01",
+    "kind": "fact",
+    "audience": "both",
+    "title": "A heartbeat you can hear",
+    "body": "By now the heart is beating steadily — about twice as fast as yours — and strong enough to find on a doppler at your next visit."
+  },
+  {
+    "id": "d02",
+    "kind": "fact",
+    "audience": "both",
+    "title": "The size of a secret",
+    "body": "Your baby is measured crown-to-rump this trimester, like measuring a tiny curled-up secret."
+  },
+  {
+    "id": "d03",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Taste buds in training",
+    "body": "Flavours from what you eat drift into the amniotic fluid. Dinner tonight is, in a small way, a shared meal.",
+    "cta": {
+      "label": "See tonight's food ideas",
+      "route": "/(tabs)/food"
+    }
+  },
+  {
+    "id": "d04",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Tiny fingerprints",
+    "body": "The ridges that will become fingerprints are forming — a signature no one else on earth will ever have."
+  },
+  {
+    "id": "d05",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Practising breath",
+    "body": "Long before the first cry, your baby rehearses breathing motions with the amniotic fluid. Rehearsal for the big debut."
+  },
+  {
+    "id": "d06",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Hiccups happen",
+    "body": "Those small rhythmic jumps you may feel soon? Practice-breathing hiccups. Completely normal, quietly adorable."
+  },
+  {
+    "id": "d07",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Growing ears",
+    "body": "The ears are migrating to their final spots and the inner ear is wiring up. Your voice is becoming their first music."
+  },
+  {
+    "id": "d08",
+    "kind": "fact",
+    "audience": "both",
+    "title": "A leap every week",
+    "body": "Each week of pregnancy brings something new that wasn't there seven days ago — that's the quiet magic of the Journey tab.",
+    "cta": {
+      "label": "See this week's milestones",
+      "route": "/(tabs)/journey"
+    }
+  },
+  {
+    "id": "d09",
+    "kind": "fact",
+    "audience": "both",
+    "title": "The nesting instinct is real",
+    "body": "Late pregnancy brings a documented urge to prepare the home. Biologists call it nesting; you call it a Saturday well spent.",
+    "cta": {
+      "label": "Start the nest list",
+      "route": "/(tabs)/wishlist"
+    }
+  },
+  {
+    "id": "d10",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Kicks get stronger",
+    "body": "What starts as bubbles and flutters becomes unmistakable rolls and thumps — usually felt first between weeks 18 and 25."
+  },
+  {
+    "id": "d11",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Baby's sleep cycles",
+    "body": "By the third trimester your baby has real sleep-wake cycles — and, maddeningly, often wakes when you lie down."
+  },
+  {
+    "id": "d12",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Vernix, the original lotion",
+    "body": "A creamy protective coat called vernix covers your baby's skin in the final weeks — nature's first moisturiser."
+  },
+  {
+    "id": "d13",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Water before coffee",
+    "body": "A tall glass of water first thing eases nausea, headaches, and the third-trimester puffiness. Your future self says thanks."
+  },
+  {
+    "id": "d14",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Small meals, often",
+    "body": "Five little meals sit better than three big ones right now — steadier energy, calmer stomach.",
+    "cta": {
+      "label": "Gentle foods for today",
+      "route": "/(tabs)/food"
+    }
+  },
+  {
+    "id": "d15",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "The left-side trick",
+    "body": "Sleeping on your left side improves blood flow to the placenta. A pillow between the knees makes it genuinely comfortable."
+  },
+  {
+    "id": "d16",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Write one sentence",
+    "body": "Future-you will treasure even a single honest sentence about today. It doesn't have to be profound to be precious.",
+    "cta": {
+      "label": "Add to the journal",
+      "route": "/(tabs)/journal"
+    }
+  },
+  {
+    "id": "d17",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Photograph the bump today",
+    "body": "It changes faster than you think. A quick photo in the same spot each week becomes the most-watched slideshow of your life."
+  },
+  {
+    "id": "d18",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Rest is productive",
+    "body": "Growing a human is metabolic hard labour. A nap is not laziness; it is, quite literally, the work."
+  },
+  {
+    "id": "d19",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Say the strange symptom out loud",
+    "body": "Nothing is too weird to mention to your provider. They've heard it all, and asking beats wondering at 3am."
+  },
+  {
+    "id": "d20",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Snack before you rise",
+    "body": "A plain cracker on the nightstand, eaten before you sit up, is the oldest morning-sickness trick because it works."
+  },
+  {
+    "id": "d21",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Moisturise the bump",
+    "body": "A slow minute with oil or lotion on the belly is part skincare, part first conversation with the baby."
+  },
+  {
+    "id": "d22",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Gentle movement counts",
+    "body": "A ten-minute walk after dinner settles digestion, sleep, and mood. No gear, no goals, just motion."
+  },
+  {
+    "id": "d23",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Keep a questions note",
+    "body": "Between appointments, park every question in one place. Bring the list; leave with answers instead of 'oh, I forgot to ask'.",
+    "cta": {
+      "label": "Jot one down now",
+      "route": "/(tabs)/journal"
+    }
+  },
+  {
+    "id": "d24",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Take a chore without being asked",
+    "body": "Pick one recurring task and silently make it yours for the rest of the pregnancy. It lands better than any gift."
+  },
+  {
+    "id": "d25",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Learn this week's size",
+    "body": "Knowing whether the baby is a fig or a grapefruit this week makes you a real participant, not a spectator.",
+    "cta": {
+      "label": "See this week",
+      "route": "/(tabs)/journey"
+    }
+  },
+  {
+    "id": "d26",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Ask about the feeling, not just the fact",
+    "body": "'How are you feeling about it all?' opens a door that 'how are you?' keeps closed."
+  },
+  {
+    "id": "d27",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Run the craving errand gladly",
+    "body": "The midnight pickle run is pregnancy folklore for a reason. Do it with ceremony and you're a legend.",
+    "cta": {
+      "label": "Check her latest cravings",
+      "route": "/(tabs)/food"
+    }
+  },
+  {
+    "id": "d28",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Book the thing",
+    "body": "Research one appointment, class, or purchase end-to-end so she never has to chase it. Ownership is the love language of trimester two."
+  },
+  {
+    "id": "d29",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Write to the baby",
+    "body": "A note to the little one — your voice, your hopes — becomes a keepsake they'll read at eighteen.",
+    "cta": {
+      "label": "Start the letter",
+      "route": "/(tabs)/journal"
+    }
+  },
+  {
+    "id": "d30",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Feet up, phone down",
+    "body": "Ten undivided minutes each evening — no screens — is worth more than an hour of half-attention."
+  },
+  {
+    "id": "d31",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Pack your own bag too",
+    "body": "The hospital bag isn't just hers. Snacks, charger, a change of clothes, and the camera are your department."
+  },
+  {
+    "id": "d32",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Brag about her to the baby",
+    "body": "Tell the bump, out loud, how amazing its mother is. She'll pretend it's silly. It isn't."
+  },
+  {
+    "id": "d33",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Guard the calendar",
+    "body": "Protect her rest like it's a meeting with the boss. Because it is — and you're the gatekeeper."
+  },
+  {
+    "id": "d34",
+    "kind": "action",
+    "audience": "both",
+    "title": "One photo, today",
+    "body": "Take one photo of this ordinary day — the bump, the couch, the two of you. Ordinary now, treasure later."
+  },
+  {
+    "id": "d35",
+    "kind": "action",
+    "audience": "both",
+    "title": "Name the feeling",
+    "body": "Each say one word for how today felt. No fixing, no advice — just say it and hear it."
+  },
+  {
+    "id": "d36",
+    "kind": "action",
+    "audience": "both",
+    "title": "Plan the announcement photo",
+    "body": "If you haven't told everyone yet, dream up how you'll do it. Half the fun is the scheming."
+  },
+  {
+    "id": "d37",
+    "kind": "action",
+    "audience": "both",
+    "title": "A ten-minute dream session",
+    "body": "What do you want the first week home to look like? Ten minutes of dreaming together is real preparation."
+  },
+  {
+    "id": "d38",
+    "kind": "action",
+    "audience": "both",
+    "title": "Start the hospital list",
+    "body": "Even months early, a running list lowers the background hum of 'are we ready?'.",
+    "cta": {
+      "label": "Open the wishlist",
+      "route": "/(tabs)/wishlist"
+    }
+  },
+  {
+    "id": "d39",
+    "kind": "action",
+    "audience": "both",
+    "title": "Cook one craving kindly",
+    "body": "Pick tonight's dinner from the craving list, made the gentle way.",
+    "cta": {
+      "label": "See cravings & swaps",
+      "route": "/(tabs)/food"
+    }
+  },
+  {
+    "id": "d40",
+    "kind": "action",
+    "audience": "both",
+    "title": "Record the heartbeat",
+    "body": "At your next appointment, ask to record the heartbeat on a phone. It's the first voice memo that matters.",
+    "cta": {
+      "label": "Save it in the journal",
+      "route": "/(tabs)/journal"
+    }
+  },
+  {
+    "id": "d41",
+    "kind": "action",
+    "audience": "both",
+    "title": "Choose the first outfit",
+    "body": "One tiny outfit, chosen together, makes the whole thing wonderfully real."
+  },
+  {
+    "id": "d42",
+    "kind": "action",
+    "audience": "both",
+    "title": "Walk and talk",
+    "body": "A short evening walk, phones away, one question each: what are you most excited for?"
+  },
+  {
+    "id": "d43",
+    "kind": "action",
+    "audience": "both",
+    "title": "Write this week's headline",
+    "body": "If this week of your pregnancy were a newspaper, what's the headline? Save it in the journal.",
+    "cta": {
+      "label": "Write the headline",
+      "route": "/(tabs)/journal"
+    }
+  },
+  {
+    "id": "d44",
+    "kind": "fact",
+    "audience": "both",
+    "title": "The bump has a soundtrack",
+    "body": "Your baby hears the world muffled, like underwater — but your voice comes through clearest of all."
+  },
+  {
+    "id": "d45",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Hair, maybe",
+    "body": "Some babies arrive bald as a pebble, others with a full head of hair. Heartburn folklore aside, it's a genetic lottery."
+  },
+  {
+    "id": "d46",
+    "kind": "fact",
+    "audience": "both",
+    "title": "A full grip",
+    "body": "By late pregnancy your baby can grasp — that iron-strong newborn grip is being rehearsed right now."
+  },
+  {
+    "id": "d47",
+    "kind": "fact",
+    "audience": "both",
+    "title": "The due date is a guess",
+    "body": "Only about 1 in 20 babies arrive on their due date. Think of it as a season, not a deadline."
+  },
+  {
+    "id": "d48",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Placenta: the temporary organ",
+    "body": "Your body grew an entirely new organ for this project, and will retire it gracefully when the work is done."
+  },
+  {
+    "id": "d49",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Dreams get vivid",
+    "body": "Pregnancy hormones turn up the volume on dreams. Bizarre is normal; write the good ones down.",
+    "cta": {
+      "label": "Capture last night's dream",
+      "route": "/(tabs)/journal"
+    }
+  },
+  {
+    "id": "d50",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Baby's first cells know the plan",
+    "body": "From a single cell, every instruction for every freckle is already written. The whole story is underway."
+  },
+  {
+    "id": "d51",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Your blood volume is up ~50%",
+    "body": "Your heart is pumping for two, moving almost half again as much blood as before pregnancy."
+  },
+  {
+    "id": "d52",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Protein at breakfast",
+    "body": "Eggs, yogurt, or nut butter in the morning steadies blood sugar and tames the mid-morning quease.",
+    "cta": {
+      "label": "Breakfast ideas",
+      "route": "/(tabs)/food"
+    }
+  },
+  {
+    "id": "d53",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Compression socks are chic now",
+    "body": "If ankles are swelling by evening, gentle compression socks in the morning genuinely help."
+  },
+  {
+    "id": "d54",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Stretch before bed",
+    "body": "Slow calf and hip stretches before sleep cut down the 2am leg-cramp ambush."
+  },
+  {
+    "id": "d55",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Let people help",
+    "body": "When someone offers, say yes and name a task. Help given is love accepted."
+  },
+  {
+    "id": "d56",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "One prenatal class, booked",
+    "body": "You don't need every class. One good one, booked early, beats five you'll rush to later."
+  },
+  {
+    "id": "d57",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Read one week ahead",
+    "body": "Skim next week's changes so nothing she mentions surprises you. Prepared is attractive.",
+    "cta": {
+      "label": "Peek at next week",
+      "route": "/(tabs)/journey"
+    }
+  },
+  {
+    "id": "d58",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Handle the admin",
+    "body": "Insurance, leave paperwork, the registry logistics — unglamorous, unforgettable."
+  },
+  {
+    "id": "d59",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Learn the nap schedule",
+    "body": "Hers, not the baby's. Defend it like a dragon guards gold."
+  },
+  {
+    "id": "d60",
+    "kind": "tip",
+    "audience": "partner",
+    "title": "Touch the bump with permission",
+    "body": "Ask, then linger. Feeling a kick for the first time rearranges something in a person."
+  },
+  {
+    "id": "d61",
+    "kind": "action",
+    "audience": "both",
+    "title": "The name shortlist",
+    "body": "Each bring three names to the couch tonight. Vetoes allowed, mockery banned."
+  },
+  {
+    "id": "d62",
+    "kind": "action",
+    "audience": "both",
+    "title": "One screen-free evening",
+    "body": "Tonight: cook, talk, maybe fold something tiny. The apps will survive without you both."
+  },
+  {
+    "id": "d63",
+    "kind": "action",
+    "audience": "both",
+    "title": "Photograph the nursery corner",
+    "body": "Even if it's still a closet full of boxes. 'Before' photos make the 'after' sing."
+  },
+  {
+    "id": "d64",
+    "kind": "tip",
+    "audience": "mother",
+    "title": "Say it to the mirror",
+    "body": "'I'm doing something extraordinary.' Daily. Cheesy, and also true."
+  },
+  {
+    "id": "d65",
+    "kind": "fact",
+    "audience": "both",
+    "title": "The first kicks feel like popcorn",
+    "body": "Most describe quickening as popcorn popping or a fish turning over — subtle, then suddenly obvious."
+  },
+  {
+    "id": "d66",
+    "kind": "fact",
+    "audience": "both",
+    "title": "Colostrum arrives early",
+    "body": "Your body may start making the first milk weeks before birth. The kitchen opens before the guests arrive."
+  },
+  {
+    "id": "d67",
+    "kind": "action",
+    "audience": "both",
+    "title": "Pick the paediatrician",
+    "body": "A short list and one meet-and-greet now saves a scramble later."
+  }
+]
