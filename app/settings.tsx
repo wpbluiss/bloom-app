@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Alert, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,17 +7,32 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Chip } from '../components/Chip';
+import { InviteCard } from '../components/InviteCard';
 import { PressScale } from '../components/PressScale';
 import { useApp } from '../lib/AppContext';
 import { copy } from '../lib/copy';
 import { Role, updateProfile, updatePregnancy } from '../lib/db';
+import {
+  NotificationPrefs,
+  getNotificationPrefs,
+  notificationsAllowed,
+  requestNotificationPermission,
+  saveNotificationPrefs,
+  scheduleGentleReminders,
+} from '../lib/notifications';
 import { supabase } from '../lib/supabase';
 import { formatISODate } from '../lib/weeks';
 import { colors, radius, spacing, type } from '../lib/theme';
 
+function timeToDate(hour: number, minute: number): Date {
+  const d = new Date();
+  d.setHours(hour, minute, 0, 0);
+  return d;
+}
+
 export default function SettingsScreen() {
   const router = useRouter();
-  const { session, profile, pregnancy, week, refresh } = useApp();
+  const { session, profile, household, pregnancy, week, refresh } = useApp();
   const emailPrefix = session?.user.email?.split('@')[0]?.toLowerCase();
   const storedName = profile?.display_name?.trim() ?? '';
   const nameIsEmailPrefix = storedName.length > 0 && storedName.toLowerCase() === emailPrefix;
@@ -27,6 +42,16 @@ export default function SettingsScreen() {
     pregnancy ? new Date(pregnancy.due_date + 'T12:00:00') : new Date()
   );
   const [busy, setBusy] = useState(false);
+  const [inviteCode, setInviteCode] = useState<string | null>(household?.invite_code ?? null);
+  const [prefs, setPrefs] = useState<NotificationPrefs | null>(null);
+
+  useEffect(() => {
+    setInviteCode(household?.invite_code ?? null);
+  }, [household]);
+
+  useEffect(() => {
+    getNotificationPrefs().then(setPrefs);
+  }, []);
 
   const save = async () => {
     if (!session?.user) return;
@@ -45,6 +70,24 @@ export default function SettingsScreen() {
     }
   };
 
+  const updatePrefs = async (next: NotificationPrefs) => {
+    setPrefs(next);
+    await saveNotificationPrefs(next);
+    await scheduleGentleReminders(week, pregnancy?.due_date ?? null);
+  };
+
+  const toggleDaily = async (enabled: boolean) => {
+    if (!prefs) return;
+    if (enabled && !(await notificationsAllowed())) {
+      const granted = await requestNotificationPermission();
+      if (!granted) {
+        Alert.alert('Reminders are off in iOS Settings', 'You can allow Bloom notifications any time in the Settings app.');
+        return;
+      }
+    }
+    await updatePrefs({ ...prefs, dailyEnabled: enabled });
+  };
+
   const signOut = () => {
     Alert.alert(copy.global.signOut, copy.global.signOutConfirm, [
       { text: 'Cancel', style: 'cancel' },
@@ -59,6 +102,8 @@ export default function SettingsScreen() {
     ]);
   };
 
+  const nameMissing = !storedName || nameIsEmailPrefix;
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <View style={styles.topBar}>
@@ -70,6 +115,13 @@ export default function SettingsScreen() {
       </View>
       <ScrollView contentContainerStyle={styles.scroll}>
         {week ? <Text style={styles.weekCaps}>{copy.global.weekCounter(week)}</Text> : null}
+
+        {nameMissing ? (
+          <Card style={{ marginTop: spacing.md }}>
+            <Text style={styles.namePrompt}>{copy.namePrompt.body}</Text>
+          </Card>
+        ) : null}
+
         <Card style={{ marginTop: spacing.md }}>
           <Text style={styles.label}>DISPLAY NAME</Text>
           <TextInput
@@ -100,6 +152,49 @@ export default function SettingsScreen() {
             <Text style={styles.nickname}>For {pregnancy.baby_nickname}</Text>
           ) : null}
         </Card>
+
+        {prefs ? (
+          <Card style={{ marginTop: spacing.xl }}>
+            <View style={styles.reminderRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>DAILY REMINDER</Text>
+                <Text style={styles.reminderHint}>A gentle nudge to check in, once a day.</Text>
+              </View>
+              <Switch
+                value={prefs.dailyEnabled}
+                onValueChange={toggleDaily}
+                trackColor={{ true: colors.accent.terracottaSoft, false: colors.border.subtle }}
+                thumbColor={prefs.dailyEnabled ? colors.accent.terracotta : colors.ink.tertiary}
+              />
+            </View>
+            {prefs.dailyEnabled ? (
+              <View style={{ marginTop: spacing.md, alignItems: 'flex-start' }}>
+                <DateTimePicker
+                  value={timeToDate(prefs.hour, prefs.minute)}
+                  mode="time"
+                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
+                  onChange={(_: DateTimePickerEvent, d?: Date) => {
+                    if (d) updatePrefs({ ...prefs, hour: d.getHours(), minute: d.getMinutes() });
+                  }}
+                  accentColor={colors.accent.terracotta}
+                />
+              </View>
+            ) : null}
+          </Card>
+        ) : null}
+
+        {inviteCode ? (
+          <View style={{ marginTop: spacing.xl }}>
+            <InviteCard
+              code={inviteCode}
+              onRegenerated={(next) => {
+                setInviteCode(next);
+                refresh().catch(() => {});
+              }}
+            />
+          </View>
+        ) : null}
+
         <Button label="Save" onPress={save} loading={busy} style={{ marginTop: spacing.xl }} />
         <Button label={copy.global.signOut} variant="tertiary" onPress={signOut} style={{ marginTop: spacing.md }} />
         <Text style={styles.footer}>{session?.user.email ?? ''}</Text>
@@ -132,5 +227,8 @@ const styles = StyleSheet.create({
   },
   chipsRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm, flexWrap: 'wrap' },
   nickname: { ...type.serifQuote, color: colors.ink.secondary, marginTop: spacing.lg },
+  namePrompt: { ...type.bodySM, color: colors.ink.secondary },
+  reminderRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  reminderHint: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xs },
   footer: { ...type.caption, color: colors.ink.tertiary, textAlign: 'center', marginTop: spacing.xxl },
 });

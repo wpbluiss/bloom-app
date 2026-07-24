@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,15 +7,32 @@ import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { Chip } from '../../components/Chip';
 import { FadeIn } from '../../components/FadeIn';
+import { InviteCard } from '../../components/InviteCard';
 import { PressScale } from '../../components/PressScale';
 import { CardSkeleton } from '../../components/Skeleton';
 import { WeekArt } from '../../components/WeekArt';
 import { useApp } from '../../lib/AppContext';
 import { copy, dailyPrompt } from '../../lib/copy';
-import { Checkin, fetchTodayCheckin, upsertCheckin } from '../../lib/db';
-import { prefetchIllustrations } from '../../lib/illustrations';
+import { dailyEntry, DAILY_KIND_LABEL } from '../../lib/daily';
+import {
+  Checkin,
+  PartnerActivity,
+  Profile,
+  createJournalEntry,
+  createMediaRow,
+  fetchHouseholdMemberCount,
+  fetchLatestPartnerActivity,
+  fetchProfilesByIds,
+  fetchTodayCheckin,
+  updateProfile,
+  upsertCheckin,
+  uploadToBucket,
+} from '../../lib/db';
+import { capturePhoto, pickMedia, uriToBytes } from '../../lib/media';
 import { scheduleGentleReminders } from '../../lib/notifications';
-import { daysUntilDue, formatISODate, formatLength, formatWeight, trimesterOf, weekInfo } from '../../lib/weeks';
+import { prefetchIllustrations } from '../../lib/illustrations';
+import { consumeWeekUnlock } from '../../lib/rituals';
+import { currentWeek, daysUntilDue, formatISODate, formatLength, formatWeight, trimesterOf, weekInfo } from '../../lib/weeks';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 const SYMPTOMS = ['Nausea', 'Fatigue', 'Heartburn', 'Headache', 'Swelling', 'Cramping', 'Insomnia', 'Backache'];
@@ -23,7 +40,7 @@ const MOOD_ICONS = ['rainy-outline', 'moon-outline', 'remove-outline', 'happy-ou
 
 export default function TodayScreen() {
   const router = useRouter();
-  const { session, profile, pregnancy, week, loading } = useApp();
+  const { session, profile, household, pregnancy, week, loading, refresh } = useApp();
   const [checkin, setCheckin] = useState<Checkin | null>(null);
   const [mood, setMood] = useState<string | null>(null);
   const [symptoms, setSymptoms] = useState<string[]>([]);
@@ -32,6 +49,14 @@ export default function TodayScreen() {
   const [savedTick, setSavedTick] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingCheckin, setLoadingCheckin] = useState(true);
+  const [memberCount, setMemberCount] = useState<number | null>(null);
+  const [partnerActivity, setPartnerActivity] = useState<PartnerActivity | null>(null);
+  const [partnerName, setPartnerName] = useState<string | null>(null);
+  const [momentBusy, setMomentBusy] = useState(false);
+  const [momentSaved, setMomentSaved] = useState(false);
+  const [nameDraft, setNameDraft] = useState('');
+  const [nameSaving, setNameSaving] = useState(false);
+  const unlockCheckedFor = useRef<number | null>(null);
 
   const info = weekInfo(week ?? 4);
   const isPartner = profile?.role === 'partner';
@@ -47,25 +72,37 @@ export default function TodayScreen() {
     return dn.split(' ')[0];
   }, [profile, session]);
 
+  const today = useMemo(() => (pregnancy ? dailyEntry(profile?.role, pregnancy.due_date) : null), [pregnancy, profile]);
+
   const load = useCallback(async () => {
-    if (!pregnancy || !session?.user) {
+    if (!pregnancy || !session?.user || !household) {
       setLoadingCheckin(false);
       return;
     }
     try {
-      const c = await fetchTodayCheckin(pregnancy.id, session.user.id);
+      const [c, count, activity] = await Promise.all([
+        fetchTodayCheckin(pregnancy.id, session.user.id),
+        fetchHouseholdMemberCount(household.id),
+        fetchLatestPartnerActivity(pregnancy.id, household.id, session.user.id),
+      ]);
       setCheckin(c);
       if (c) {
         setMood(c.mood);
         setSymptoms(c.symptoms ?? []);
         setNote(c.notes ?? '');
       }
+      setMemberCount(count);
+      setPartnerActivity(activity);
+      if (activity) {
+        const profiles: Profile[] = await fetchProfilesByIds([activity.userId]);
+        setPartnerName(profiles[0]?.display_name?.trim() || null);
+      }
     } catch (e) {
       console.warn(e);
     } finally {
       setLoadingCheckin(false);
     }
-  }, [pregnancy, session]);
+  }, [pregnancy, session, household]);
 
   useFocusEffect(
     useCallback(() => {
@@ -75,19 +112,29 @@ export default function TodayScreen() {
 
   useEffect(() => {
     if (week) {
-      scheduleGentleReminders(week).catch(() => {});
+      scheduleGentleReminders(week, pregnancy?.due_date ?? null).catch(() => {});
       prefetchIllustrations([week - 1, week, week + 1, week + 2]);
     }
-  }, [week]);
+  }, [week, pregnancy]);
+
+  // Weekly unlock ceremony: once per new week, full-screen keepsake moment.
+  useEffect(() => {
+    if (!week || unlockCheckedFor.current === week) return;
+    unlockCheckedFor.current = week;
+    consumeWeekUnlock(week).then((newWeek) => {
+      if (newWeek) router.push('/week-unlock');
+    });
+  }, [week, router]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
       await load();
+      await refresh();
     } finally {
       setRefreshing(false);
     }
-  }, [load]);
+  }, [load, refresh]);
 
   const save = async () => {
     if (!pregnancy || !session?.user) return;
@@ -115,11 +162,89 @@ export default function TodayScreen() {
   const toggleSymptom = (s: string) =>
     setSymptoms((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
+  const saveName = async () => {
+    if (!session?.user || !nameDraft.trim()) return;
+    setNameSaving(true);
+    try {
+      await updateProfile(session.user.id, { display_name: nameDraft.trim() });
+      await refresh();
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      setNameSaving(false);
+    }
+  };
+
+  // One-tap capture: camera or library straight into the journal timeline.
+  const keepMoment = (source: 'camera' | 'library') => {
+    setMomentBusy(true);
+    void (async () => {
+      try {
+        if (!session?.user || !household) return;
+        const picked = source === 'camera' ? await capturePhoto() : await pickMedia({ allowsVideo: true });
+        if (!picked) return;
+        const entry = await createJournalEntry({
+          household_id: household.id,
+          pregnancy_id: pregnancy?.id ?? null,
+          author_id: session.user.id,
+          week_number: pregnancy ? currentWeek(pregnancy.due_date) : null,
+          entry_type: 'note',
+          title: null,
+          body: null,
+          entry_date: formatISODate(new Date()),
+        });
+        const bytes = await uriToBytes(picked.uri);
+        const path = await uploadToBucket('journal-media', household.id, bytes, picked.ext, picked.contentType);
+        await createMediaRow({
+          journal_entry_id: entry.id,
+          household_id: household.id,
+          storage_path: path,
+          media_type: picked.mediaType,
+          caption: null,
+        });
+        setMomentSaved(true);
+        setTimeout(() => setMomentSaved(false), 4000);
+      } catch (e) {
+        console.warn(e);
+        Alert.alert(copy.global.error);
+      } finally {
+        setMomentBusy(false);
+      }
+    })();
+  };
+
+  const openMomentPicker = () => {
+    if (momentBusy) return;
+    Alert.alert(copy.moment.title, undefined, [
+      { text: copy.moment.take, onPress: () => keepMoment('camera') },
+      { text: copy.moment.choose, onPress: () => keepMoment('library') },
+      { text: copy.moment.cancel, style: 'cancel' },
+    ]);
+  };
+
   const dateLine = useMemo(
     () =>
       new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase(),
     []
   );
+
+  const partnerLine = useMemo(() => {
+    if (!partnerActivity) return null;
+    const name = partnerName ?? copy.pingpong.partnerFallback;
+    switch (partnerActivity.kind) {
+      case 'mood':
+        return {
+          icon: 'heart-outline' as const,
+          text:
+            copy.pingpong.mood(name, partnerActivity.mood) +
+            (partnerActivity.note ? ` “${partnerActivity.note.slice(0, 80)}”` : ''),
+        };
+      case 'craving':
+        return { icon: 'basket-outline' as const, text: copy.pingpong.craving(name, partnerActivity.food) };
+      case 'journal':
+        return { icon: 'book-outline' as const, text: copy.pingpong.journal(name, partnerActivity.snippet) };
+    }
+  }, [partnerActivity, partnerName]);
 
   if (loading || loadingCheckin) {
     return (
@@ -183,8 +308,80 @@ export default function TodayScreen() {
           </View>
         </FadeIn>
 
+        {/* Name prompt — Bloom should greet her properly */}
+        {!firstName ? (
+          <FadeIn index={2}>
+            <Card style={{ marginTop: spacing.xl }}>
+              <Text style={styles.tipBody}>{copy.namePrompt.body}</Text>
+              <View style={styles.nameRow}>
+                <TextInput
+                  style={styles.nameInput}
+                  placeholder="Your name"
+                  placeholderTextColor={colors.ink.tertiary}
+                  value={nameDraft}
+                  onChangeText={setNameDraft}
+                  maxLength={40}
+                />
+                <Button
+                  label={copy.namePrompt.cta}
+                  onPress={saveName}
+                  loading={nameSaving}
+                  disabled={!nameDraft.trim()}
+                  style={{ height: 44, paddingHorizontal: spacing.xl }}
+                />
+              </View>
+            </Card>
+          </FadeIn>
+        ) : null}
+
+        {/* Today in your pregnancy — the daily fresh card */}
+        {today ? (
+          <FadeIn index={3}>
+            <Card style={{ marginTop: spacing.xl }}>
+              <View style={styles.dailyHeader}>
+                <Text style={styles.eyebrow}>{copy.today.dailyEyebrow}</Text>
+                <View style={styles.dailyKindPill}>
+                  <Text style={styles.dailyKindText}>{DAILY_KIND_LABEL[today.kind]}</Text>
+                </View>
+              </View>
+              <Text style={styles.dailyTitle}>{today.title}</Text>
+              <Text style={styles.tipBody}>{today.body}</Text>
+              {today.cta ? (
+                <PressScale onPress={() => router.push(today.cta!.route as never)} hitSlop={8} style={styles.dailyCta}>
+                  <Text style={styles.dailyCtaText}>{today.cta.label}</Text>
+                  <Ionicons name="arrow-forward" size={16} color={colors.accent.terracotta} />
+                </PressScale>
+              ) : null}
+            </Card>
+          </FadeIn>
+        ) : null}
+
+        {/* For you both — the partner ping-pong hook */}
+        {partnerLine ? (
+          <FadeIn index={4}>
+            <Card style={{ marginTop: spacing.xl }}>
+              <Text style={styles.eyebrow}>{copy.pingpong.eyebrow}</Text>
+              <View style={styles.pingRow}>
+                <View style={styles.pingIconWrap}>
+                  <Ionicons name={partnerLine.icon} size={20} color={colors.accent.terracotta} />
+                </View>
+                <Text style={[styles.tipBody, { flex: 1, marginTop: 0 }]}>{partnerLine.text}</Text>
+              </View>
+            </Card>
+          </FadeIn>
+        ) : null}
+
+        {/* Share with your partner — only while the household is a party of one */}
+        {memberCount === 1 && household?.invite_code ? (
+          <FadeIn index={5}>
+            <View style={{ marginTop: spacing.xl }}>
+              <InviteCard code={household.invite_code} />
+            </View>
+          </FadeIn>
+        ) : null}
+
         {/* Daily check-in */}
-        <FadeIn index={2}>
+        <FadeIn index={6}>
           <Card style={{ marginTop: spacing.xl }}>
             <Text style={styles.eyebrow}>{copy.today.checkinEyebrow}</Text>
             <Text style={styles.checkinQuestion}>{dailyPrompt(profile?.role)}</Text>
@@ -236,7 +433,7 @@ export default function TodayScreen() {
         </FadeIn>
 
         {/* This week */}
-        <FadeIn index={3}>
+        <FadeIn index={7}>
           <Text style={[styles.eyebrow, { marginTop: spacing.section }]}>{copy.today.thisWeek}</Text>
           <TipCard eyebrow={copy.today.babyEyebrow} body={info.development} />
           {isPartner ? (
@@ -252,6 +449,20 @@ export default function TodayScreen() {
           )}
         </FadeIn>
       </ScrollView>
+
+      {/* One-tap capture — the timeline grows passively */}
+      <View style={styles.fabWrap} pointerEvents="box-none">
+        {momentSaved ? (
+          <View style={styles.momentToast}>
+            <Ionicons name="checkmark" size={14} color={colors.sage.primary} />
+            <Text style={styles.momentToastText}>{copy.moment.saved}</Text>
+          </View>
+        ) : null}
+        <PressScale onPress={openMomentPicker} style={styles.fab} disabled={momentBusy}>
+          <Ionicons name={momentBusy ? 'hourglass-outline' : 'add'} size={22} color={colors.accent.onAccent} />
+          <Text style={styles.fabLabel}>Moment</Text>
+        </PressScale>
+      </View>
     </SafeAreaView>
   );
 }
@@ -267,7 +478,7 @@ function TipCard({ eyebrow, body }: { eyebrow: string; body: string }) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg.canvas },
-  scroll: { padding: spacing.screen, paddingBottom: spacing.hero },
+  scroll: { padding: spacing.screen, paddingBottom: 120 },
   headerRow: { flexDirection: 'row', alignItems: 'center' },
   dateCaps: { ...type.labelCaps, color: colors.ink.tertiary },
   greeting: { ...type.displayLG, color: colors.ink.primary, marginTop: spacing.xs },
@@ -324,4 +535,65 @@ const styles = StyleSheet.create({
   },
   savedText: { ...type.labelMD, color: colors.sage.primary },
   tipBody: { ...type.bodySM, color: colors.ink.secondary, marginTop: spacing.sm },
+  nameRow: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg, alignItems: 'center' },
+  nameInput: {
+    flex: 1,
+    backgroundColor: colors.bg.sunken,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.lg,
+    height: 44,
+    ...type.bodyMD,
+    color: colors.ink.primary,
+  },
+  dailyHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  dailyKindPill: {
+    backgroundColor: colors.sage.soft,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  dailyKindText: { ...type.labelCaps, fontSize: 9, color: colors.sage.primary },
+  dailyTitle: { ...type.displayMD, color: colors.ink.primary, marginTop: spacing.sm },
+  dailyCta: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.lg, minHeight: 32 },
+  dailyCtaText: { ...type.titleSM, color: colors.accent.terracotta },
+  pingRow: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.md, alignItems: 'flex-start' },
+  pingIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.accent.terracottaSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fabWrap: {
+    position: 'absolute',
+    right: spacing.screen,
+    bottom: 24,
+    alignItems: 'flex-end',
+    gap: spacing.md,
+  },
+  fab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.accent.terracotta,
+    borderRadius: radius.full,
+    height: 52,
+    paddingHorizontal: spacing.xl,
+    ...shadow.fab,
+  },
+  fabLabel: { ...type.titleSM, color: colors.accent.onAccent },
+  momentToast: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    ...shadow.card,
+  },
+  momentToastText: { ...type.caption, color: colors.ink.secondary },
 });
