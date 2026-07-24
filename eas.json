@@ -1,0 +1,26 @@
+{
+  "cli": { "version": ">= 12.0.0" },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": { "simulator": false }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": { "simulator": true }
+    },
+    "production": {
+      "ios": { "simulator": false }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "TODO-LUIS-APPLE-ID@example.com",
+        "ascAppId": "TODO-APP-STORE-CONNECT-APP-ID",
+        "appleTeamId": "TODO-APPLE-TEAM-ID"
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Bloom",
+    "slug": "bloom",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "bloom",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.wpluiss.bloom",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Bloom uses your camera to add photos to journal entries and wishlist items.",
+        "NSPhotoLibraryUsageDescription": "Bloom saves photos to your journal and wishlist, kept privately for your household."
+      }
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAF6F0"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FAF6F0"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-notifications",
+      "expo-image-picker",
+      "expo-av"
+    ],
+    "extra": {
+      "supabaseUrl": "https://olqryrntsxglehxyahzf.supabase.co",
+      "supabasePublishableKey": "sb_publishable_FLh8kwTvhGMrZXNQxladxw_HX6yP6Rf"
+    },
+    "experiments": { "typedRoutes": false }
+  }
+}
