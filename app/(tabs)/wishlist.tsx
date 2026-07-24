@@ -78,7 +78,7 @@ export default function WishlistScreen() {
                 <Image source={{ uri: item.signedUrl }} style={styles.itemImage} />
               ) : (
                 <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
-                  <Ionicons name="cube-outline" size={32} color={colors.ink.tertiary} />
+                  <Ionicons name="gift-outline" size={30} color={colors.accent.blush} />
                 </View>
               )}
               <View style={{ padding: spacing.md }}>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...shadow.card,
   },
-  itemImage: { width: '100%', aspectRatio: 1, backgroundColor: colors.bg.surfaceWarm },
+  itemImage: { width: '100%', aspectRatio: 1, backgroundColor: colors.bg.paper },
   itemImagePlaceholder: { alignItems: 'center', justifyContent: 'center' },
   catChip: {
     alignSelf: 'flex-start',
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   catChipText: { ...type.caption, color: colors.ink.secondary },
   itemName: { ...type.titleSM, color: colors.ink.primary },
   priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xs },
-  itemPrice: { ...type.labelMD, color: colors.ink.secondary },
+  itemPrice: { ...type.titleSM, color: colors.ink.primary },
   purchasedPill: {
     flexDirection: 'row',
     alignItems: 'center',

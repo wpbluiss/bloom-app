@@ -94,11 +94,13 @@ export default function JournalScreen() {
                 <FadeIn key={e.id} index={Math.min(i, 5)}>
                   <Card style={{ marginTop: spacing.md }}>
                     <View style={styles.entryHeader}>
-                      <Ionicons
-                        name={TYPE_ICONS[e.entry_type] ?? 'pencil-outline'}
-                        size={16}
-                        color={colors.accent.terracotta}
-                      />
+                      <View style={styles.typeChip}>
+                        <Ionicons
+                          name={TYPE_ICONS[e.entry_type] ?? 'pencil-outline'}
+                          size={14}
+                          color={colors.accent.terracottaDeep}
+                        />
+                      </View>
                       {e.title ? <Text style={styles.entryTitle}>{e.title}</Text> : null}
                     </View>
                     {e.body ? <Text style={styles.entryBody}>{e.body}</Text> : null}
@@ -151,6 +153,14 @@ const styles = StyleSheet.create({
   scroll: { padding: spacing.screen, paddingBottom: 120 },
   groupHeader: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.lg },
   entryHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  typeChip: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: colors.accent.terracottaSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   entryTitle: { ...type.titleMD, color: colors.ink.primary, flex: 1 },
   entryBody: { ...type.bodyMD, color: colors.ink.secondary, marginTop: spacing.sm },
   thumb: { width: 180, height: 135, borderRadius: radius.md, marginRight: spacing.sm, backgroundColor: colors.bg.surfaceWarm },
