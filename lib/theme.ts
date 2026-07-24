@@ -5,6 +5,8 @@ export const tokens = {
       canvas: '#FAF6F0',
       surface: '#FFFFFF',
       surfaceWarm: '#F4EDE3',
+      accent: '#F3E9DE',
+      paper: '#FDF9F3',
       sunken: '#F0E9DE',
     },
     ink: {
@@ -53,9 +55,12 @@ export const tokens = {
   spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24, section: 32, hero: 40, screen: 20 },
   radius: { sm: 8, md: 14, lg: 20, xl: 28, full: 999 },
   shadow: {
-    card: { shadowColor: '#2B2620', shadowOffset: { width: 0, height: 2 }, shadowRadius: 12, shadowOpacity: 0.06, elevation: 2 },
-    raised: { shadowColor: '#2B2620', shadowOffset: { width: 0, height: 6 }, shadowRadius: 20, shadowOpacity: 0.09, elevation: 5 },
-    fab: { shadowColor: '#2B2620', shadowOffset: { width: 0, height: 4 }, shadowRadius: 14, shadowOpacity: 0.12, elevation: 6 },
+    // Warm-tinted, low-opacity, long-blur — depth you feel, not see.
+    card: { shadowColor: '#5A4232', shadowOffset: { width: 0, height: 4 }, shadowRadius: 16, shadowOpacity: 0.08, elevation: 3 },
+    raised: { shadowColor: '#5A4232', shadowOffset: { width: 0, height: 10 }, shadowRadius: 28, shadowOpacity: 0.12, elevation: 7 },
+    fab: { shadowColor: '#5A4232', shadowOffset: { width: 0, height: 6 }, shadowRadius: 16, shadowOpacity: 0.16, elevation: 7 },
+    // Soft terracotta glow reserved for the current week on the journey timeline.
+    glow: { shadowColor: '#C4603C', shadowOffset: { width: 0, height: 6 }, shadowRadius: 20, shadowOpacity: 0.22, elevation: 6 },
   },
   motion: {
     springDefault: { damping: 18, stiffness: 180, mass: 0.9 },
