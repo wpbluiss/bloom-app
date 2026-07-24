@@ -164,12 +164,12 @@ export async function fetchActivePregnancy(householdId: string): Promise<Pregnan
 export async function createHouseholdForUser(userId: string, displayName: string, role: Role): Promise<Household> {
   const { error: pErr } = await supabase
     .from('profiles')
-    .upsert({ id: userId, display_name: displayName, role });
+    .upsert({ id: userId, display_name: displayName.trim() || null, role });
   if (pErr) throw pErr;
 
   const { data: household, error: hErr } = await supabase
     .from('households')
-    .insert({ name: `${displayName}'s family` })
+    .insert({ name: displayName.trim() ? `${displayName.trim()}'s family` : 'Our family' })
     .select()
     .single();
   if (hErr) throw hErr;
