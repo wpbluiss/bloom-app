@@ -6,18 +6,26 @@
 // Supported per asset (e.g. icon.png):
 //   icon.png.b64            single base64 payload
 //   icon.png.b64.1 .. .N    large payload split into ordered parts (concatenated)
-//   icon.png.b64x[.1 .. .N] same, but XOR-obfuscated with the key below so the
-//                           text has no long repeated-character runs (some
-//                           tooling truncates those on write).
+//   icon.png.b64x[.1 .. .N] same, but obfuscated with a SHA-256 counter keystream
+//                           keyed by XOR_KEY so the text has no repeated blocks
+//                           (some tooling silently drops repeated text on write).
 // Fails loudly on a corrupt/truncated payload (bad magic or missing IEND) so
 // the app never builds with a broken ./assets/*.png reference.
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 const PNG_IEND = Buffer.from([0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82]);
 const XOR_KEY = Buffer.from('7557e43d4638bfd3d706df0dea2a3708914328aa47dbb39a4a95fdffbbee27ba', 'hex');
 const assetsDir = path.join(__dirname, '..', 'assets');
+
+function xorKeystream(buf) {
+  for (let j = 0, block = 0; j < buf.length; j += 32, block++) {
+    const h = crypto.createHash('sha256').update(XOR_KEY).update(String(block)).digest();
+    for (let k = 0; k < 32 && j + k < buf.length; k++) buf[j + k] ^= h[k];
+  }
+}
 
 // Group payloads per output PNG: { "icon.png": [{file, part, xor}, ...] }
 const groups = new Map();
@@ -45,7 +53,7 @@ for (const [base, entries] of groups) {
     .join('')
     .replace(/\s+/g, '');
   const buf = Buffer.from(b64, 'base64');
-  if (useXor) for (let i = 0; i < buf.length; i++) buf[i] ^= XOR_KEY[i & 31];
+  if (useXor) xorKeystream(buf);
   const out = path.join(assetsDir, base);
   if (
     buf.length < 8 ||
