@@ -22,7 +22,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FAF6F0"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -48,10 +52,15 @@
     ],
     "extra": {
       "supabaseUrl": "https://olqryrntsxglehxyahzf.supabase.co",
-      "supabasePublishableKey": "sb_publishable_FLh8kwTvhGMrZXNQxladxw_HX6yP6Rf"
+      "supabasePublishableKey": "sb_publishable_FLh8kwTvhGMrZXNQxladxw_HX6yP6Rf",
+      "router": {},
+      "eas": {
+        "projectId": "4be81ef5-1d17-4521-9608-a0981c25adb9"
+      }
     },
     "experiments": {
       "typedRoutes": false
-    }
+    },
+    "owner": "wpbluiss"
   }
 }
