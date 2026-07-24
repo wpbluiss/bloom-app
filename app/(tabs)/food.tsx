@@ -15,7 +15,7 @@ import { formatISODate } from '../../lib/weeks';
 import foodsData from '../../assets/foods.json';
 import { colors, radius, spacing, type } from '../../lib/theme';
 
-interface PowerFood { name: string; benefit: string; nutrients: string[]; trimester: number }
+interface PowerFood { name: string; benefit: string; nutrients: string[]; trimester: number | 'all' }
 interface AvoidFood { name: string; why: string; severity: 'avoid' | 'limit' }
 interface CravingSwap { craving: string; healthierSwap: string; why: string }
 
@@ -64,7 +64,7 @@ export default function FoodScreen() {
       FOODS.powerFoods.filter(
         (f) =>
           (!q || f.name.toLowerCase().includes(q) || f.benefit.toLowerCase().includes(q)) &&
-          (!trimesterFilter || f.trimester === trimesterFilter)
+          (!trimesterFilter || f.trimester === 'all' || f.trimester === trimesterFilter)
       ),
     [q, trimesterFilter]
   );
@@ -155,7 +155,7 @@ export default function FoodScreen() {
                       ))}
                     </View>
                   </View>
-                  <Text style={styles.trimesterTag}>T{f.trimester}</Text>
+                  <Text style={styles.trimesterTag}>{f.trimester === 'all' ? 'ALL' : `T${f.trimester}`}</Text>
                 </View>
               ))
             )}
