@@ -20,8 +20,9 @@ npx expo start
 ```
 
 `npm install` also runs `scripts/decode-assets.js` (postinstall), which decodes the
-committed base64 brand assets into `assets/icon.png`, `assets/adaptive-icon.png`,
-and `assets/splash.png` (terracotta rounded-square with a cream serif "B").
+committed base64 brand asset into `assets/icon.png` — a terracotta rounded-square
+with a cream serif "B" on ivory. The same image is reused for the splash screen and
+the Android adaptive icon (see `app.json`).
 
 Scan with Expo Go, or press `i` for the iOS simulator.
 
@@ -88,9 +89,8 @@ lib/
   media.ts               photo compression + video size warning
   notifications.ts       local-only gentle reminders
   AppContext.tsx         session/profile/household/pregnancy state
-assets/                  weeks.json, foods.json, icon/splash (committed as .png.b64
-                         and decoded to PNG by `npm run decode-assets`, which runs
-                         automatically on postinstall)
+assets/                  weeks.json, foods.json, icon.png.b64 (decoded to icon.png
+                         on postinstall by scripts/decode-assets.js)
 supabase/functions/      find-alternatives edge function source
 ```
 
