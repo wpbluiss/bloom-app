@@ -25,8 +25,8 @@ export default function RoleScreen() {
       if (household) {
         await updateProfile(session.user.id, { role });
       } else {
-        const name = session.user.email?.split('@')[0] ?? 'Parent';
-        await createHouseholdForUser(session.user.id, name, role);
+        // Name comes later from Settings — never prefill from the email address.
+        await createHouseholdForUser(session.user.id, '', role);
       }
       await refresh();
       if (params.dueDate) {

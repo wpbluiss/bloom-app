@@ -9,9 +9,11 @@ import { Chip } from '../../components/Chip';
 import { FadeIn } from '../../components/FadeIn';
 import { PressScale } from '../../components/PressScale';
 import { CardSkeleton } from '../../components/Skeleton';
+import { WeekArt } from '../../components/WeekArt';
 import { useApp } from '../../lib/AppContext';
 import { copy, dailyPrompt } from '../../lib/copy';
 import { Checkin, fetchTodayCheckin, upsertCheckin } from '../../lib/db';
+import { prefetchIllustrations } from '../../lib/illustrations';
 import { scheduleGentleReminders } from '../../lib/notifications';
 import { daysUntilDue, formatISODate, formatLength, formatWeight, trimesterOf, weekInfo } from '../../lib/weeks';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
@@ -34,6 +36,16 @@ export default function TodayScreen() {
   const info = weekInfo(week ?? 4);
   const isPartner = profile?.role === 'partner';
   const daysLeft = pregnancy ? daysUntilDue(pregnancy.due_date) : null;
+
+  // Greeting name: profiles.display_name from onboarding/settings — but never
+  // an email-prefix leftover from older signups; then we stay neutral.
+  const firstName = useMemo(() => {
+    const dn = profile?.display_name?.trim();
+    if (!dn) return null;
+    const emailPrefix = session?.user.email?.split('@')[0]?.toLowerCase();
+    if (emailPrefix && dn.toLowerCase() === emailPrefix) return null;
+    return dn.split(' ')[0];
+  }, [profile, session]);
 
   const load = useCallback(async () => {
     if (!pregnancy || !session?.user) {
@@ -62,7 +74,10 @@ export default function TodayScreen() {
   );
 
   useEffect(() => {
-    if (week) scheduleGentleReminders(week).catch(() => {});
+    if (week) {
+      scheduleGentleReminders(week).catch(() => {});
+      prefetchIllustrations([week - 1, week, week + 1, week + 2]);
+    }
   }, [week]);
 
   const onRefresh = useCallback(async () => {
@@ -129,9 +144,7 @@ export default function TodayScreen() {
           <View style={styles.headerRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.dateCaps}>{dateLine}</Text>
-              <Text style={styles.greeting}>
-                {copy.today.greeting(profile?.display_name?.split(' ')[0] ?? 'there')}
-              </Text>
+              <Text style={styles.greeting}>{copy.today.greeting(firstName)}</Text>
             </View>
             <PressScale onPress={() => router.push('/settings')} hitSlop={8}>
               <Ionicons name="person-circle-outline" size={30} color={colors.ink.secondary} />
@@ -139,31 +152,29 @@ export default function TodayScreen() {
           </View>
         </FadeIn>
 
-        {/* Weekly-size hero card */}
+        {/* Weekly hero — the week as an editorial keepsake page */}
         <FadeIn index={1}>
           <View style={styles.hero}>
             <Text style={styles.heroEyebrow}>
               WEEK {week} · TRIMESTER {trimesterOf(week ?? 4)}
             </Text>
             <Text style={styles.heroHeadline}>{info.headline}</Text>
-            <View style={styles.sizeRow}>
-              <Ionicons name="nutrition-outline" size={36} color={colors.accent.terracotta} />
-              <Text style={styles.sizeQuote}>Size of {info.sizeComparison}</Text>
-            </View>
+            <WeekArt week={week ?? 4} height={236} style={{ marginTop: spacing.xl }} />
+            <Text style={styles.sizeQuote}>Size of {info.sizeComparison}</Text>
             <View style={styles.statsRow}>
               <View style={styles.stat}>
                 <Text style={styles.statValue}>{formatLength(info.sizeLengthCm)}</Text>
-                <Text style={styles.statLabel}>Length</Text>
+                <Text style={styles.statLabel}>LENGTH</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.stat}>
                 <Text style={styles.statValue}>{formatWeight(info.sizeWeightG)}</Text>
-                <Text style={styles.statLabel}>Weight</Text>
+                <Text style={styles.statLabel}>WEIGHT</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.stat}>
                 <Text style={styles.statValue}>{daysLeft ?? '—'}</Text>
-                <Text style={styles.statLabel}>Days to go</Text>
+                <Text style={styles.statLabel}>DAYS TO GO</Text>
               </View>
             </View>
             <View style={styles.progressTrack}>
@@ -261,20 +272,21 @@ const styles = StyleSheet.create({
   dateCaps: { ...type.labelCaps, color: colors.ink.tertiary },
   greeting: { ...type.displayLG, color: colors.ink.primary, marginTop: spacing.xs },
   hero: {
-    backgroundColor: colors.bg.surfaceWarm,
-    borderRadius: 24,
-    padding: spacing.xl,
+    backgroundColor: colors.bg.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    padding: spacing.xxl,
     marginTop: spacing.xl,
     ...shadow.raised,
   },
   heroEyebrow: { ...type.labelCaps, color: colors.accent.terracotta },
   heroHeadline: { ...type.displayXL, color: colors.ink.primary, marginTop: spacing.sm },
-  sizeRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginTop: spacing.lg },
-  sizeQuote: { ...type.serifQuote, color: colors.ink.secondary, flex: 1 },
+  sizeQuote: { ...type.serifQuote, color: colors.ink.secondary, marginTop: spacing.lg, textAlign: 'center' },
   statsRow: { flexDirection: 'row', marginTop: spacing.xl, alignItems: 'center' },
   stat: { flex: 1, alignItems: 'center' },
   statValue: { ...type.displayMD, color: colors.ink.primary },
-  statLabel: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xs },
+  statLabel: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.xs },
   statDivider: { width: 1, height: 36, backgroundColor: colors.border.subtle },
   progressTrack: {
     height: 2,
