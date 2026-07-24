@@ -18,7 +18,10 @@ import { colors, radius, spacing, type } from '../lib/theme';
 export default function SettingsScreen() {
   const router = useRouter();
   const { session, profile, pregnancy, week, refresh } = useApp();
-  const [name, setName] = useState(profile?.display_name ?? '');
+  const emailPrefix = session?.user.email?.split('@')[0]?.toLowerCase();
+  const storedName = profile?.display_name?.trim() ?? '';
+  const nameIsEmailPrefix = storedName.length > 0 && storedName.toLowerCase() === emailPrefix;
+  const [name, setName] = useState(nameIsEmailPrefix ? '' : storedName);
   const [role, setRole] = useState<Role | null>(profile?.role ?? null);
   const [dueDate, setDueDate] = useState<Date>(
     pregnancy ? new Date(pregnancy.due_date + 'T12:00:00') : new Date()
