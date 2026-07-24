@@ -98,7 +98,7 @@ export default function Login() {
                     placeholder="••••••"
                     placeholderTextColor={colors.ink.tertiary}
                     keyboardType="number-pad"
-                    maxLength={6}
+                    maxLength={8}
                     value={code}
                     onChangeText={setCode}
                   />

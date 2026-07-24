@@ -32,12 +32,17 @@
       "expo-font",
       "expo-notifications",
       "expo-image-picker",
-      "expo-av"
+      "expo-av",
+      "expo-asset",
+      "@react-native-community/datetimepicker",
+      "expo-video"
     ],
     "extra": {
       "supabaseUrl": "https://olqryrntsxglehxyahzf.supabase.co",
       "supabasePublishableKey": "sb_publishable_FLh8kwTvhGMrZXNQxladxw_HX6yP6Rf"
     },
-    "experiments": { "typedRoutes": false }
+    "experiments": {
+      "typedRoutes": false
+    }
   }
 }
