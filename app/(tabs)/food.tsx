@@ -13,7 +13,7 @@ import { copy } from '../../lib/copy';
 import { FoodLog, createFoodLog, fetchFoodLogs } from '../../lib/db';
 import { formatISODate } from '../../lib/weeks';
 import foodsData from '../../assets/foods.json';
-import { colors, radius, spacing, type } from '../../lib/theme';
+import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 interface PowerFood { name: string; benefit: string; nutrients: string[]; trimester: number | 'all' }
 interface AvoidFood { name: string; why: string; severity: 'avoid' | 'limit' }
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   segment: { flex: 1, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
-  segmentActive: { backgroundColor: colors.accent.terracotta },
+  segmentActive: { backgroundColor: colors.accent.terracotta, ...shadow.card },
   segmentLabel: { ...type.labelMD, color: colors.ink.secondary },
   segmentLabelActive: { color: colors.accent.onAccent, fontFamily: 'Inter_600SemiBold' },
   scroll: { padding: spacing.screen, paddingBottom: 120 },
@@ -276,12 +276,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     backgroundColor: colors.bg.surface,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border.subtle,
     padding: spacing.lg,
     marginBottom: spacing.md,
     alignItems: 'flex-start',
+    ...shadow.card,
   },
   sageDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.sage.primary, marginTop: 6, marginRight: spacing.md },
   rowTitle: { ...type.titleSM, color: colors.ink.primary },
@@ -294,7 +295,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   nutrientText: { ...type.caption, color: colors.sage.primary, fontFamily: 'Inter_500Medium' },
-  trimesterTag: { ...type.caption, color: colors.ink.tertiary, marginLeft: spacing.sm },
+  trimesterTag: { ...type.labelCaps, color: colors.ink.tertiary, marginLeft: spacing.sm },
   avoidHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   doubt: { ...type.caption, color: colors.ink.tertiary, textAlign: 'center', marginTop: spacing.sm, fontStyle: 'italic' },
   cravingInput: {
