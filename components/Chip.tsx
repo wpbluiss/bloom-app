@@ -41,9 +41,12 @@ export function SeverityChip({ severity }: { severity: 'avoid' | 'limit' }) {
 
 const styles = StyleSheet.create({
   chip: {
-    height: 32,
+    // minHeight + vertical padding instead of a fixed height, so the label
+    // always fits inside the chip.
+    minHeight: 32,
     borderRadius: radius.full,
     paddingHorizontal: 14,
+    paddingVertical: 6,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm - 2,

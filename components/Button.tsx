@@ -51,11 +51,14 @@ export function Button({ label, onPress, variant = 'primary', disabled, loading,
 
 const styles = StyleSheet.create({
   base: {
-    height: 54,
+    // minHeight (not fixed height) so the label can never be clipped by the
+    // pill — the button grows with larger text instead of cutting it off.
+    minHeight: 54,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.md,
   },
   primary: { backgroundColor: colors.accent.terracotta },
   secondary: {

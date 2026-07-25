@@ -1,7 +1,7 @@
 import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
 import { colors } from '../../lib/theme';
 
 const icons: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
@@ -29,7 +29,8 @@ export default function TabsLayout() {
           backgroundColor: colors.bg.surface,
           borderTopColor: colors.border.subtle,
           borderTopWidth: 1,
-          height: 84,
+          // No fixed height: the bar sizes itself around the home-indicator
+          // safe-area inset on every device, so labels are never clipped.
           paddingTop: 8,
         },
         tabBarIcon: ({ color, focused }) => {

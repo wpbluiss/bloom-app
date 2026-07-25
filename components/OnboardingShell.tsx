@@ -60,7 +60,7 @@ export function OnboardingShell({
           <Text style={styles.headline}>{headline}</Text>
           {helper ? <Text style={styles.helper}>{helper}</Text> : null}
         </FadeIn>
-        <FadeIn index={1}>
+        <FadeIn index={1} style={styles.contentWrap}>
           <View style={styles.content}>{children}</View>
         </FadeIn>
       </View>
@@ -90,7 +90,7 @@ export function OptionCard({
   return (
     <PressScale onPress={onPress} style={[styles.optionCard, selected && styles.optionCardActive]}>
       <View style={styles.optionRow}>
-        <Text style={styles.optionTitle}>{title}</Text>
+        <Text style={[styles.optionTitle, selected && { color: colors.accent.terracottaDeep }]}>{title}</Text>
         {selected ? <Ionicons name="checkmark-circle" size={22} color={colors.accent.terracotta} /> : null}
       </View>
       {body ? <Text style={styles.optionBody}>{body}</Text> : null}
@@ -112,10 +112,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent.terracottaSoft,
     borderColor: colors.accent.terracotta,
   },
-  optionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  optionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: spacing.md },
   optionTitle: { ...type.displayMD, color: colors.ink.primary, flex: 1 },
   optionBody: { ...type.bodySM, color: colors.ink.secondary, marginTop: spacing.sm },
-  body: { flex: 1, padding: spacing.screen },
+  body: { flex: 1, paddingHorizontal: spacing.screen },
   track: {
     height: 2,
     backgroundColor: colors.border.subtle,
@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
   eyebrow: { ...type.labelCaps, color: colors.accent.terracotta, marginTop: spacing.lg },
   headline: { ...type.displayLG, color: colors.ink.primary, marginTop: spacing.sm },
   helper: { ...type.bodySM, color: colors.ink.secondary, marginTop: spacing.sm },
-  content: { marginTop: spacing.section, flex: 1 },
-  footer: { padding: spacing.screen, paddingBottom: spacing.section },
+  contentWrap: { flex: 1 },
+  content: { marginTop: spacing.section, flex: 1, justifyContent: 'center' },
+  footer: { paddingHorizontal: spacing.screen, paddingBottom: spacing.section, paddingTop: spacing.md },
   note: { ...type.caption, color: colors.ink.tertiary, textAlign: 'center', marginTop: spacing.md },
 });
