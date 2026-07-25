@@ -7,6 +7,7 @@ import { colors } from '../../lib/theme';
 const icons: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
   index: { active: 'sunny', inactive: 'sunny-outline' },
   journey: { active: 'git-commit', inactive: 'git-commit-outline' },
+  learn: { active: 'library', inactive: 'library-outline' },
   journal: { active: 'book', inactive: 'book-outline' },
   wishlist: { active: 'gift', inactive: 'gift-outline' },
   food: { active: 'leaf', inactive: 'leaf-outline' },
@@ -49,6 +50,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ title: 'Today' }} />
       <Tabs.Screen name="journey" options={{ title: 'Journey' }} />
+      <Tabs.Screen name="learn" options={{ title: 'Learn' }} />
       <Tabs.Screen name="journal" options={{ title: 'Journal' }} />
       <Tabs.Screen name="wishlist" options={{ title: 'Wishlist' }} />
       <Tabs.Screen name="food" options={{ title: 'Food' }} />
