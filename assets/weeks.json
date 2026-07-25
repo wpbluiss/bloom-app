@@ -5,9 +5,21 @@
     "sizeLengthCm": 0.2,
     "sizeWeightG": 0.4,
     "headline": "A quiet beginning",
-    "development": "The embryo is settling into the lining of the uterus and the neural tube \u2014 the future brain and spine \u2014 is starting to form. Two tiny layers of cells are already organizing into everything your baby will become.",
-    "momTip": "If you haven't started a prenatal vitamin with folate yet, now is the moment \u2014 it matters most in these early weeks.",
-    "partnerTip": "Celebrate the news together in a small, private way \u2014 this is your shared secret for now."
+    "development": "The embryo is settling into the lining of the uterus and the neural tube — the future brain and spine — is starting to form. Two tiny layers of cells are already organizing into everything your baby will become.",
+    "momTips": [
+      "If you haven't started a prenatal vitamin with folate yet, now is the moment — it matters most in these early weeks.",
+      "You may feel nothing at all yet — that's normal. The vitamin and the rest are already doing their job.",
+      "If the two lines still don't feel real, that's okay. There's no required way to feel this week.",
+      "Note the first day of your last period somewhere safe; your provider will ask.",
+      "Cutting back on caffeine starts gently — one small cup a day is generally considered fine."
+    ],
+    "partnerTips": [
+      "Celebrate the news together in a small, private way — this is your shared secret for now.",
+      "She may look exactly the same and feel completely different — ask how she's doing, then really listen.",
+      "Take a quiet photo of these early days; you'll both want the 'before' someday.",
+      "Start learning the basics — what a due date means, what happens at the first appointment.",
+      "Keep the secret well; deciding who to tell, and when, is something to do together."
+    ]
   },
   {
     "week": 5,
@@ -16,8 +28,20 @@
     "sizeWeightG": 0.6,
     "headline": "First flickers",
     "development": "The heart is beginning to take shape and may pulse for the first time this week. The brain and spinal cord are forming from the neural tube.",
-    "momTip": "Nausea can start now \u2014 keep plain crackers by the bed and eat something small before you get up.",
-    "partnerTip": "Take over the cooking if smells start bothering her; an unscented kitchen is a real gift right now."
+    "momTips": [
+      "Nausea can start now — keep plain crackers by the bed and eat something small before you get up.",
+      "Eat small and often; an empty stomach is nausea's best friend.",
+      "If smells suddenly ambush you, cold foods tend to smell less than hot ones.",
+      "Bloating and tender breasts are common this week — a softer bra is a real upgrade.",
+      "You don't have to announce anything yet; this week can belong to just the two of you."
+    ],
+    "partnerTips": [
+      "Take over the cooking if smells start bothering her; an unscented kitchen is a real gift right now.",
+      "Keep crackers and water on her nightstand without being asked — mornings start rough.",
+      "If she's queasy, eat the fragrant takeout away from home for a while.",
+      "Ask 'what sounds edible today?' instead of 'what do you want for dinner?'",
+      "Read up on week five together — five minutes of knowing what's happening goes a long way."
+    ]
   },
   {
     "week": 6,
@@ -25,9 +49,21 @@
     "sizeLengthCm": 0.6,
     "sizeWeightG": 1.0,
     "headline": "A heartbeat, almost",
-    "development": "Little buds that will become arms and legs are appearing, and the heart is beating in a steady rhythm. Facial features \u2014 eyes and a tiny nose \u2014 are starting to form.",
-    "momTip": "Fatigue is your body doing serious construction work; nap without guilt.",
-    "partnerTip": "Handle the grocery run and stock up on whatever plain foods she's actually willing to eat."
+    "development": "Little buds that will become arms and legs are appearing, and the heart is beating in a steady rhythm. Facial features — eyes and a tiny nose — are starting to form.",
+    "momTips": [
+      "Fatigue is your body doing serious construction work; nap without guilt.",
+      "Ginger tea, ginger chews, or flat ginger ale — many find real relief in ginger.",
+      "Your blood volume is already rising; dizziness when standing quickly is common — rise slowly.",
+      "If you're calling providers this week, ask what their first-visit schedule looks like.",
+      "Guilt-free screen time and an early bedtime is a perfectly valid evening routine right now."
+    ],
+    "partnerTips": [
+      "Handle the grocery run and stock up on whatever plain foods she's actually willing to eat.",
+      "Learn the difference between normal queasiness and not being able to keep fluids down — the second deserves a call.",
+      "Take on the litter box if you have a cat; it's hers to skip for the next nine months.",
+      "Keep dinner simple and smell-free; this is the season of plain pasta, and that's fine.",
+      "Tell her she's doing great even when all she did was lie on the couch — growing a human counts."
+    ]
   },
   {
     "week": 7,
@@ -36,8 +72,20 @@
     "sizeWeightG": 2.0,
     "headline": "Doubling by the day",
     "development": "Your baby has doubled in size since last week. Tiny hands and feet are emerging from paddle-shaped limbs, and the brain is growing by roughly a hundred cells a minute.",
-    "momTip": "Sip water steadily through the day \u2014 dehydration makes nausea and headaches worse.",
-    "partnerTip": "Learn one new thing about this week of pregnancy and share it with her \u2014 it shows you're in it together."
+    "momTips": [
+      "Sip water steadily through the day — dehydration makes nausea and headaches worse.",
+      "If nausea peaks around now, vitamin B6 is the most-studied option — ask your provider about it.",
+      "Your waist may thicken before any bump appears; leggings are your friend.",
+      "Frequent urination has begun — normal, and it will ease mid-pregnancy before returning.",
+      "Write down how this week felt; the details fade faster than you'd think."
+    ],
+    "partnerTips": [
+      "Learn one new thing about this week of pregnancy and share it with her — it shows you're in it together.",
+      "Stock the fridge with her three safe foods and guard them like treasure.",
+      "Offer to make the first prenatal appointment call — phone admin is help too.",
+      "If she's exhausted by 7pm, run the bath, take the dishes, and let the evening be short.",
+      "Keep a shared note of questions for the provider so neither of you blanks at the appointment."
+    ]
   },
   {
     "week": 8,
@@ -46,8 +94,20 @@
     "sizeWeightG": 3.0,
     "headline": "Fingers and toes begin",
     "development": "Fingers and toes are forming, and the eyelids are starting to cover the eyes. Your baby is making small, spontaneous movements you can't feel yet.",
-    "momTip": "If your first ultrasound is around now, bring tissues \u2014 seeing that flicker is surprisingly emotional.",
-    "partnerTip": "Go with her to the first ultrasound if you possibly can; ask the questions she's too overwhelmed to ask."
+    "momTips": [
+      "If your first ultrasound is around now, bring tissues — seeing that flicker is surprisingly emotional.",
+      "Your provider may offer early bloodwork around now — it's routine, not a warning sign.",
+      "If mornings are hard, eat something small before your feet touch the floor.",
+      "A metallic taste is a real pregnancy thing; cold water with lemon can blunt it.",
+      "Rest when the tiredness comes — first-trimester fatigue is earned, not laziness."
+    ],
+    "partnerTips": [
+      "Go with her to the first ultrasound if you possibly can; ask the questions she's too overwhelmed to ask.",
+      "Before the ultrasound, ask if there's anything she's nervous about — then just hold that with her.",
+      "Handle the scheduling and insurance calls if she'll let you; logistics are love.",
+      "Save that first ultrasound image somewhere backed up.",
+      "Keep the household running quietly this week — meals, laundry, trash — without keeping score."
+    ]
   },
   {
     "week": 9,
@@ -56,8 +116,20 @@
     "sizeWeightG": 4.0,
     "headline": "All essential parts",
     "development": "All the essential organs have begun to form, and the tail at the base of the spine is disappearing. Tiny earlobes and the tip of a nose are taking shape.",
-    "momTip": "Your clothes may start feeling snug at the waist \u2014 a hair tie through the button loop is the classic trick.",
-    "partnerTip": "Offer a back rub before bed; her body is working around the clock even while she sleeps."
+    "momTips": [
+      "Your clothes may start feeling snug at the waist — a hair tie through the button loop is the classic trick.",
+      "Your waistband may be snug even without a visible bump — bloating is doing that, and it's normal.",
+      "If you're ravenous one hour and queasy the next, you're textbook. Small snacks bridge both.",
+      "Mood swings can arrive uninvited; naming them out loud takes away some of their power.",
+      "Start a simple folder for appointment notes and lab results — future you will be grateful."
+    ],
+    "partnerTips": [
+      "Offer a back rub before bed; her body is working around the clock even while she sleeps.",
+      "Ask about her dreams — pregnancy dreams are famously vivid, and telling them helps.",
+      "Take over one weekly chore permanently, starting now. Pick the one she hates most.",
+      "If her favorite foods have betrayed her, quietly refresh the snack shelf with the new winners.",
+      "Learn this week's size comparison and use it — 'our blueberry' makes it real for both of you."
+    ]
   },
   {
     "week": 10,
@@ -66,8 +138,20 @@
     "sizeWeightG": 4.5,
     "headline": "Officially a fetus",
     "development": "This week the embryo graduates to fetus. Vital organs are formed and starting to function, and tiny nails are beginning to grow on fingers and toes.",
-    "momTip": "If morning sickness is peaking, cold foods often smell less \u2014 try chilled fruit or yogurt.",
-    "partnerTip": "Keep a running note on your phone of snacks she can tolerate, and keep them stocked."
+    "momTips": [
+      "If morning sickness is peaking, cold foods often smell less — try chilled fruit or yogurt.",
+      "If this is the worst of the nausea, relief often begins in the next few weeks — you're near the peak.",
+      "Veins may look more visible as blood volume climbs; it's your circulation doing its new job.",
+      "A prenatal vitamin that upsets your stomach can be swapped — ask for alternatives instead of quitting.",
+      "Round one of big decisions (screening tests) is coming; there's time to read before choosing."
+    ],
+    "partnerTips": [
+      "Keep a running note on your phone of snacks she can tolerate, and keep them stocked.",
+      "Rub her shoulders before bed and don't make it a production — quiet care lands best.",
+      "If she's anxious about the upcoming screenings, offer to read the same article and compare notes.",
+      "Keep mornings slow where you can: make the tea, find the crackers, warm the car.",
+      "Notice how hard she's working at seeming normal; home should be the place she can stop."
+    ]
   },
   {
     "week": 11,
@@ -75,9 +159,21 @@
     "sizeLengthCm": 4.1,
     "sizeWeightG": 7.0,
     "headline": "Hiccups and stretches",
-    "development": "Your baby is stretching, somersaulting, and even hiccupping \u2014 all in secret. Tooth buds are forming beneath the gums, and the diaphragm is developing.",
-    "momTip": "Consider scheduling any first-trimester screening tests your provider recommends this week.",
-    "partnerTip": "Start reading up on the screening options so the two of you can decide together, calmly."
+    "development": "Your baby is stretching, somersaulting, and even hiccupping — all in secret. Tooth buds are forming beneath the gums, and the diaphragm is developing.",
+    "momTips": [
+      "Consider scheduling any first-trimester screening tests your provider recommends this week.",
+      "Your uterus is now about grapefruit-sized; a little pelvic heaviness is expected.",
+      "If food aversions are running your life, protein hides well in smoothies and soups.",
+      "Skin changes — glow or breakouts, either is normal — come from the same hormone surge.",
+      "It's okay to start browsing maternity basics; soft waistbands help sooner than a real bump."
+    ],
+    "partnerTips": [
+      "Start reading up on the screening options so the two of you can decide together, calmly.",
+      "Be the calm researcher: present options, not opinions, and let the decision be hers first.",
+      "If she's worried about telling work, role-play the conversation together.",
+      "Surprise her with the one snack that's been reliably safe all week.",
+      "Take a bump photo even if there's barely a bump — the series starts somewhere."
+    ]
   },
   {
     "week": 12,
@@ -85,9 +181,21 @@
     "sizeLengthCm": 5.4,
     "sizeWeightG": 14.0,
     "headline": "Reflexes in rehearsal",
-    "development": "Reflexes are kicking in \u2014 your baby's fingers can open and close, and the mouth makes sucking motions. The intestines are moving into place inside the abdomen.",
-    "momTip": "Many parents share their news around now; there's no wrong time, only your time.",
-    "partnerTip": "If you're announcing soon, plan a reveal that feels like the two of you \u2014 not like anyone else's."
+    "development": "Reflexes are kicking in — your baby's fingers can open and close, and the mouth makes sucking motions. The intestines are moving into place inside the abdomen.",
+    "momTips": [
+      "Many parents share their news around now; there's no wrong time, only your time.",
+      "The risk of miscarriage drops meaningfully after this week — one reason many share now.",
+      "Dizziness can still visit; stand up slowly and keep snacks close.",
+      "If the nausea is loosening its grip, reintroduce the vegetables you abandoned — gently.",
+      "Your first-trimester screening window is open; ask your provider what's recommended for you."
+    ],
+    "partnerTips": [
+      "If you're announcing soon, plan a reveal that feels like the two of you — not like anyone else's.",
+      "If you're telling family soon, agree on the order of phone calls — it prevents real hurt feelings.",
+      "Offer to be the one who tells the difficult-to-tell relative, if she wants that.",
+      "Celebrate the end of the first trimester's hardest stretch — plan something small and easy.",
+      "Keep a running list of name ideas you both like; it's early, and that's exactly the fun."
+    ]
   },
   {
     "week": 13,
@@ -96,8 +204,20 @@
     "sizeWeightG": 23.0,
     "headline": "Vocal cords, quietly",
     "development": "Vocal cords are forming, and your baby has tiny fingerprints on fingers the size of grains of rice. The placenta is fully up and running.",
-    "momTip": "The second trimester is near \u2014 many people feel their energy return in the next few weeks.",
-    "partnerTip": "Notice and name the small wins: the first day without nausea is worth a toast (sparkling water counts)."
+    "momTips": [
+      "The second trimester is near — many people feel their energy return in the next few weeks.",
+      "As energy returns, gentle walks are a lovely way to feel like yourself again.",
+      "Round ligament twinges — quick, sharp, one-sided — often begin as the uterus grows.",
+      "Appetite may rebound with enthusiasm; keep protein-rich snacks within reach.",
+      "If you're still nauseous, you're not broken — for some it fades a few weeks later."
+    ],
+    "partnerTips": [
+      "Notice and name the small wins: the first day without nausea is worth a toast (sparkling water counts).",
+      "Plan a tiny celebration for the second trimester — flowers and a nap both count.",
+      "Ask her what she missed most while feeling awful, then bring it back if it's safe.",
+      "Start the shared calendar for appointments; being there starts with knowing when they are.",
+      "Take her out for the meal she couldn't look at last month."
+    ]
   },
   {
     "week": 14,
@@ -106,8 +226,20 @@
     "sizeWeightG": 43.0,
     "headline": "The golden trimester",
     "development": "Welcome to the second trimester. Your baby can squint, frown, and may have started sucking a thumb. The kidneys are producing urine and the liver starts making bile.",
-    "momTip": "With energy returning, gentle movement like walking or prenatal yoga can feel wonderful.",
-    "partnerTip": "Plan a low-key date while energy is good \u2014 a walk, a breakfast out, an afternoon movie."
+    "momTips": [
+      "With energy returning, gentle movement like walking or prenatal yoga can feel wonderful.",
+      "If round ligament pain surprises you, move slowly when rolling over or standing up.",
+      "Nasal congestion without a cold is a known pregnancy quirk — saline spray is a safe friend.",
+      "Your bump may begin to show now, or not for weeks — both timelines are normal.",
+      "Second-trimester appetite is real; aim it at protein and color when you can."
+    ],
+    "partnerTips": [
+      "Plan a low-key date while energy is good — a walk, a breakfast out, an afternoon movie.",
+      "Book that easy date now — energy windows in pregnancy are worth scheduling around.",
+      "Tell her, out loud and specifically, how she's handling all of this.",
+      "Offer to research prenatal classes for later; having it on the radar calms everyone.",
+      "If she's ready to walk more, make the evening walk your shared ritual."
+    ]
   },
   {
     "week": 15,
@@ -116,8 +248,20 @@
     "sizeWeightG": 70.0,
     "headline": "Sensing the light",
     "development": "Though the eyes are still fused shut, your baby can sense light. The ears are nearly in their final position, and the skeleton is hardening from cartilage into bone.",
-    "momTip": "Round ligament pain \u2014 a quick sharp tug on one side \u2014 is common now; move slowly when changing positions.",
-    "partnerTip": "Remind her that new aches are usually just stretching; a heating pad on low and your hand on her back help."
+    "momTips": [
+      "Round ligament pain — a quick sharp tug on one side — is common now; move slowly when changing positions.",
+      "If your gums bleed when brushing, that's common — a soft brush helps, and mention it at your next dental visit.",
+      "You may feel hungrier at night; a small protein snack before bed steadies things.",
+      "Heartburn can start now — smaller meals and staying upright after eating help.",
+      "This is a good week to book the anatomy scan if your provider hasn't already."
+    ],
+    "partnerTips": [
+      "Remind her that new aches are usually just stretching; a heating pad on low and your hand on her back help.",
+      "Warm a heating pad for her back before she asks; low heat only.",
+      "If new aches worry her, learn which ones are normal so you can reassure, not panic.",
+      "Offer a slow walk after dinner — it helps her digestion and your talking time.",
+      "Keep complimenting the bump specifically; she may be starting to feel self-conscious."
+    ]
   },
   {
     "week": 16,
@@ -125,9 +269,21 @@
     "sizeLengthCm": 11.6,
     "sizeWeightG": 100.0,
     "headline": "Listening in",
-    "development": "The ears are developed enough that your baby may begin to hear muted sounds \u2014 your heartbeat, your voice. The circulatory system is fully operational.",
-    "momTip": "Talk or hum to your belly when it feels natural; your voice will be the most familiar sound in your baby's world.",
-    "partnerTip": "Start talking to the bump now \u2014 your voice is lower and carries well through the womb, and babies recognize it after birth."
+    "development": "The ears are developed enough that your baby may begin to hear muted sounds — your heartbeat, your voice. The circulatory system is fully operational.",
+    "momTips": [
+      "Talk or hum to your belly when it feels natural; your voice will be the most familiar sound in your baby's world.",
+      "If you haven't felt movement yet, that's completely normal — first flutters often wait until 18–22 weeks.",
+      "Congestion and nosebleeds can both appear now; a humidifier at night helps.",
+      "Your appetite may spike — keep a protein snack in your bag so hunger never catches you empty.",
+      "Back aching? Check your posture when sitting; a small cushion at the lower back works wonders."
+    ],
+    "partnerTips": [
+      "Start talking to the bump now — your voice is lower and carries well through the womb, and babies recognize it after birth.",
+      "Read aloud to the bump sometimes — it feels silly until it doesn't.",
+      "If she's showing now, tell her often how lovely she looks; mean it, say it plainly.",
+      "Take over the heavy lifting without commentary — groceries, laundry baskets, the litter box.",
+      "Plan the babymoon-ish weekend now if it's ever happening; the window is the next few months."
+    ]
   },
   {
     "week": 17,
@@ -136,8 +292,20 @@
     "sizeWeightG": 140.0,
     "headline": "Growing a layer of cozy",
     "development": "Your baby is starting to build a layer of fat beneath the skin, and the umbilical cord is getting thicker and stronger. Sweat glands are beginning to develop.",
-    "momTip": "Sleep on your side with a pillow between your knees \u2014 it's kinder to your back and circulation.",
-    "partnerTip": "If she's started shopping for a pregnancy pillow, surprise her by researching the good ones."
+    "momTips": [
+      "Sleep on your side with a pillow between your knees — it's kinder to your back and circulation.",
+      "Side sleeping becomes the recommendation from here on; the left side is the classic favorite.",
+      "Your center of gravity is shifting — expect the occasional clumsy day and go easy on yourself.",
+      "Vivid dreams are ramping up; keeping a notepad by the bed makes them fun instead of eerie.",
+      "If your appetite is back, iron-rich foods (lentils, lean beef, spinach) earn their place now."
+    ],
+    "partnerTips": [
+      "If she's started shopping for a pregnancy pillow, surprise her by researching the good ones.",
+      "Give up the big pillow gracefully; her sleep arrangement now outranks yours.",
+      "If she wakes from strange dreams, listen to the whole plot — they're usually amazing.",
+      "Offer foot rubs on the regular; her circulation is working overtime.",
+      "Start noticing baby gear prices now so nothing shocks you later."
+    ]
   },
   {
     "week": 18,
@@ -145,9 +313,21 @@
     "sizeLengthCm": 14.2,
     "sizeWeightG": 190.0,
     "headline": "Yawns in the dark",
-    "development": "Your baby is yawning, stretching, and flexing those brand-new muscles. The nervous system is wiring up at astonishing speed, and myelin \u2014 the insulation around nerves \u2014 is starting to form.",
-    "momTip": "The mid-pregnancy anatomy scan usually happens around now \u2014 it's the longest, most detailed look you'll get.",
-    "partnerTip": "Be at the anatomy scan. Seeing the spine, the heart chambers, the tiny profile together is unforgettable."
+    "development": "Your baby is yawning, stretching, and flexing those brand-new muscles. The nervous system is wiring up at astonishing speed, and myelin — the insulation around nerves — is starting to form.",
+    "momTips": [
+      "The mid-pregnancy anatomy scan usually happens around now — it's the longest, most detailed look you'll get.",
+      "You'll likely be asked about movement soon — those first flutters feel like bubbles or popcorn.",
+      "Posture matters more each week; stand tall, shoulders back, pelvis tucked slightly.",
+      "If back pain appears, a warm (not hot) compress on the lower back is the classic comfort.",
+      "Drink water before you feel thirsty; your blood volume is still climbing."
+    ],
+    "partnerTips": [
+      "Be at the anatomy scan. Seeing the spine, the heart chambers, the tiny profile together is unforgettable.",
+      "Clear your schedule for the anatomy scan day — work will survive without you.",
+      "Ask the sonographer your questions too; you're allowed to be amazed out loud.",
+      "Print one ultrasound photo for the fridge; small rituals make it real.",
+      "After the scan, take her to lunch and talk about what you both just saw."
+    ]
   },
   {
     "week": 19,
@@ -155,9 +335,21 @@
     "sizeLengthCm": 15.3,
     "sizeWeightG": 240.0,
     "headline": "A waxy little coat",
-    "development": "A protective, cheese-like coating called vernix is covering your baby's skin. The senses \u2014 taste, smell, hearing, sight, touch \u2014 are all developing in their own dedicated brain regions.",
-    "momTip": "If you haven't felt movement yet, it often starts soon \u2014 like bubbles, or a fish turning over.",
-    "partnerTip": "Keep your hand on the bump in the evenings; in a few weeks you'll feel what she feels."
+    "development": "A protective, cheese-like coating called vernix is covering your baby's skin. The senses — taste, smell, hearing, sight, touch — are all developing in their own dedicated brain regions.",
+    "momTips": [
+      "If you haven't felt movement yet, it often starts soon — like bubbles, or a fish turning over.",
+      "Dizziness when standing can persist — rise slowly and keep snacks nearby.",
+      "Your skin may itch as it stretches; fragrance-free moisturizer is your daily friend.",
+      "If leg cramps wake you at night, gentle calf stretches before bed help many people.",
+      "A pregnancy pillow stops being a luxury around now — side sleeping is a long game."
+    ],
+    "partnerTips": [
+      "Keep your hand on the bump in the evenings; in a few weeks you'll feel what she feels.",
+      "Learn what the first kicks feel like for her so you can ask good questions.",
+      "Keep evenings unhurried; her body is on a construction schedule that never pauses.",
+      "Research car seats casually now — the options are vast and early browsing is free.",
+      "If she's anxious about feeling the baby 'enough,' remind her there's a wide normal range."
+    ]
   },
   {
     "week": 20,
@@ -166,8 +358,20 @@
     "sizeWeightG": 300.0,
     "headline": "Halfway home",
     "development": "You're at the halfway mark. Your baby is swallowing regularly and producing meconium, the first bowel movement. Those first flutters may now feel like unmistakable kicks.",
-    "momTip": "Your appetite may surge \u2014 keep protein-rich snacks handy so the hunger works for you.",
-    "partnerTip": "Mark the halfway point: a photo, a letter to the baby, or simply a long dinner talking about names."
+    "momTips": [
+      "Your appetite may surge — keep protein-rich snacks handy so the hunger works for you.",
+      "Anatomy scan week for many — ask all your questions; no question is too small.",
+      "Your belly button may start its slow migration; totally normal, usually temporary.",
+      "Sleep on your side now if you aren't already — a pillow between the knees keeps hips happy.",
+      "If hands feel puffy by evening, rings may want to move to a necklace chain."
+    ],
+    "partnerTips": [
+      "Mark the halfway point: a photo, a letter to the baby, or simply a long dinner talking about names.",
+      "Write the baby a letter at the halfway mark; someday that page will be priceless.",
+      "Take the halfway photo yourself — same spot, same pose, every few weeks from now on.",
+      "Start the conversation about parental leave logistics before calendars get tight.",
+      "Cook the celebratory dinner; halfway deserves more than takeout."
+    ]
   },
   {
     "week": 21,
@@ -175,9 +379,21 @@
     "sizeLengthCm": 26.7,
     "sizeWeightG": 360.0,
     "headline": "Tasting dinner",
-    "development": "Your baby swallows amniotic fluid flavored by what you eat \u2014 an early education in the family menu. The bone marrow has taken over blood cell production from the liver and spleen.",
-    "momTip": "Heartburn often shows up now; eat smaller meals and stay upright for a while after eating.",
-    "partnerTip": "Take over dish duty after dinner so she can put her feet up immediately \u2014 heartburn hates that."
+    "development": "Your baby swallows amniotic fluid flavored by what you eat — an early education in the family menu. The bone marrow has taken over blood cell production from the liver and spleen.",
+    "momTips": [
+      "Heartburn often shows up now; eat smaller meals and stay upright for a while after eating.",
+      "Stretch marks may begin appearing; they're genetics more than lotion, so be kind to your skin either way.",
+      "If you're feeling regular movement now, notice your baby's patterns — quiet times and disco times.",
+      "Varicose veins can show up; elevating your legs and moving often helps.",
+      "Keep calcium coming — bones are being built around the clock now."
+    ],
+    "partnerTips": [
+      "Take over dish duty after dinner so she can put her feet up immediately — heartburn hates that.",
+      "Set a recurring 'her feet up' alarm for after dinner; make it non-negotiable.",
+      "Feel for kicks in the evening — this is often when they're findable from the outside.",
+      "Start assembling a shortlist of pediatricians; the good ones book out.",
+      "Ask her what she's craving this week and make it appear."
+    ]
   },
   {
     "week": 22,
@@ -186,8 +402,20 @@
     "sizeWeightG": 430.0,
     "headline": "Lips and eyebrows",
     "development": "Your baby's lips and eyebrows are distinct now, and the eyes are fully formed though the irises still lack color. Tiny tooth buds for adult teeth are in place.",
-    "momTip": "Moisturize your belly daily \u2014 it may not prevent stretch marks, but it soothes the itch of stretching skin.",
-    "partnerTip": "Tell her she's beautiful, specifically and often; bodies change fast now and reassurance lands deeply."
+    "momTips": [
+      "Moisturize your belly daily — it may not prevent stretch marks, but it soothes the itch of stretching skin.",
+      "Your bump is now public property in strangers' eyes; rehearse a polite boundary for unwanted touching.",
+      "If your belly itches, moisturize after showering while the skin is still damp.",
+      "Braxton Hicks can begin — a painless tightening that fades when you change position.",
+      "Feet may grow half a size; comfortable shoes are a health item now, not a fashion choice."
+    ],
+    "partnerTips": [
+      "Tell her she's beautiful, specifically and often; bodies change fast now and reassurance lands deeply.",
+      "Defend her rest like it's your job — because it is.",
+      "If strangers' comments bother her, be ready to run interference with a smile.",
+      "Learn the Braxton Hicks vs. real contraction distinction; it prevents 2am panic later.",
+      "Take the bump photo this week yourself, and tell her why you love it."
+    ]
   },
   {
     "week": 23,
@@ -196,8 +424,20 @@
     "sizeWeightG": 501.0,
     "headline": "Dancing to music",
     "development": "Your baby can hear sounds from outside the womb and may startle or move to loud noises and music. The lungs are practicing breathing motions with amniotic fluid.",
-    "momTip": "Play the songs you love \u2014 babies have been shown to recognize music heard in the womb after birth.",
-    "partnerTip": "Make a playlist for the bump: the songs you want your baby to grow up knowing."
+    "momTips": [
+      "Play the songs you love — babies have been shown to recognize music heard in the womb after birth.",
+      "Swelling in feet by day's end is common; put them up when you can and mention sudden swelling to your provider.",
+      "If sleep is fragmenting, a wind-down routine — dim lights, no screens — genuinely helps.",
+      "Your baby can hear you now — narrate your day out loud sometimes.",
+      "A faint line down your belly (linea nigra) may appear; it's hormone pigment and fades after birth."
+    ],
+    "partnerTips": [
+      "Make a playlist for the bump: the songs you want your baby to grow up knowing.",
+      "Sing to the bump without embarrassment; babies recognize these songs after birth.",
+      "Make the bedroom cooler and darker; her sleep quality is a shared project now.",
+      "Elevate her feet with a cushion when you're watching something together.",
+      "Keep a bottle of water filled and within her reach at all times — small thing, big effect."
+    ]
   },
   {
     "week": 24,
@@ -206,8 +446,20 @@
     "sizeWeightG": 600.0,
     "headline": "A face like theirs",
     "development": "Your baby's face is almost fully formed, complete with eyelashes. The lungs are developing branches and the cells that will produce surfactant, needed for breathing air.",
-    "momTip": "Glucose screening usually happens in the next few weeks \u2014 ask your provider when yours is scheduled.",
-    "partnerTip": "Offer to drive her to the glucose test and keep her company; the drink is famously unpleasant."
+    "momTips": [
+      "Glucose screening usually happens in the next few weeks — ask your provider when yours is scheduled.",
+      "If the glucose drink is looming, it's famously unpleasant but quick — you've handled worse this month.",
+      "Backaches respond well to warm (not hot) compresses and gentle stretching.",
+      "Babies born at 24 weeks can survive with intensive care — a quiet milestone many find comforting.",
+      "Slow down on stairs and wet floors; relaxin has loosened your joints."
+    ],
+    "partnerTips": [
+      "Offer to drive her to the glucose test and keep her company; the drink is famously unpleasant.",
+      "Bring snacks for after the glucose test — she'll be hungry.",
+      "Ask what the 24-week milestone means to her; it means a lot to many.",
+      "Massage her lower back with slow, warm hands; ask about pressure first.",
+      "Handle the bending chores — loading the low dishwasher rack is now your art form."
+    ]
   },
   {
     "week": 25,
@@ -216,8 +468,20 @@
     "sizeWeightG": 660.0,
     "headline": "Hands that grasp",
     "development": "Your baby's hands are fully developed with a startle reflex and a grip. The nostrils, sealed until now, are beginning to open.",
-    "momTip": "You may notice Braxton Hicks \u2014 practice contractions that feel like a tightening; they soften when you change position.",
-    "partnerTip": "Learn the difference between Braxton Hicks and real contractions now, so you're both calm later."
+    "momTips": [
+      "You may notice Braxton Hicks — practice contractions that feel like a tightening; they soften when you change position.",
+      "If Braxton Hicks tighten when you're active, treat it as your body's reminder to sit and sip water.",
+      "Heartburn may peak now; an extra pillow at night uses gravity kindly.",
+      "Your baby's kicks are getting stronger — invite your partner's hand at the evening show.",
+      "Hemorrhoids can appear; fiber, water, and not straining are the classics of prevention."
+    ],
+    "partnerTips": [
+      "Learn the difference between Braxton Hicks and real contractions now, so you're both calm later.",
+      "Time her Braxton Hicks with her so she learns the pattern with company, not alone.",
+      "Keep the fiber coming: cook beans, oats, berries — quietly, deliciously.",
+      "Take over one evening routine entirely — bath, tea, bed — so she can simply arrive.",
+      "If vivid dreams entertain her, ask for the plot at breakfast."
+    ]
   },
   {
     "week": 26,
@@ -226,8 +490,20 @@
     "sizeWeightG": 760.0,
     "headline": "Eyes about to open",
     "development": "The eyes, fused shut for months, will begin to open soon. Your baby is taking small practice breaths and the lungs keep maturing day by day.",
-    "momTip": "Your center of gravity is shifting \u2014 wear supportive shoes and take stairs a little slower.",
-    "partnerTip": "Walk beside her at her pace, not yours; evening walks together are good for sleep and for talking."
+    "momTips": [
+      "Your center of gravity is shifting — wear supportive shoes and take stairs a little slower.",
+      "Your eyes may feel drier; it's hormonal and usually temporary — mention it if it persists.",
+      "If you're short of breath climbing stairs, slow down — your diaphragm is sharing space now.",
+      "The glucose screening happens around now for many; ask when yours is scheduled.",
+      "Start thinking about a birth preferences list — just notes for now, nothing binding."
+    ],
+    "partnerTips": [
+      "Walk beside her at her pace, not yours; evening walks together are good for sleep and for talking.",
+      "Match her walking pace exactly; this is an act of love disguised as a stroll.",
+      "Start reading one birth book chapter a week together — ten minutes, out loud.",
+      "If stairs wind her, take the laundry trips without being asked.",
+      "Plan the third-trimester logistics now: who drives, who calls whom, what's the backup."
+    ]
   },
   {
     "week": 27,
@@ -235,9 +511,21 @@
     "sizeLengthCm": 36.6,
     "sizeWeightG": 875.0,
     "headline": "Dreaming begins",
-    "development": "Your baby's brain is active enough for sleep cycles \u2014 and possibly the first dreams. The lungs and nervous system continue their steady maturing.",
-    "momTip": "This is the last week of the second trimester; if sleep is getting tricky, a wind-down routine genuinely helps.",
-    "partnerTip": "Take one chore entirely off her plate this trimester and make it permanently yours."
+    "development": "Your baby's brain is active enough for sleep cycles — and possibly the first dreams. The lungs and nervous system continue their steady maturing.",
+    "momTips": [
+      "This is the last week of the second trimester; if sleep is getting tricky, a wind-down routine genuinely helps.",
+      "The third trimester is days away; if fatigue is returning, naps are medicine, not indulgence.",
+      "Leg cramps at night often respond to stretching and magnesium-rich foods like pumpkin seeds.",
+      "Your baby may have hiccups — rhythmic little pulses that are entirely normal.",
+      "Keep a water bottle everywhere you sit; hydration helps nearly every late-pregnancy complaint."
+    ],
+    "partnerTips": [
+      "Take one chore entirely off her plate this trimester and make it permanently yours.",
+      "Choose your permanent chore wisely — dishes and laundry are the classics for a reason.",
+      "If she has leg cramps at night, learn the calf stretch that helps and offer it half-asleep.",
+      "Book a prenatal class for the coming weeks if you haven't; they fill up.",
+      "Tell her one specific thing you admire about how she's doing this."
+    ]
   },
   {
     "week": 28,
@@ -246,8 +534,20 @@
     "sizeWeightG": 1005.0,
     "headline": "Third trimester, hello",
     "development": "Your baby can blink, cough, and has eyelashes. Brain tissue is developing rapidly, and the eyes may now produce tears.",
-    "momTip": "Your provider may ask you to start counting kicks \u2014 pick a quiet time each day and get to know your baby's rhythm.",
-    "partnerTip": "Join the evening kick counts; putting your hand on the bump and waiting together is its own ritual."
+    "momTips": [
+      "Your provider may ask you to start counting kicks — pick a quiet time each day and get to know your baby's rhythm.",
+      "Kick counts: learn what 'normal' feels like for your baby, and call your provider if the pattern breaks.",
+      "Sleep with pillows deployed strategically — between knees, behind back, under bump.",
+      "If you're breathless lying flat, prop yourself up; it's the uterus meeting the diaphragm.",
+      "The third trimester often brings vivid nesting urges; pace yourself, the list will keep."
+    ],
+    "partnerTips": [
+      "Join the evening kick counts; putting your hand on the bump and waiting together is its own ritual.",
+      "Make the kick count a shared evening ritual — her bump, your hand, no phones.",
+      "Assemble one piece of baby furniture this month; instruction manuals build character.",
+      "Keep the car fueled above half from here on out.",
+      "If she's nesting at 10pm, hand her a label maker, not a lecture."
+    ]
   },
   {
     "week": 29,
@@ -256,8 +556,20 @@
     "sizeWeightG": 1153.0,
     "headline": "Muscle and marrow",
     "development": "Muscles and lungs keep maturing, and the bones are soaking up calcium by the day. Your baby's head is growing to make room for a rapidly developing brain.",
-    "momTip": "Calcium-rich foods matter extra now \u2014 yogurt, cheese, tofu, and leafy greens all count.",
-    "partnerTip": "Cook dinner with calcium in mind this week; feeding the pregnancy is a real way to help."
+    "momTips": [
+      "Calcium-rich foods matter extra now — yogurt, cheese, tofu, and leafy greens all count.",
+      "If heartburn flares at night, avoid eating in the last two hours before bed.",
+      "Your baby's movements may feel like rolls now instead of jabs — space is getting premium.",
+      "Colostrum — early milk — can leak a little; it's normal, and nursing pads solve it.",
+      "Short walks still count as exercise; the goal is movement, not mileage."
+    ],
+    "partnerTips": [
+      "Cook dinner with calcium in mind this week; feeding the pregnancy is a real way to help.",
+      "Cook calcium-rich dinners and don't announce it — stealth nutrition.",
+      "If colostrum surprises her, be the calm one who says 'your body is getting ready.'",
+      "Take the 3am heartburn shift: fetch the water, prop the pillows, no sighing.",
+      "Start practicing installing the car seat; it is famously less intuitive than it looks."
+    ]
   },
   {
     "week": 30,
@@ -266,8 +578,20 @@
     "sizeWeightG": 1319.0,
     "headline": "Trading space for strength",
     "development": "Your baby is running out of room for acrobatics, so movements feel more like rolls and stretches than kicks. The bone marrow has taken over red blood cell production completely.",
-    "momTip": "Feeling breathless when you lie flat is normal \u2014 prop yourself up with extra pillows.",
-    "partnerTip": "Build her the pillow fort before she asks; comfort engineering is love in practice."
+    "momTips": [
+      "Feeling breathless when you lie flat is normal — prop yourself up with extra pillows.",
+      "If sleep is elusive, the cool-side-of-the-pillow trick and a dark room help more than they should.",
+      "Clumsiness peaks around now; keep the good mugs on lower shelves and forgive the spills.",
+      "Your provider visits may move to every two weeks soon — keep your question list handy.",
+      "Sudden sharp pelvic zaps have a benign cause: baby pressing on nerves. Mention anything persistent to your provider."
+    ],
+    "partnerTips": [
+      "Build her the pillow fort before she asks; comfort engineering is love in practice.",
+      "Engineer her comfort nightly: pillows, water, phone charger, cool room.",
+      "Attend every appointment you can from here; each one matters more now.",
+      "Put the hospital bag list in a shared note and start checking things off.",
+      "If she's forgetful, be the gentle external memory, never the scorekeeper."
+    ]
   },
   {
     "week": 31,
@@ -276,8 +600,20 @@
     "sizeWeightG": 1502.0,
     "headline": "All five senses online",
     "development": "All five senses are working. Your baby can track light, taste what you've eaten, hear your conversations, and respond to touch on the belly.",
-    "momTip": "Swelling in feet and ankles is common; elevate them when you sit and mention sudden puffiness to your provider.",
-    "partnerTip": "Foot rubs. Nightly. No further notes."
+    "momTips": [
+      "Swelling in feet and ankles is common; elevate them when you sit and mention sudden puffiness to your provider.",
+      "Warm baths — not hot — soothe the third-trimester body beautifully.",
+      "If your bump feels tight after walking, sit, sip water, and let the practice contractions pass.",
+      "Frequent urination returns as baby presses lower; leaning forward on the toilet empties more fully.",
+      "Keep iron foods in rotation; your blood volume is near its peak."
+    ],
+    "partnerTips": [
+      "Foot rubs. Nightly. No further notes.",
+      "Draw her the bath; test the temperature; leave the room if she wants quiet.",
+      "Take the recycling, the trash, and any floor-level anything — bending is your sport now.",
+      "If her ankles swell, elevate them on your lap during the evening show.",
+      "Start a shared countdown note; seeing the number shrink helps you both."
+    ]
   },
   {
     "week": 32,
@@ -285,9 +621,21 @@
     "sizeLengthCm": 42.4,
     "sizeWeightG": 1702.0,
     "headline": "Soft bones, strong grip",
-    "development": "Your baby has toenails, fingernails, and real hair \u2014 or at least a respectable peach fuzz. The skeleton is fully formed but the bones stay soft and pliable for the journey ahead.",
-    "momTip": "Many babies settle head-down around now; your provider will check position at upcoming visits.",
-    "partnerTip": "Start the hospital bag checklist together \u2014 having a plan calms both of you."
+    "development": "Your baby has toenails, fingernails, and real hair — or at least a respectable peach fuzz. The skeleton is fully formed but the bones stay soft and pliable for the journey ahead.",
+    "momTips": [
+      "Many babies settle head-down around now; your provider will check position at upcoming visits.",
+      "If baby's position comes up at appointments, most babies flip head-down on their own schedule.",
+      "Itching that is severe — especially on palms and soles — is worth a call to your provider.",
+      "Your ribs may ache where little feet have moved in; gentle side stretches help.",
+      "Practice the hospital route once this month — traffic patterns included."
+    ],
+    "partnerTips": [
+      "Start the hospital bag checklist together — having a plan calms both of you.",
+      "Own the hospital bag checklist: chargers, snacks, documents, her lip balm.",
+      "If rib kicks make her wince, rub the spot and be suitably outraged on her behalf.",
+      "Wash and fold the tiny clothes with her; it's unexpectedly emotional.",
+      "Confirm time-off plans with your work now, in writing."
+    ]
   },
   {
     "week": 33,
@@ -295,9 +643,21 @@
     "sizeLengthCm": 43.7,
     "sizeWeightG": 1918.0,
     "headline": "Walls that glow",
-    "development": "The walls of the womb have thinned and stretched, letting more light in \u2014 your baby can tell day from night. The immune system is receiving antibodies from you.",
-    "momTip": "Keep up your iron intake; your blood volume has increased by about half since pregnancy began.",
-    "partnerTip": "Book something lovely for week 36 \u2014 a dinner, a day trip \u2014 before schedules narrow."
+    "development": "The walls of the womb have thinned and stretched, letting more light in — your baby can tell day from night. The immune system is receiving antibodies from you.",
+    "momTips": [
+      "Keep up your iron intake; your blood volume has increased by about half since pregnancy began.",
+      "If sleep is a stranger, rest without sleeping still counts — lie down, breathe, no phone.",
+      "Your baby's immune system is borrowing yours; keeping up your own rest helps both.",
+      "Waddling is biomechanics, not a personality change — own it.",
+      "Note your baby's active hours; they'll roughly match newborn awake times."
+    ],
+    "partnerTips": [
+      "Book something lovely for week 36 — a dinner, a day trip — before schedules narrow.",
+      "Keep the house stocked with one-handed snacks for the coming newborn era.",
+      "If she's up at night, sometimes just be awake with her for five quiet minutes.",
+      "Plan the week-36 date now; later weeks get unpredictable.",
+      "Learn the stages of labor basics so her updates make sense in real time."
+    ]
   },
   {
     "week": 34,
@@ -306,8 +666,20 @@
     "sizeWeightG": 2146.0,
     "headline": "Lungs nearly ready",
     "development": "The central nervous system and lungs are maturing rapidly. The protective vernix coating is getting thicker, and fat layers are rounding out your baby's cheeks.",
-    "momTip": "Rest whenever the tiredness comes \u2014 third-trimester fatigue is real and earned.",
-    "partnerTip": "Handle the logistics this month: car seat research, install date, pediatrician shortlist."
+    "momTips": [
+      "Rest whenever the tiredness comes — third-trimester fatigue is real and earned.",
+      "If hands tingle or go numb at night, wrist position changes often help — mention it to your provider.",
+      "Birth breathing and comfort techniques are things your provider or class can teach around now.",
+      "Naps are training for newborn life; take them without ceremony.",
+      "Pack your hospital bag over two calm evenings rather than one frantic one."
+    ],
+    "partnerTips": [
+      "Handle the logistics this month: car seat research, install date, pediatrician shortlist.",
+      "Finish the car seat install and book the inspection; it's a 30-minute errand that matters.",
+      "Stock the freezer with easy meals — future you will weep with gratitude.",
+      "Handle the pediatrician calls this week; interviews are your assignment.",
+      "Keep her phone charged and yours too; communication is the job from here."
+    ]
   },
   {
     "week": 35,
@@ -316,8 +688,20 @@
     "sizeWeightG": 2383.0,
     "headline": "Snug as a seed",
     "development": "Your baby is gaining about half a pound a week, and the kidneys and liver are fully functional. The grip is strong enough to hold your finger from day one.",
-    "momTip": "Appointments likely move to every two weeks now \u2014 keep a running list of questions on your phone.",
-    "partnerTip": "Add your own questions to her list too; you're allowed to be curious and prepared."
+    "momTips": [
+      "Appointments likely move to every two weeks now — keep a running list of questions on your phone.",
+      "If baby's movements change pattern noticeably, call your provider — trust your sense of your baby.",
+      "Group B strep screening usually happens around now; it's a quick, routine swab.",
+      "Walking the stairs slowly is enough cardio; this is the season of gentle.",
+      "Practice the 'it's time' conversation: who drives, who you call, which door you leave from."
+    ],
+    "partnerTips": [
+      "Add your own questions to her list too; you're allowed to be curious and prepared.",
+      "You're a participant, not a passenger — bring your own questions to the next appointment.",
+      "Learn the real signs of labor — water breaking, regular contractions — versus the false alarms.",
+      "Keep the hospital bag by the door from this week on.",
+      "Clear your calendar of anything non-essential after week 37."
+    ]
   },
   {
     "week": 36,
@@ -326,8 +710,20 @@
     "sizeWeightG": 2622.0,
     "headline": "The long wiggle down",
     "development": "Your baby may begin descending into the pelvis, which can ease your heartburn and sharpen the pressure below. The downy lanugo hair is mostly gone.",
-    "momTip": "Walking, bouncing on a birth ball, and rest in equal measure \u2014 listen to which one your body asks for.",
-    "partnerTip": "Install the car seat this week and get it inspected; it's the one task with no extension."
+    "momTips": [
+      "Walking, bouncing on a birth ball, and rest in equal measure — listen to which one your body asks for.",
+      "If pressure low in the pelvis arrives, baby may be dropping — breathing gets easier, bathroom trips increase.",
+      "Weekly appointments usually begin now; bring your questions written down.",
+      "Rest in the afternoon if nights are broken; sleep is arriving in shifts.",
+      "Warm compresses on the lower back ease the new pelvic heaviness."
+    ],
+    "partnerTips": [
+      "Install the car seat this week and get it inspected; it's the one task with no extension.",
+      "Check the car seat install with the manual in hand, then get it checked professionally.",
+      "Drive the hospital route at the actual hour you might need to.",
+      "Keep your boots by the door and your ringer on.",
+      "Ask her, weekly now: what can I take off your plate today?"
+    ]
   },
   {
     "week": 37,
@@ -336,8 +732,20 @@
     "sizeWeightG": 2859.0,
     "headline": "Early term, full wonder",
     "development": "Your baby is considered early term. The lungs and brain are still fine-tuning, and your baby is practicing breathing, sucking, and gripping all at once.",
-    "momTip": "Wash the tiny clothes, pack the bag, then let yourself do nothing at all \u2014 you've earned the pause.",
-    "partnerTip": "Keep your phone charged and your calendar flexible from here on out."
+    "momTips": [
+      "Wash the tiny clothes, pack the bag, then let yourself do nothing at all — you've earned the pause.",
+      "If you feel a gush or steady trickle of fluid, call your provider — that could be your water.",
+      "Losing the mucus plug can happen days before labor; note it, mention it, don't panic.",
+      "Contractions that fade when you rest are practice; ones that build are the real thing.",
+      "Let people help you now; accepting casseroles is a life skill."
+    ],
+    "partnerTips": [
+      "Keep your phone charged and your calendar flexible from here on out.",
+      "Charge the camera, clear the memory card, know where the charger lives.",
+      "Write down the call tree: family, work, the friend taking the dog.",
+      "Keep the tank full and the seats clear; departure could be any evening.",
+      "Do a trial run of the middle-of-the-night exit, minus the drama."
+    ]
   },
   {
     "week": 38,
@@ -345,9 +753,21 @@
     "sizeLengthCm": 49.8,
     "sizeWeightG": 3083.0,
     "headline": "Waiting, beautifully",
-    "development": "Your baby's brain and nervous system are still adding connections \u2014 development continues right up to birth. The grasp reflex is strong, and the eyes may be gray-blue for now.",
-    "momTip": "Note the difference between practice contractions and the real thing: real ones get longer, stronger, and closer together.",
-    "partnerTip": "Agree on the 'it's time' plan: who you call first, which route you drive, what's in the bag by the door."
+    "development": "Your baby's brain and nervous system are still adding connections — development continues right up to birth. The grasp reflex is strong, and the eyes may be gray-blue for now.",
+    "momTips": [
+      "Note the difference between practice contractions and the real thing: real ones get longer, stronger, and closer together.",
+      "Time any contractions: real labor gets longer, stronger, and closer together.",
+      "Sleep whenever sleep is available; labor doesn't schedule around your rest.",
+      "If anxiety spikes, slow breathing — in for four, out for six — genuinely steadies the nervous system.",
+      "Eat small, easy meals; your stomach has very little real estate left."
+    ],
+    "partnerTips": [
+      "Agree on the 'it's time' plan: who you call first, which route you drive, what's in the bag by the door.",
+      "Rehearse the plan out loud once: route, calls, bag, door code.",
+      "Take over all household operations silently; she has one job now.",
+      "Keep snacks packed for yourself too — labor is long for everyone.",
+      "Tell her, plainly, that she's got this. Repeat as needed."
+    ]
   },
   {
     "week": 39,
@@ -356,8 +776,20 @@
     "sizeWeightG": 3288.0,
     "headline": "Full term, full heart",
     "development": "Your baby is full term. The lungs are coated in surfactant, ready for that first breath, and fat continues to build for warmth in the outside world.",
-    "momTip": "Do one thing this week that's purely for you \u2014 a slow breakfast, a favorite film, a long bath while you still can.",
-    "partnerTip": "Keep showing up in small ways: water refilled, phone charged, shoulders rubbed. Presence is the job now."
+    "momTips": [
+      "Do one thing this week that's purely for you — a slow breakfast, a favorite film, a long bath while you still can.",
+      "Any cramping, backache, or restlessness could be early labor — note patterns, stay hydrated, call with questions.",
+      "Walking and rest, alternating, is the classic final-week rhythm.",
+      "If your due date passes quietly, that's the norm, not a failure — most babies pick their own day.",
+      "Let the house be imperfect; you're about to do something enormous."
+    ],
+    "partnerTips": [
+      "Keep showing up in small ways: water refilled, phone charged, shoulders rubbed. Presence is the job now.",
+      "Keep meals simple and her favorites available; appetite and queasiness can both visit this week.",
+      "Be reachable instantly — this is the week your phone stays loud.",
+      "If she's restless at midnight, walk the hallway with her, slowly, without checking your watch.",
+      "Prepare one true sentence for the delivery room — something she can hold onto."
+    ]
   },
   {
     "week": 40,
@@ -366,7 +798,19 @@
     "sizeWeightG": 3462.0,
     "headline": "Any day, any hour",
     "development": "Your baby is fully developed and simply waiting for the right moment. The skull bones remain soft and slightly overlapping, designed for the journey to you.",
-    "momTip": "Due dates are estimates \u2014 most babies arrive within a window on either side, and yours is no exception.",
-    "partnerTip": "Be her calm. Bring the snacks, make the calls, hold her hand, and get ready to meet your baby."
+    "momTips": [
+      "Due dates are estimates — most babies arrive within a window on either side, and yours is no exception.",
+      "Your provider will discuss monitoring or induction timelines if you pass your date — ask all your questions.",
+      "Every cramp is not labor; every quiet day is not a problem. Call when unsure — that's what they're there for.",
+      "Sleep, eat, walk, repeat. The simplest routine is the right one now.",
+      "Look around at the quiet once in a while; it's the last of its kind."
+    ],
+    "partnerTips": [
+      "Be her calm. Bring the snacks, make the calls, hold her hand, and get ready to meet your baby.",
+      "Take over every call, text, and 'any news?' inquiry — shield her from the waiting crowd.",
+      "Keep the fridge stocked with labor-friendly snacks and the freezer with post-birth meals.",
+      "If the days stretch past the due date, keep her spirits up with small, gentle plans.",
+      "Breathe with her. Practice now so it comes naturally when it counts."
+    ]
   }
 ]
