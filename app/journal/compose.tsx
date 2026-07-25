@@ -22,6 +22,7 @@ import { EntryType, countHouseholdMedia, createJournalEntry, createMediaRow, upd
 import { FREE_MEDIA_LIMIT, promptForPass, useEntitlement } from '../../lib/entitlements';
 import { track } from '../../lib/events';
 import { PickedMedia, pickMedia, uriToBytes } from '../../lib/media';
+import { maybeAskForReview } from '../../lib/review';
 import { currentWeek, formatISODate } from '../../lib/weeks';
 import { colors, radius, spacing, type } from '../../lib/theme';
 
@@ -92,6 +93,8 @@ export default function ComposeScreen() {
         });
       }
       router.back();
+      // Ask once, ever — and only at the high point of a milestone saved.
+      if (!editId && entryType === 'milestone') void maybeAskForReview();
     } catch (e) {
       console.warn(e);
       Alert.alert(copy.global.error);

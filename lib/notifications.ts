@@ -87,9 +87,10 @@ function nextRolloverDate(dueDate: string): Date | null {
 
 /**
  * Local-only gentle reminders: a soft daily check-in nudge at the user's chosen
- * time (default 8:30pm) and a celebration note the morning the next week begins.
- * No push server involved. Never prompts for permission by itself — scheduling
- * silently no-ops until permission exists.
+ * time (default 8:30pm), a celebration note the morning the next week begins,
+ * and a one-shot rescue nudge three days out that only fires if she stops
+ * opening the app. No push server involved. Never prompts for permission by
+ * itself — scheduling silently no-ops until permission exists.
  */
 export async function scheduleGentleReminders(
   week: number | null,
@@ -135,6 +136,14 @@ export async function scheduleGentleReminders(
         });
       }
     }
+
+    // The Chloe-window rescue (synthetic-beta finding): every reschedule pushes
+    // this one-shot three days out, so it only ever fires after three quiet days.
+    const rescue = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    await Notifications.scheduleNotificationAsync({
+      content: { title: copy.notifications.rescueTitle, body: copy.notifications.rescueBody },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: rescue },
+    });
   } catch (e) {
     console.warn('notifications scheduling failed', e);
   }

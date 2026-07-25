@@ -493,3 +493,16 @@ export async function uploadToBucket(
   if (error) throw error;
   return path;
 }
+
+// ---------- Account deletion (App Review 5.1.1(v)) ----------
+
+/**
+ * Permanently delete the account and everything the user authored, via the
+ * server-side security-definer function (migration 006). Shared memories stay
+ * with the partner; a solo household is removed entirely. Signs out after.
+ */
+export async function deleteAccount(): Promise<void> {
+  const { error } = await supabase.rpc('delete_own_account');
+  if (error) throw error;
+  await supabase.auth.signOut();
+}
