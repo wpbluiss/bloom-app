@@ -18,7 +18,8 @@ import { Chip } from '../../components/Chip';
 import { PressScale } from '../../components/PressScale';
 import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
-import { EntryType, createJournalEntry, createMediaRow, uploadToBucket } from '../../lib/db';
+import { EntryType, countHouseholdMedia, createJournalEntry, createMediaRow, uploadToBucket } from '../../lib/db';
+import { FREE_MEDIA_LIMIT, promptForPass, useEntitlement } from '../../lib/entitlements';
 import { PickedMedia, pickMedia, uriToBytes } from '../../lib/media';
 import { currentWeek, formatISODate } from '../../lib/weeks';
 import { colors, radius, spacing, type } from '../../lib/theme';
@@ -33,6 +34,7 @@ const ENTRY_TYPES: { key: EntryType; label: string }[] = [
 export default function ComposeScreen() {
   const router = useRouter();
   const { session, household, pregnancy } = useApp();
+  const { pregnancyPass } = useEntitlement();
   const [entryType, setEntryType] = useState<EntryType>('note');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -40,6 +42,15 @@ export default function ComposeScreen() {
   const [busy, setBusy] = useState(false);
 
   const attach = async () => {
+    // Free tier: 25 journal media items. The Pass lifts the cap. (Dev mode:
+    // always entitled, never gated.)
+    if (!pregnancyPass && household) {
+      const existing = await countHouseholdMedia(household.id);
+      if (existing + media.length >= FREE_MEDIA_LIMIT) {
+        promptForPass(router, copy.paywall.gateMedia);
+        return;
+      }
+    }
     const picked = await pickMedia({ allowsVideo: true });
     if (picked) setMedia((m) => [...m, picked]);
   };
