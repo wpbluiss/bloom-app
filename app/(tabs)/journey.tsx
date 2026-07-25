@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { Button } from '../../components/Button';
@@ -19,6 +19,7 @@ const TRIMESTER_RANGES = ['Weeks 4 – 13', 'Weeks 14 – 27', 'Weeks 28 – 40'
 export default function JourneyScreen() {
   const router = useRouter();
   const { pregnancy, week } = useApp();
+  const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   const [selected, setSelected] = useState<WeekInfo | null>(null);
   const rowY = useRef<Record<number, number>>({});
@@ -147,7 +148,7 @@ export default function JourneyScreen() {
           <PressScale style={styles.scrimTouch} onPress={() => setSelected(null)} />
           <View style={styles.sheet}>
             {selected ? (
-              <ScrollView contentContainerStyle={{ padding: spacing.xxl }}>
+              <ScrollView contentContainerStyle={{ padding: spacing.xxl, paddingBottom: spacing.xxl + insets.bottom }}>
                 <View style={styles.grabber} />
                 <Text style={styles.eyebrow}>
                   WEEK {selected.week} · TRIMESTER {trimesterOf(selected.week)}
