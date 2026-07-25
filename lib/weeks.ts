@@ -56,6 +56,34 @@ export function dailyTip(tips: string[], dueDate: Date | string, today: Date = n
   return tips[dayIndex % tips.length];
 }
 
+/** A calendar date mapped onto the 280-day pregnancy window. */
+export interface PregnancyDayPoint {
+  /** 0-based index into the window (0 = first day, 279 = due day). */
+  dayIndex: number;
+  /** Calendar pregnancy week (1–40, unclamped; weekInfo() clamps to content range). */
+  week: number;
+  /** Day within the pregnancy week (1–7). */
+  dayOfWeek: number;
+  /** 1-based day of pregnancy (1–280). */
+  day: number;
+}
+
+/**
+ * Map any calendar date to its point in the pregnancy, or null when the date
+ * falls outside the 280-day window ending on the due date. Used by the Today
+ * screen's week strip, where any day of the calendar week can be selected.
+ */
+export function pregnancyDay(dueDate: Date | string, date: Date = new Date()): PregnancyDayPoint | null {
+  const dayIndex = 280 - daysUntilDue(dueDate, date);
+  if (dayIndex < 0 || dayIndex > 279) return null;
+  return {
+    dayIndex,
+    week: Math.floor(dayIndex / 7) + 1,
+    dayOfWeek: (dayIndex % 7) + 1,
+    day: dayIndex + 1,
+  };
+}
+
 export function weekInfo(week: number): WeekInfo {
   const w = clampWeek(week);
   return WEEKS.find((x) => x.week === w) ?? WEEKS[0];

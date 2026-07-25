@@ -94,6 +94,21 @@ export const copy = {
     forYou: 'FOR YOU',
     forHer: 'FOR HER',
     forPartner: 'FOR YOUR PARTNER',
+    // Week strip + day card
+    weekStripEyebrow: 'YOUR WEEK, DAY BY DAY',
+    weekDayLine: (week: number, day: number) => `Week ${week}, day ${day}`,
+    beforeWindow: 'A quiet day just before this story begins — the counting starts soon.',
+    afterWindow: 'Past the due date now — any day could be the day. Keep your provider close.',
+    // "Today, for you" insights block
+    forYouEyebrow: 'TODAY, FOR YOU',
+    dayLine: (n: number) => `Day ${n} of your pregnancy`,
+    expectEyebrow: 'WHAT TODAY MAY HOLD',
+    commonEyebrow: 'COMMON AROUND NOW',
+    commonAroundNow: [
+      'Nausea, deep tiredness, and tender breasts are the usual companions of these weeks — for most, they soften after week 12.',
+      'Energy often returns now, and the first flutters may follow soon. Round-ligament tugs and a growing bump become the new normal.',
+      'Braxton Hicks practice contractions, heartburn, and lighter sleep are common as your body readies itself for the big day.',
+    ],
   },
   food: {
     segments: ['Eat well', 'Be careful', 'Cravings'] as const,
@@ -235,6 +250,15 @@ export const copy = {
     careLine: "If anything feels severe or scary, call your provider — that's what they're there for.",
     edit: 'Edit',
     cancel: 'Cancel',
+  },
+  learn: {
+    title: 'Learn',
+    subtitle: 'Quiet, plain-language guides — every one grounded in published guidance from trusted health institutions.',
+    mostRead: 'MOST READ',
+    byline: (source: string) => `Based on guidance from ${source}`,
+    readSource: (source: string) => `Read the original guidance from ${source}`,
+    disclaimer: 'Everyday guidance, not medical advice. Your provider knows you and your pregnancy best.',
+    close: 'Close',
   },
   paywall: {
     eyebrow: 'BLOOM PREGNANCY PASS',
