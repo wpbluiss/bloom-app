@@ -11,14 +11,14 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
 import { Chip } from '../../components/Chip';
 import { PressScale } from '../../components/PressScale';
 import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
-import { EntryType, countHouseholdMedia, createJournalEntry, createMediaRow, uploadToBucket } from '../../lib/db';
+import { EntryType, countHouseholdMedia, createJournalEntry, createMediaRow, updateJournalEntry, uploadToBucket } from '../../lib/db';
 import { FREE_MEDIA_LIMIT, promptForPass, useEntitlement } from '../../lib/entitlements';
 import { PickedMedia, pickMedia, uriToBytes } from '../../lib/media';
 import { currentWeek, formatISODate } from '../../lib/weeks';
@@ -33,11 +33,14 @@ const ENTRY_TYPES: { key: EntryType; label: string }[] = [
 
 export default function ComposeScreen() {
   const router = useRouter();
+  // When opened from a journal card, params pre-fill the form for editing.
+  const params = useLocalSearchParams<{ id?: string; type?: string; title?: string; body?: string }>();
+  const editId = params.id ?? null;
   const { session, household, pregnancy } = useApp();
   const { pregnancyPass } = useEntitlement();
-  const [entryType, setEntryType] = useState<EntryType>('note');
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+  const [entryType, setEntryType] = useState<EntryType>((params.type as EntryType) || 'note');
+  const [title, setTitle] = useState(params.title ?? '');
+  const [body, setBody] = useState(params.body ?? '');
   const [media, setMedia] = useState<PickedMedia[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -57,24 +60,35 @@ export default function ComposeScreen() {
 
   const save = async () => {
     if (!session?.user || !household) return;
-    if (!body.trim() && !title.trim() && media.length === 0) return;
+    if (!body.trim() && !title.trim() && media.length === 0 && !editId) return;
     setBusy(true);
     try {
-      const entry = await createJournalEntry({
-        household_id: household.id,
-        pregnancy_id: pregnancy?.id ?? null,
-        author_id: session.user.id,
-        week_number: pregnancy ? currentWeek(pregnancy.due_date) : null,
-        entry_type: entryType,
-        title: title.trim() || null,
-        body: body.trim() || null,
-        entry_date: formatISODate(new Date()),
-      });
+      let entryId = editId;
+      if (editId) {
+        // Editing: update the existing row in place (media already attached stays).
+        await updateJournalEntry(editId, {
+          entry_type: entryType,
+          title: title.trim() || null,
+          body: body.trim() || null,
+        });
+      } else {
+        const entry = await createJournalEntry({
+          household_id: household.id,
+          pregnancy_id: pregnancy?.id ?? null,
+          author_id: session.user.id,
+          week_number: pregnancy ? currentWeek(pregnancy.due_date) : null,
+          entry_type: entryType,
+          title: title.trim() || null,
+          body: body.trim() || null,
+          entry_date: formatISODate(new Date()),
+        });
+        entryId = entry.id;
+      }
       for (const m of media) {
         const bytes = await uriToBytes(m.uri);
         const path = await uploadToBucket('journal-media', household.id, bytes, m.ext, m.contentType);
         await createMediaRow({
-          journal_entry_id: entry.id,
+          journal_entry_id: entryId!,
           household_id: household.id,
           storage_path: path,
           media_type: m.mediaType,
@@ -156,7 +170,7 @@ export default function ComposeScreen() {
         </ScrollView>
         <View style={styles.footer}>
           <Button
-            label={copy.global.keepMemory}
+            label={editId ? 'Save changes' : copy.global.keepMemory}
             onPress={save}
             loading={busy}
             disabled={!body.trim() && !title.trim() && media.length === 0}

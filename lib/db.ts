@@ -284,6 +284,15 @@ export async function createJournalEntry(entry: Omit<JournalEntry, 'id' | 'creat
   return data as JournalEntry;
 }
 
+/** Edit a moment in place — text and type only; media rows are untouched. */
+export async function updateJournalEntry(
+  id: string,
+  patch: Partial<Pick<JournalEntry, 'entry_type' | 'title' | 'body'>>
+): Promise<void> {
+  const { error } = await supabase.from('journal_entries').update(patch).eq('id', id);
+  if (error) throw error;
+}
+
 export async function createMediaRow(media: Omit<Media, 'id' | 'created_at' | 'signedUrl'>): Promise<void> {
   const { error } = await supabase.from('media').insert(media);
   if (error) throw error;
