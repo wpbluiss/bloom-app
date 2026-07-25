@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
-import { Card } from '../../components/Card';
 import { PressScale } from '../../components/PressScale';
 import { CardSkeleton } from '../../components/Skeleton';
 import { copy } from '../../lib/copy';
@@ -113,7 +112,7 @@ export default function WishlistDetail() {
             <Text
               style={[
                 styles.statusText,
-                { color: item.status === 'purchased' ? colors.sage.primary : colors.ink.secondary },
+                { color: item.status === 'purchased' ? colors.sage.primary : colors.ink.tertiary },
               ]}
             >
               {item.status === 'purchased' ? 'Purchased' : 'Mark as purchased'}
