@@ -52,7 +52,8 @@ export const tokens = {
     caption: { fontFamily: 'Inter_400Regular', fontSize: 12, lineHeight: 16, letterSpacing: 0.1 },
     serifQuote: { fontFamily: 'Fraunces_400Regular_Italic', fontSize: 18, lineHeight: 27, letterSpacing: -0.2 },
   },
-  spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24, section: 32, hero: 40, screen: 20 },
+  // screen: the consistent horizontal gutter for every screen (24px).
+  spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24, section: 32, hero: 40, screen: 24 },
   radius: { sm: 8, md: 14, lg: 20, xl: 28, full: 999 },
   shadow: {
     // Warm-tinted, low-opacity, long-blur — depth you feel, not see.
