@@ -350,7 +350,7 @@ export default function TodayScreen() {
                   onPress={saveName}
                   loading={nameSaving}
                   disabled={!nameDraft.trim()}
-                  style={{ height: 44, paddingHorizontal: spacing.xl }}
+                  style={{ minHeight: 44, paddingHorizontal: spacing.xl }}
                 />
               </View>
             </Card>
@@ -449,7 +449,7 @@ export default function TodayScreen() {
                 onPress={save}
                 loading={saving}
                 disabled={!mood && symptoms.length === 0 && !note.trim()}
-                style={{ height: 44, paddingHorizontal: spacing.xl }}
+                style={{ minHeight: 44, paddingHorizontal: spacing.xl }}
               />
             </View>
           </Card>
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg.sunken,
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
-    height: 44,
+    minHeight: 44,
     ...type.bodyMD,
     color: colors.ink.primary,
   },
@@ -601,8 +601,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.accent.terracotta,
     borderRadius: radius.full,
-    height: 52,
+    minHeight: 52,
     paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.sm,
     ...shadow.fab,
   },
   fabLabel: { ...type.titleSM, color: colors.accent.onAccent },
