@@ -31,7 +31,7 @@
       "severity": "limit"
     },
     {
-      "name": "Refrigerated p\u00e2t\u00e9s and meat spreads",
+      "name": "Refrigerated pâtés and meat spreads",
       "why": "Listeria risk; canned or shelf-stable versions are a safe alternative.",
       "severity": "avoid"
     },
@@ -42,7 +42,7 @@
     },
     {
       "name": "Alcohol",
-      "why": "No amount is known to be safe during pregnancy \u2014 this is the one firm rule.",
+      "why": "No amount is known to be safe during pregnancy — this is the one firm rule.",
       "severity": "avoid"
     },
     {
@@ -62,7 +62,7 @@
     },
     {
       "name": "Energy drinks",
-      "why": "High caffeine plus unstudied stimulant blends \u2014 skip them for now.",
+      "why": "High caffeine plus unstudied stimulant blends — skip them for now.",
       "severity": "avoid"
     },
     {
@@ -107,7 +107,7 @@
     },
     {
       "name": "Buffet or picnic food left out over 2 hours",
-      "why": "Bacteria multiply quickly at room temperature \u2014 when in doubt, skip it.",
+      "why": "Bacteria multiply quickly at room temperature — when in doubt, skip it.",
       "severity": "limit"
     },
     {
@@ -457,16 +457,6 @@
         "vitamin D"
       ],
       "trimester": 2
-    },
-    {
-      "name": "Whole eggs with yolk, hard boiled",
-      "benefit": "Choline powerhouse for baby's brain",
-      "nutrients": [
-        "choline",
-        "vitamin D",
-        "protein"
-      ],
-      "trimester": 1
     }
   ],
   "powerFoodSwaps": {
@@ -624,11 +614,6 @@
       { "name": "Salmon", "note": "DHA + omega-3" },
       { "name": "Sardines (canned, with bones)", "note": "DHA + calcium" },
       { "name": "Walnuts", "note": "plant omega-3" }
-    ],
-    "Whole eggs with yolk, hard boiled": [
-      { "name": "Greek yogurt", "note": "protein + B12" },
-      { "name": "Tofu scramble", "note": "protein + calcium" },
-      { "name": "Edamame", "note": "choline + protein" }
     ]
   },
   "cravingSwaps": [
@@ -650,7 +635,7 @@
     {
       "craving": "Soda",
       "healthierSwap": "Sparkling water with a splash of real juice",
-      "why": "Bubbles and sweetness without the sugar spike \u2014 and it hydrates you both."
+      "why": "Bubbles and sweetness without the sugar spike — and it hydrates you both."
     },
     {
       "craving": "French fries",
@@ -660,7 +645,7 @@
     {
       "craving": "Pickles straight from the jar",
       "healthierSwap": "Pickles, just mind the sodium elsewhere that day",
-      "why": "This one's actually fine \u2014 vinegar cravings are classic; balance salt across your meals."
+      "why": "This one's actually fine — vinegar cravings are classic; balance salt across your meals."
     },
     {
       "craving": "White bread and butter",
@@ -680,12 +665,12 @@
     {
       "craving": "Doughnuts",
       "healthierSwap": "Whole-grain toast with ricotta, honey, and cinnamon",
-      "why": "Warm, sweet, and creamy \u2014 with protein that carries you past mid-morning."
+      "why": "Warm, sweet, and creamy — with protein that carries you past mid-morning."
     },
     {
       "craving": "Cheese straight from the block",
       "healthierSwap": "Cheese, paired with apple slices or whole-grain crackers",
-      "why": "Keep the cheese (pasteurized) \u2014 just add fiber so it's a snack, not a vanishing act."
+      "why": "Keep the cheese (pasteurized) — just add fiber so it's a snack, not a vanishing act."
     },
     {
       "craving": "Cake",
@@ -695,7 +680,7 @@
     {
       "craving": "Sour gummies",
       "healthierSwap": "Frozen grapes or tart dried mango",
-      "why": "Sharp, sweet, and fun to eat \u2014 with actual vitamin C along for the ride."
+      "why": "Sharp, sweet, and fun to eat — with actual vitamin C along for the ride."
     },
     {
       "craving": "Fast-food burger",
@@ -714,7 +699,7 @@
     },
     {
       "craving": "Cereal at midnight",
-      "healthierSwap": "Fortified whole-grain cereal with milk \u2014 genuinely a good call",
+      "healthierSwap": "Fortified whole-grain cereal with milk — genuinely a good call",
       "why": "This craving is your body asking for folate and iron; say yes."
     },
     {
