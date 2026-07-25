@@ -87,6 +87,7 @@ export const copy = {
     },
     sizeLine: (comparison: string) => `This week, your baby is the size of ${comparison}.`,
     checkinEyebrow: 'DAILY CHECK-IN',
+    checkinQuestion: 'How are you feeling today?',
     dailyEyebrow: 'TODAY IN YOUR PREGNANCY',
     thisWeek: 'THIS WEEK',
     babyEyebrow: 'YOUR BABY',
@@ -228,6 +229,13 @@ export const copy = {
     body: 'What should we call you? Add your name so Bloom can greet you properly.',
     cta: 'Add my name',
   },
+  checkin: {
+    heardFallback: 'Thank you for checking in — every small note becomes part of the story.',
+    reliefEyebrow: 'A LITTLE RELIEF',
+    careLine: "If anything feels severe or scary, call your provider — that's what they're there for.",
+    edit: 'Edit',
+    cancel: 'Cancel',
+  },
   paywall: {
     eyebrow: 'BLOOM PREGNANCY PASS',
     headline: 'One payment. Your whole pregnancy. For both of you.',
@@ -283,3 +291,34 @@ export function dailyPrompt(role: 'mother' | 'partner' | null | undefined): stri
   if (idx === 8 && role === 'partner') return copy.checkinPromptPartner9;
   return copy.checkinPrompts[idx];
 }
+
+/**
+ * One warm sentence per mood (keyed by copy.moods) shown after she checks in,
+ * so the response feels heard rather than confirmed.
+ */
+export const MOOD_ACKNOWLEDGMENTS: Record<string, string> = {
+  Heavy: "That's a lot to carry. Thank you for saying it out loud — heavy days count too.",
+  Tired: 'Rest is the work right now. Your body is doing far more than it lets on.',
+  Okay: 'Okay is a perfectly good place to be. Steady days are quiet wins.',
+  Good: 'Lovely — hold on to that. The good days are worth remembering.',
+  Glowing: 'Glowing suits you. Soak it in — this is the good stuff.',
+};
+
+/**
+ * Curated relief tips keyed by symptom chip label (Today screen check-in).
+ * Short, standard prenatal guidance (ACOG/NHS-style) — not medical advice.
+ */
+export const SYMPTOM_RELIEF_TIPS: Record<string, string> = {
+  Nausea:
+    'Small, frequent meals and ginger tea are the first-line favorites. Vitamin B6 is the most-studied supplement — ask your provider.',
+  Fatigue:
+    'Rest is productive right now — your body is building a placenta. Iron-rich foods help if labs show low iron.',
+  Heartburn: 'Smaller meals, and avoid lying down for an hour after eating.',
+  Headache: 'Hydration first — dehydration is the most common trigger in early pregnancy.',
+  Swelling: 'Elevate your legs when you can; mention sudden face or hand swelling to your provider.',
+  Cramping:
+    'Mild stretching sensations are normal as the uterus grows. Severe or one-sided pain deserves a call to your provider.',
+  Insomnia:
+    'A pillow between the knees and a cool, dark room. Screens off an hour before bed helps more than it sounds.',
+  Backache: 'Watch posture when sitting, and a warm (not hot) compress on the lower back.',
+};

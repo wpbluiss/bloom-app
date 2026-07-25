@@ -12,7 +12,7 @@ import { PressScale } from '../../components/PressScale';
 import { CardSkeleton } from '../../components/Skeleton';
 import { WeekArt } from '../../components/WeekArt';
 import { useApp } from '../../lib/AppContext';
-import { copy, dailyPrompt } from '../../lib/copy';
+import { copy, MOOD_ACKNOWLEDGMENTS, SYMPTOM_RELIEF_TIPS } from '../../lib/copy';
 import { dailyEntry, DAILY_KIND_LABEL } from '../../lib/daily';
 import {
   Checkin,
@@ -34,7 +34,7 @@ import { capturePhoto, pickMedia, uriToBytes } from '../../lib/media';
 import { scheduleGentleReminders } from '../../lib/notifications';
 import { prefetchIllustrations } from '../../lib/illustrations';
 import { consumeWeekUnlock } from '../../lib/rituals';
-import { currentWeek, daysUntilDue, formatISODate, formatLength, formatWeight, trimesterOf, weekInfo } from '../../lib/weeks';
+import { currentWeek, dailyTip, daysUntilDue, formatISODate, formatLength, formatWeight, trimesterOf, weekInfo } from '../../lib/weeks';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 const SYMPTOMS = ['Nausea', 'Fatigue', 'Heartburn', 'Headache', 'Swelling', 'Cramping', 'Insomnia', 'Backache'];
@@ -50,6 +50,7 @@ export default function TodayScreen() {
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
   const [savedTick, setSavedTick] = useState(false);
+  const [editingCheckin, setEditingCheckin] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingCheckin, setLoadingCheckin] = useState(true);
   const [memberCount, setMemberCount] = useState<number | null>(null);
@@ -62,6 +63,9 @@ export default function TodayScreen() {
   const unlockCheckedFor = useRef<number | null>(null);
 
   const info = weekInfo(week ?? 4);
+  // Daily rotating tips — deterministic by day-of-pregnancy, fresh each day.
+  const momTip = pregnancy ? dailyTip(info.momTips, pregnancy.due_date) : info.momTips[0];
+  const partnerTip = pregnancy ? dailyTip(info.partnerTips, pregnancy.due_date) : info.partnerTips[0];
   const isPartner = profile?.role === 'partner';
   const daysLeft = pregnancy ? daysUntilDue(pregnancy.due_date) : null;
 
@@ -153,6 +157,7 @@ export default function TodayScreen() {
     setCheckin(payload); // optimistic
     try {
       await upsertCheckin(payload);
+      setEditingCheckin(false);
       setSavedTick(true);
       setTimeout(() => setSavedTick(false), 2500);
     } catch (e) {
@@ -403,55 +408,90 @@ export default function TodayScreen() {
           </FadeIn>
         ) : null}
 
-        {/* Daily check-in */}
+        {/* Daily check-in — after she checks in, the card answers back */}
         <FadeIn index={6}>
           <Card style={{ marginTop: spacing.xl }}>
             <Text style={styles.eyebrow}>{copy.today.checkinEyebrow}</Text>
-            <Text style={styles.checkinQuestion}>{dailyPrompt(profile?.role)}</Text>
-            <View style={styles.moodRow}>
-              {copy.moods.map((m, i) => (
-                <PressScale key={m} onPress={() => setMood(m)} style={styles.moodItem}>
-                  <Ionicons
-                    name={MOOD_ICONS[i] as keyof typeof Ionicons.glyphMap}
-                    size={26}
-                    color={mood === m ? colors.accent.terracotta : colors.ink.tertiary}
-                  />
-                  <Text style={[styles.moodLabel, mood === m && { color: colors.accent.terracottaDeep }]}>{m}</Text>
-                </PressScale>
-              ))}
-            </View>
-            <View style={styles.chipsWrap}>
-              {SYMPTOMS.map((s) => (
-                <Chip key={s} label={s} selected={symptoms.includes(s)} onPress={() => toggleSymptom(s)} />
-              ))}
-            </View>
-            <TextInput
-              style={styles.noteInput}
-              placeholder="One sentence is enough…"
-              placeholderTextColor={colors.ink.tertiary}
-              value={note}
-              onChangeText={(t) => setNote(t.slice(0, 280))}
-              multiline
-            />
-            <View style={styles.saveRow}>
-              {savedTick ? (
-                <View style={styles.savedPill}>
-                  <Ionicons name="checkmark" size={14} color={colors.sage.primary} />
-                  <Text style={styles.savedText}>Saved</Text>
+            {checkin && !editingCheckin ? (
+              <View>
+                <Text style={styles.ackText}>
+                  {(checkin.mood && MOOD_ACKNOWLEDGMENTS[checkin.mood]) || copy.checkin.heardFallback}
+                </Text>
+                {checkin.notes ? <Text style={styles.noteEcho}>“{checkin.notes}”</Text> : null}
+                {(checkin.symptoms ?? []).filter((s) => SYMPTOM_RELIEF_TIPS[s]).length > 0 ? (
+                  <View style={styles.reliefWrap}>
+                    <Text style={styles.reliefEyebrow}>{copy.checkin.reliefEyebrow}</Text>
+                    {(checkin.symptoms ?? [])
+                      .filter((s) => SYMPTOM_RELIEF_TIPS[s])
+                      .map((s) => (
+                        <View key={s} style={styles.reliefBlock}>
+                          <Text style={styles.reliefLabel}>{s}</Text>
+                          <Text style={styles.reliefTip}>{SYMPTOM_RELIEF_TIPS[s]}</Text>
+                        </View>
+                      ))}
+                  </View>
+                ) : null}
+                <View style={styles.careRow}>
+                  <Ionicons name="call-outline" size={14} color={colors.accent.terracottaDeep} />
+                  <Text style={styles.careText}>{copy.checkin.careLine}</Text>
                 </View>
-              ) : checkin ? (
-                <Text style={styles.caption}>Checked in today</Text>
-              ) : (
-                <Text style={styles.caption}>{copy.empty.today.body}</Text>
-              )}
-              <Button
-                label={checkin ? 'Update' : copy.empty.today.cta}
-                onPress={save}
-                loading={saving}
-                disabled={!mood && symptoms.length === 0 && !note.trim()}
-                style={{ minHeight: 44, paddingHorizontal: spacing.xl }}
-              />
-            </View>
+                <View style={styles.editRow}>
+                  <Button
+                    label={copy.checkin.edit}
+                    variant="tertiary"
+                    onPress={() => setEditingCheckin(true)}
+                  />
+                </View>
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.checkinQuestion}>{copy.today.checkinQuestion}</Text>
+                <View style={styles.moodRow}>
+                  {copy.moods.map((m, i) => (
+                    <PressScale key={m} onPress={() => setMood(m)} style={styles.moodItem}>
+                      <Ionicons
+                        name={MOOD_ICONS[i] as keyof typeof Ionicons.glyphMap}
+                        size={26}
+                        color={mood === m ? colors.accent.terracotta : colors.ink.tertiary}
+                      />
+                      <Text style={[styles.moodLabel, mood === m && { color: colors.accent.terracottaDeep }]}>{m}</Text>
+                    </PressScale>
+                  ))}
+                </View>
+                <View style={styles.chipsWrap}>
+                  {SYMPTOMS.map((s) => (
+                    <Chip key={s} label={s} selected={symptoms.includes(s)} onPress={() => toggleSymptom(s)} />
+                  ))}
+                </View>
+                <TextInput
+                  style={styles.noteInput}
+                  placeholder="One sentence is enough…"
+                  placeholderTextColor={colors.ink.tertiary}
+                  value={note}
+                  onChangeText={(t) => setNote(t.slice(0, 280))}
+                  multiline
+                />
+                <View style={styles.saveRow}>
+                  {editingCheckin && checkin ? (
+                    <Button label={copy.checkin.cancel} variant="tertiary" onPress={() => setEditingCheckin(false)} />
+                  ) : savedTick ? (
+                    <View style={styles.savedPill}>
+                      <Ionicons name="checkmark" size={14} color={colors.sage.primary} />
+                      <Text style={styles.savedText}>Saved</Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.caption}>{copy.empty.today.body}</Text>
+                  )}
+                  <Button
+                    label={checkin ? 'Update' : copy.empty.today.cta}
+                    onPress={save}
+                    loading={saving}
+                    disabled={!mood && symptoms.length === 0 && !note.trim()}
+                    style={{ minHeight: 44, paddingHorizontal: spacing.xl }}
+                  />
+                </View>
+              </View>
+            )}
           </Card>
         </FadeIn>
 
@@ -461,13 +501,13 @@ export default function TodayScreen() {
           <TipCard eyebrow={copy.today.babyEyebrow} body={info.development} />
           {isPartner ? (
             <>
-              <TipCard eyebrow={copy.today.forYou} body={info.partnerTip} />
-              <TipCard eyebrow={copy.today.forHer} body={info.momTip} />
+              <TipCard eyebrow={copy.today.forYou} body={partnerTip} />
+              <TipCard eyebrow={copy.today.forHer} body={momTip} />
             </>
           ) : (
             <>
-              <TipCard eyebrow={copy.today.forYou} body={info.momTip} />
-              <TipCard eyebrow={copy.today.forPartner} body={info.partnerTip} />
+              <TipCard eyebrow={copy.today.forYou} body={momTip} />
+              <TipCard eyebrow={copy.today.forPartner} body={partnerTip} />
             </>
           )}
         </FadeIn>
@@ -557,6 +597,28 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
   },
   savedText: { ...type.labelMD, color: colors.sage.primary },
+  ackText: { ...type.serifQuote, color: colors.ink.primary, marginTop: spacing.md },
+  noteEcho: { ...type.bodySM, fontStyle: 'italic', color: colors.ink.secondary, marginTop: spacing.md },
+  reliefWrap: { marginTop: spacing.lg, gap: spacing.sm },
+  reliefEyebrow: { ...type.labelCaps, color: colors.ink.tertiary, marginBottom: spacing.xs },
+  reliefBlock: {
+    backgroundColor: colors.bg.surfaceWarm,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  reliefLabel: { ...type.titleSM, color: colors.accent.terracottaDeep },
+  reliefTip: { ...type.bodySM, color: colors.ink.secondary, marginTop: spacing.xs },
+  careRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    marginTop: spacing.lg,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.subtle,
+  },
+  careText: { ...type.caption, color: colors.ink.secondary, flex: 1 },
+  editRow: { alignSelf: 'flex-start', marginTop: spacing.sm },
   tipBody: { ...type.bodySM, color: colors.ink.secondary, marginTop: spacing.sm },
   nameRow: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg, alignItems: 'center' },
   nameInput: {
