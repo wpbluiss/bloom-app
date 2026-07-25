@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Alert, Share, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from './Card';
 import { PressScale } from './PressScale';
 import { copy } from '../lib/copy';
+import { promptForPass, useEntitlement } from '../lib/entitlements';
 import { regenerateInviteCode } from '../lib/invites';
 import { colors, radius, spacing, type } from '../lib/theme';
 
@@ -15,11 +17,21 @@ interface Props {
 /**
  * The family invite code, presented like a letterpress card: big Fraunces
  * letters, native share sheet, and a quiet "new code" action (Settings).
+ *
+ * Partner linking is a Bloom Pregnancy Pass feature: without the entitlement,
+ * sharing or regenerating a code opens a warm upgrade prompt instead. In dev
+ * mode (no RevenueCat key) everyone is entitled and nothing changes.
  */
 export function InviteCard({ code, onRegenerated }: Props) {
+  const router = useRouter();
+  const { pregnancyPass } = useEntitlement();
   const [busy, setBusy] = useState(false);
 
   const share = async () => {
+    if (!pregnancyPass) {
+      promptForPass(router, copy.paywall.gatePartner);
+      return;
+    }
     try {
       await Share.share({ message: copy.invite.shareMessage(code) });
     } catch {
@@ -28,6 +40,10 @@ export function InviteCard({ code, onRegenerated }: Props) {
   };
 
   const regenerate = () => {
+    if (!pregnancyPass) {
+      promptForPass(router, copy.paywall.gatePartner);
+      return;
+    }
     Alert.alert(copy.invite.regenerate + '?', 'The old code stops working right away.', [
       { text: 'Cancel', style: 'cancel' },
       {
