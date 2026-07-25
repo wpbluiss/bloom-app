@@ -17,6 +17,7 @@ import {
   Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
 import { AppProvider } from '../lib/AppContext';
+import { EntitlementProvider } from '../lib/entitlements';
 import { colors } from '../lib/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -41,25 +42,28 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.canvas }}>
       <AppProvider>
-        <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.bg.canvas },
-            animation: 'fade',
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)/login" />
-          <Stack.Screen name="(onboarding)" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="journal/compose" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="journal/player" options={{ presentation: 'fullScreenModal' }} />
-          <Stack.Screen name="wishlist/new" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="wishlist/[id]" />
-          <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="week-unlock" options={{ presentation: 'fullScreenModal' }} />
-        </Stack>
+        <EntitlementProvider>
+          <StatusBar style="dark" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: colors.bg.canvas },
+              animation: 'fade',
+            }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)/login" />
+            <Stack.Screen name="(onboarding)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="journal/compose" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="journal/player" options={{ presentation: 'fullScreenModal' }} />
+            <Stack.Screen name="wishlist/new" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="wishlist/[id]" />
+            <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="week-unlock" options={{ presentation: 'fullScreenModal' }} />
+            <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
+          </Stack>
+        </EntitlementProvider>
       </AppProvider>
     </GestureHandlerRootView>
   );
