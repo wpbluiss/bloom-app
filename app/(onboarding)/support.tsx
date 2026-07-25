@@ -18,7 +18,7 @@ export default function SupportScreen() {
   const info = weekInfo(week ?? 4);
 
   const lines = [
-    info.partnerTip,
+    info.partnerTips[0],
     'Her check-ins appear on your Today screen — respond with actions, not just words.',
     'A new way to help arrives every week, right when the week turns.',
   ];

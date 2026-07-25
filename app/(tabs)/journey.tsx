@@ -10,7 +10,7 @@ import { WeekArt } from '../../components/WeekArt';
 import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
 import { weekIllustration } from '../../lib/illustrations';
-import { WEEKS, WeekInfo, formatLength, formatWeight, trimesterOf } from '../../lib/weeks';
+import { WEEKS, WeekInfo, dailyTip, formatLength, formatWeight, trimesterOf } from '../../lib/weeks';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 const TRIMESTER_TITLES = ['The first trimester', 'The second trimester', 'The third trimester'];
@@ -170,9 +170,9 @@ export default function JourneyScreen() {
                 <Text style={styles.sectionLabel}>YOUR BABY</Text>
                 <Text style={styles.body}>{selected.development}</Text>
                 <Text style={styles.sectionLabel}>FOR YOU</Text>
-                <Text style={styles.body}>{selected.momTip}</Text>
+                <Text style={styles.body}>{dailyTip(selected.momTips, pregnancy.due_date)}</Text>
                 <Text style={styles.sectionLabel}>FOR YOUR PARTNER</Text>
-                <Text style={styles.body}>{selected.partnerTip}</Text>
+                <Text style={styles.body}>{dailyTip(selected.partnerTips, pregnancy.due_date)}</Text>
                 <Button label="Close" variant="secondary" onPress={() => setSelected(null)} style={{ marginTop: spacing.xxl }} />
               </ScrollView>
             ) : null}

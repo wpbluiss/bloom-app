@@ -7,8 +7,9 @@ export interface WeekInfo {
   sizeWeightG: number;
   headline: string;
   development: string;
-  momTip: string;
-  partnerTip: string;
+  /** 5+ rotating tips; index 0 is the original curated tip for the week. */
+  momTips: string[];
+  partnerTips: string[];
 }
 
 export const WEEKS: WeekInfo[] = weeksData as WeekInfo[];
@@ -43,6 +44,16 @@ export function trimesterOf(week: number): 1 | 2 | 3 {
   if (week <= 13) return 1;
   if (week <= 27) return 2;
   return 3;
+}
+
+/**
+ * Daily rotating tip from a week's tip array: deterministic by day-of-pregnancy
+ * so it changes every day, stays stable within a day, and is always
+ * week-appropriate (the array is scoped to the week being viewed).
+ */
+export function dailyTip(tips: string[], dueDate: Date | string, today: Date = new Date()): string {
+  const dayIndex = Math.max(0, 280 - daysUntilDue(dueDate, today));
+  return tips[dayIndex % tips.length];
 }
 
 export function weekInfo(week: number): WeekInfo {
