@@ -70,8 +70,13 @@ export const copy = {
     { label: 'We found out', prompt: 'Where were you when you knew? Write down the small details.' },
     { label: 'First ultrasound', prompt: 'What did you see? What did it sound like?' },
     { label: 'Telling the family', prompt: 'Who cried? Who screamed? Who already knew?' },
+    // Second-trimester bridge (E4): the beta cohort went quiet at weeks 13–16 —
+    // these milestones keep the ladder warm exactly where we lost a user.
+    { label: 'First flutters', prompt: 'Like bubbles, like a fish turning over — the first hello from inside. Where were you when you felt it?' },
+    { label: 'The bump photo', prompt: "The first one where it really shows. Take it — you'll want proof of this exact week." },
     { label: 'First kick', prompt: 'Where were you sitting? What did it feel like — bubbles, taps, a fish turning over?' },
     { label: 'Finding out the sex', prompt: "Or choosing not to know — that's a story too." },
+    { label: 'Halfway there', prompt: "Twenty weeks down, twenty to go. What do you know now that you didn't then?" },
     { label: 'The name conversation', prompt: "The serious contenders, the vetoes, the one you can't agree on." },
     { label: 'Nursery is done', prompt: "Take the photo. You'll forget how small everything started." },
     { label: 'Baby shower', prompt: 'Who came, what they gave, what they said.' },
