@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { track } from './events';
 import { formatISODate } from './weeks';
 
 // ---------- Types (mirror of Supabase schema; do not modify schema) ----------
@@ -258,6 +259,7 @@ export async function upsertCheckin(checkin: Checkin): Promise<void> {
     .from('checkins')
     .upsert(checkin, { onConflict: 'pregnancy_id,user_id,checkin_date' });
   if (error) throw error;
+  track('checkin_done', { mood: checkin.mood, symptoms: checkin.symptoms?.length ?? 0 });
 }
 
 // ---------- Journal ----------
@@ -286,6 +288,7 @@ async function attachSignedUrls(entries: JournalEntry[]) {
 export async function createJournalEntry(entry: Omit<JournalEntry, 'id' | 'created_at' | 'media'>): Promise<JournalEntry> {
   const { data, error } = await supabase.from('journal_entries').insert(entry).select().single();
   if (error) throw error;
+  track('journal_save', { type: entry.entry_type, has_title: !!entry.title });
   return data as JournalEntry;
 }
 
@@ -353,6 +356,11 @@ export async function fetchWishlist(householdId: string): Promise<WishlistItem[]
 export async function createWishlistItem(item: Omit<WishlistItem, 'id' | 'created_at' | 'signedUrl'>): Promise<WishlistItem> {
   const { data, error } = await supabase.from('wishlist_items').insert(item).select().single();
   if (error) throw error;
+  track('wishlist_add', { category: item.category, has_price: item.target_price != null });
+  // Deal finder auto-run (E3): hunt alternatives in the background the moment an
+  // item is saved — every wishlist item becomes a savings moment without a tap.
+  track('deal_finder_autorun', { item: data.id });
+  void findAlternatives(data.id).catch(() => {});
   return data as WishlistItem;
 }
 

@@ -20,7 +20,9 @@ export interface NotificationPrefs {
   minute: number;
 }
 
-export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = { dailyEnabled: true, hour: 19, minute: 0 };
+// Default 8:30pm — the synthetic beta wrote 87% of journal entries after 8pm,
+// peaking 9–10pm. Bloom lives in the evening; the nudge should arrive just before.
+export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = { dailyEnabled: true, hour: 20, minute: 30 };
 const PREFS_KEY = 'bloom.notificationPrefs';
 
 export async function getNotificationPrefs(): Promise<NotificationPrefs> {
@@ -85,7 +87,7 @@ function nextRolloverDate(dueDate: string): Date | null {
 
 /**
  * Local-only gentle reminders: a soft daily check-in nudge at the user's chosen
- * time (default 7pm) and a celebration note the morning the next week begins.
+ * time (default 8:30pm) and a celebration note the morning the next week begins.
  * No push server involved. Never prompts for permission by itself — scheduling
  * silently no-ops until permission exists.
  */
