@@ -10,6 +10,7 @@ import { CardSkeleton } from '../../components/Skeleton';
 import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
 import { WishlistItem, fetchWishlist } from '../../lib/db';
+import { wishlistCategoryArt } from '../../lib/wishlistArt';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 const CATEGORIES = ['All', 'Nursery', 'Gear', 'Clothing', 'Feeding', 'For mom'];
@@ -72,38 +73,45 @@ export default function WishlistScreen() {
           keyExtractor={(i) => i.id}
           columnWrapperStyle={{ gap: spacing.md }}
           contentContainerStyle={styles.grid}
-          renderItem={({ item }) => (
-            <PressScale style={styles.itemCard} onPress={() => router.push(`/wishlist/${item.id}`)}>
-              {item.signedUrl ? (
-                <Image source={{ uri: item.signedUrl }} style={styles.itemImage} />
-              ) : (
-                <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
-                  <Ionicons name="gift-outline" size={30} color={colors.accent.blush} />
-                </View>
-              )}
-              <View style={{ padding: spacing.md }}>
-                {item.category ? (
-                  <View style={styles.catChip}>
-                    <Text style={styles.catChipText}>{item.category}</Text>
+          renderItem={({ item }) => {
+            const art = wishlistCategoryArt(item.category);
+            return (
+              <PressScale style={styles.itemCard} onPress={() => router.push(`/wishlist/${item.id}`)}>
+                {item.signedUrl ? (
+                  <Image source={{ uri: item.signedUrl }} style={styles.itemImage} />
+                ) : art ? (
+                  <View style={[styles.itemImage, styles.itemImageArt]}>
+                    <Image source={art} style={styles.itemArtImg} resizeMode="contain" />
                   </View>
-                ) : null}
-                <Text style={styles.itemName} numberOfLines={2}>
-                  {item.name}
-                </Text>
-                <View style={styles.priceRow}>
-                  <Text style={styles.itemPrice}>
-                    {item.target_price != null ? `$${Number(item.target_price).toFixed(0)}` : '—'}
-                  </Text>
-                  {item.status === 'purchased' ? (
-                    <View style={styles.purchasedPill}>
-                      <Ionicons name="checkmark" size={12} color={colors.sage.primary} />
-                      <Text style={styles.purchasedText}>Got it</Text>
+                ) : (
+                  <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
+                    <Ionicons name="gift-outline" size={30} color={colors.accent.blush} />
+                  </View>
+                )}
+                <View style={{ padding: spacing.md }}>
+                  {item.category ? (
+                    <View style={styles.catChip}>
+                      <Text style={styles.catChipText}>{item.category}</Text>
                     </View>
                   ) : null}
+                  <Text style={styles.itemName} numberOfLines={2}>
+                    {item.name}
+                  </Text>
+                  <View style={styles.priceRow}>
+                    <Text style={styles.itemPrice}>
+                      {item.target_price != null ? `$${Number(item.target_price).toFixed(0)}` : '—'}
+                    </Text>
+                    {item.status === 'purchased' ? (
+                      <View style={styles.purchasedPill}>
+                        <Ionicons name="checkmark" size={12} color={colors.sage.primary} />
+                        <Text style={styles.purchasedText}>Got it</Text>
+                      </View>
+                    ) : null}
+                  </View>
                 </View>
-              </View>
-            </PressScale>
-          )}
+              </PressScale>
+            );
+          }}
         />
       )}
       <PressScale style={styles.fab} onPress={() => router.push('/wishlist/new')}>
@@ -129,6 +137,8 @@ const styles = StyleSheet.create({
     ...shadow.card,
   },
   itemImage: { width: '100%', aspectRatio: 1, backgroundColor: colors.bg.paper },
+  itemImageArt: { alignItems: 'center', justifyContent: 'center', padding: spacing.xxl },
+  itemArtImg: { width: '100%', height: '100%' },
   itemImagePlaceholder: { alignItems: 'center', justifyContent: 'center' },
   catChip: {
     alignSelf: 'flex-start',

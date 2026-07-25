@@ -1,19 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
+import { IntroSplash } from '../components/IntroSplash';
 import { useApp } from '../lib/AppContext';
-import { colors } from '../lib/theme';
 
 /** Gate: no session → login; no household → onboarding; no pregnancy → due date; else tabs. */
 export default function Index() {
   const { session, household, pregnancy, loading } = useApp();
+  const [introDone, setIntroDone] = useState(false);
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg.canvas }}>
-        <ActivityIndicator color={colors.accent.terracotta} />
-      </View>
-    );
+  if (loading || !introDone) {
+    return <IntroSplash onDone={() => setIntroDone(true)} />;
   }
   if (!session) return <Redirect href="/(auth)/login" />;
   if (!household) return <Redirect href="/(onboarding)" />;

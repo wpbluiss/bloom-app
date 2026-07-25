@@ -59,6 +59,7 @@ export default function RootLayout() {
             <Stack.Screen name="journal/player" options={{ presentation: 'fullScreenModal' }} />
             <Stack.Screen name="wishlist/new" options={{ presentation: 'modal' }} />
             <Stack.Screen name="wishlist/[id]" />
+            <Stack.Screen name="learn/[id]" options={{ presentation: 'modal' }} />
             <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
             <Stack.Screen name="week-unlock" options={{ presentation: 'fullScreenModal' }} />
             <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
