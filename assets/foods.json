@@ -469,6 +469,168 @@
       "trimester": 1
     }
   ],
+  "powerFoodSwaps": {
+    "Lentils": [
+      { "name": "Chickpeas", "note": "folate + protein" },
+      { "name": "Beans (black, kidney, pinto)", "note": "folate + iron" },
+      { "name": "Edamame", "note": "folate + protein" }
+    ],
+    "Spinach": [
+      { "name": "Kale", "note": "folate + vitamin K" },
+      { "name": "Fortified whole-grain cereal", "note": "folate + iron" },
+      { "name": "Broccoli", "note": "folate + calcium" }
+    ],
+    "Asparagus": [
+      { "name": "Broccoli", "note": "folate + fiber" },
+      { "name": "Fortified whole-grain cereal", "note": "folate + iron" },
+      { "name": "Kale", "note": "folate + vitamin K" }
+    ],
+    "Fortified whole-grain cereal": [
+      { "name": "Oatmeal", "note": "iron + B vitamins" },
+      { "name": "Quinoa", "note": "folate + iron" },
+      { "name": "Whole-grain toast with nut butter", "note": "B vitamins + protein" }
+    ],
+    "Chickpeas": [
+      { "name": "Lentils", "note": "folate + protein" },
+      { "name": "Edamame", "note": "choline + protein" },
+      { "name": "Hummus on whole-grain", "note": "same chickpeas, gentler texture" }
+    ],
+    "Salmon": [
+      { "name": "Sardines (canned, with bones)", "note": "DHA + calcium" },
+      { "name": "Trout", "note": "DHA + omega-3" },
+      { "name": "Walnuts and chia seeds", "note": "plant omega-3" }
+    ],
+    "Eggs": [
+      { "name": "Greek yogurt", "note": "protein + B12" },
+      { "name": "Tofu scramble", "note": "protein + calcium" },
+      { "name": "Lentils", "note": "protein + choline" }
+    ],
+    "Greek yogurt": [
+      { "name": "Cheese (pasteurized)", "note": "calcium + protein" },
+      { "name": "Milk (or fortified alternative)", "note": "calcium + vitamin D" },
+      { "name": "Kefir", "note": "probiotics + calcium" }
+    ],
+    "Sardines (canned, with bones)": [
+      { "name": "Salmon", "note": "DHA + vitamin D" },
+      { "name": "Greek yogurt", "note": "calcium + protein" },
+      { "name": "Fortified orange juice", "note": "calcium + vitamin D" }
+    ],
+    "Sweet potato": [
+      { "name": "Butternut squash", "note": "beta-carotene + fiber" },
+      { "name": "Carrots", "note": "beta-carotene" },
+      { "name": "Cantaloupe", "note": "beta-carotene + vitamin C" }
+    ],
+    "Lean beef": [
+      { "name": "Chicken", "note": "protein + B12" },
+      { "name": "Lentils with citrus on the side", "note": "iron + absorption" },
+      { "name": "Tofu", "note": "iron + protein" }
+    ],
+    "Pumpkin seeds": [
+      { "name": "Almonds", "note": "magnesium + protein" },
+      { "name": "Walnuts", "note": "omega-3 + magnesium" },
+      { "name": "Sunflower seeds", "note": "magnesium + zinc" }
+    ],
+    "Avocado": [
+      { "name": "Hummus", "note": "healthy fats + fiber" },
+      { "name": "Nut butter on whole-grain", "note": "healthy fats + protein" },
+      { "name": "Greens with olive oil", "note": "healthy fats + folate" }
+    ],
+    "Oranges": [
+      { "name": "Strawberries", "note": "vitamin C + folate" },
+      { "name": "Fortified orange juice", "note": "vitamin C + calcium" },
+      { "name": "Kiwi", "note": "vitamin C + potassium" }
+    ],
+    "Strawberries": [
+      { "name": "Oranges", "note": "vitamin C + folate" },
+      { "name": "Berries (blueberries, raspberries)", "note": "vitamin C + fiber" },
+      { "name": "Kiwi", "note": "vitamin C" }
+    ],
+    "Tofu": [
+      { "name": "Edamame", "note": "protein + iron" },
+      { "name": "Greek yogurt", "note": "protein + calcium" },
+      { "name": "Lentils", "note": "protein + iron" }
+    ],
+    "Milk (or fortified alternative)": [
+      { "name": "Fortified almond milk", "note": "calcium + vitamin D" },
+      { "name": "Cheese (pasteurized)", "note": "calcium + protein" },
+      { "name": "Greek yogurt", "note": "calcium + protein" }
+    ],
+    "Walnuts": [
+      { "name": "Almonds", "note": "magnesium + protein" },
+      { "name": "Pumpkin seeds", "note": "omega-3 + magnesium" },
+      { "name": "Chia pudding", "note": "plant omega-3 + fiber" }
+    ],
+    "Quinoa": [
+      { "name": "Oatmeal", "note": "iron + B vitamins" },
+      { "name": "Brown rice with beans", "note": "protein + fiber" },
+      { "name": "Fortified whole-grain cereal", "note": "iron + folate" }
+    ],
+    "Kale": [
+      { "name": "Spinach", "note": "folate + vitamin K" },
+      { "name": "Broccoli", "note": "vitamin C + calcium" },
+      { "name": "Swiss chard", "note": "vitamin K + magnesium" }
+    ],
+    "Beans (black, kidney, pinto)": [
+      { "name": "Lentils", "note": "folate + iron" },
+      { "name": "Chickpeas", "note": "folate + protein" },
+      { "name": "Edamame", "note": "protein + iron" }
+    ],
+    "Edamame": [
+      { "name": "Tofu", "note": "protein + calcium" },
+      { "name": "Chickpeas", "note": "choline + protein" },
+      { "name": "Lentils", "note": "folate + protein" }
+    ],
+    "Oatmeal": [
+      { "name": "Quinoa", "note": "iron + magnesium" },
+      { "name": "Fortified whole-grain cereal", "note": "iron + B vitamins" },
+      { "name": "Whole-grain toast with nut butter", "note": "fiber + protein" }
+    ],
+    "Berries (blueberries, raspberries)": [
+      { "name": "Strawberries", "note": "vitamin C + fiber" },
+      { "name": "Oranges", "note": "vitamin C + folate" },
+      { "name": "Frozen berries over yogurt", "note": "vitamin C + calcium" }
+    ],
+    "Chicken": [
+      { "name": "Turkey", "note": "protein + B12" },
+      { "name": "Tofu", "note": "protein + iron" },
+      { "name": "Lentils", "note": "protein + iron" }
+    ],
+    "Cheese (pasteurized)": [
+      { "name": "Greek yogurt", "note": "calcium + protein" },
+      { "name": "Milk (or fortified alternative)", "note": "calcium + vitamin D" },
+      { "name": "Fortified almond milk", "note": "calcium + vitamin D" }
+    ],
+    "Fortified orange juice": [
+      { "name": "Oranges", "note": "vitamin C + folate" },
+      { "name": "Milk (or fortified alternative)", "note": "calcium + vitamin D" },
+      { "name": "Strawberries", "note": "vitamin C + folate" }
+    ],
+    "Broccoli": [
+      { "name": "Kale", "note": "vitamin K + calcium" },
+      { "name": "Spinach", "note": "folate + iron" },
+      { "name": "Asparagus", "note": "folate + fiber" }
+    ],
+    "Almonds": [
+      { "name": "Walnuts", "note": "omega-3 + magnesium" },
+      { "name": "Pumpkin seeds", "note": "magnesium + zinc" },
+      { "name": "Greek yogurt", "note": "calcium + protein" }
+    ],
+    "Dried apricots": [
+      { "name": "Dates", "note": "potassium + fiber" },
+      { "name": "Prunes", "note": "fiber + potassium" },
+      { "name": "Spinach", "note": "iron + folate" }
+    ],
+    "Trout": [
+      { "name": "Salmon", "note": "DHA + omega-3" },
+      { "name": "Sardines (canned, with bones)", "note": "DHA + calcium" },
+      { "name": "Walnuts", "note": "plant omega-3" }
+    ],
+    "Whole eggs with yolk, hard boiled": [
+      { "name": "Greek yogurt", "note": "protein + B12" },
+      { "name": "Tofu scramble", "note": "protein + calcium" },
+      { "name": "Edamame", "note": "choline + protein" }
+    ]
+  },
   "cravingSwaps": [
     {
       "craving": "Ice cream by the pint",

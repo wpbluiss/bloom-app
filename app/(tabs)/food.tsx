@@ -1,8 +1,9 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { SeverityChip } from '../../components/Chip';
@@ -18,9 +19,24 @@ import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 interface PowerFood { name: string; benefit: string; nutrients: string[]; trimester: number | 'all' }
 interface AvoidFood { name: string; why: string; severity: 'avoid' | 'limit' }
 interface CravingSwap { craving: string; healthierSwap: string; why: string }
+interface FoodSwap { name: string; note: string }
 
-const FOODS = foodsData as { avoid: AvoidFood[]; powerFoods: PowerFood[]; cravingSwaps: CravingSwap[] };
+const FOODS = foodsData as {
+  avoid: AvoidFood[];
+  powerFoods: PowerFood[];
+  cravingSwaps: CravingSwap[];
+  powerFoodSwaps: Record<string, FoodSwap[]>;
+};
 type Segment = 0 | 1 | 2;
+
+/** How a food is sitting with her — kept on-device only (AsyncStorage). */
+type FoodReaction = 'loving' | 'not_now' | 'nauseous';
+const REACTIONS_KEY = 'bloom.foodReactions.v1';
+const REACTION_OPTIONS: { key: FoodReaction; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { key: 'loving', label: 'Loving it', icon: 'heart-outline' },
+  { key: 'not_now', label: 'Not right now', icon: 'remove-circle-outline' },
+  { key: 'nauseous', label: 'Makes me nauseous', icon: 'sad-outline' },
+];
 
 function fuzzyMatchSwap(input: string): CravingSwap | null {
   const q = input.trim().toLowerCase();
@@ -42,6 +58,28 @@ export default function FoodScreen() {
   const [cravingInput, setCravingInput] = useState('');
   const [cravingLogs, setCravingLogs] = useState<FoodLog[]>([]);
   const [logging, setLogging] = useState(false);
+  const [reactions, setReactions] = useState<Record<string, FoodReaction>>({});
+  const [expandedFood, setExpandedFood] = useState<string | null>(null);
+
+  // Reactions are device-local by design — no DB migration needed.
+  useEffect(() => {
+    AsyncStorage.getItem(REACTIONS_KEY)
+      .then((raw) => {
+        if (raw) setReactions(JSON.parse(raw) as Record<string, FoodReaction>);
+      })
+      .catch(() => {});
+  }, []);
+
+  const setReaction = (food: string, reaction: FoodReaction) => {
+    setReactions((prev) => {
+      const next = { ...prev };
+      // Tapping the selected option again clears the reaction.
+      if (prev[food] === reaction) delete next[food];
+      else next[food] = reaction;
+      AsyncStorage.setItem(REACTIONS_KEY, JSON.stringify(next)).catch(() => {});
+      return next;
+    });
+  };
 
   const loadLogs = useCallback(async () => {
     if (!pregnancy) return;
@@ -141,23 +179,85 @@ export default function FoodScreen() {
             {powerFiltered.length === 0 ? (
               <EmptyState icon="leaf-outline" headline={copy.empty.foodSearch.headline} body={copy.empty.foodSearch.body} />
             ) : (
-              powerFiltered.map((f) => (
-                <View key={f.name} style={styles.row}>
-                  <View style={[styles.sageDot]} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.rowTitle}>{f.name}</Text>
-                    <Text style={styles.rowSub}>{copy.food.benefitLine(f.benefit)}</Text>
-                    <View style={styles.nutrientsRow}>
-                      {f.nutrients.slice(0, 4).map((n) => (
-                        <View key={n} style={styles.nutrientChip}>
-                          <Text style={styles.nutrientText}>{n}</Text>
+              powerFiltered.map((f) => {
+                const reaction = reactions[f.name];
+                const negative = reaction === 'not_now' || reaction === 'nauseous';
+                const expanded = expandedFood === f.name;
+                const swaps = FOODS.powerFoodSwaps[f.name] ?? [];
+                return (
+                  <View key={f.name} style={[styles.foodRow, negative && styles.foodRowMuted]}>
+                    <PressScale onPress={() => setExpandedFood(expanded ? null : f.name)} style={styles.rowMain}>
+                      <View style={styles.sageDot} />
+                      <View style={{ flex: 1 }}>
+                        <View style={styles.foodTitleRow}>
+                          <Text style={[styles.rowTitle, { flex: 1 }]}>{f.name}</Text>
+                          {reaction === 'loving' ? (
+                            <View style={styles.reactionTag}>
+                              <Ionicons name="heart" size={11} color={colors.accent.terracottaDeep} />
+                              <Text style={styles.reactionTagText}>Loving it</Text>
+                            </View>
+                          ) : negative ? (
+                            <View style={[styles.reactionTag, styles.reactionTagMuted]}>
+                              <Text style={styles.reactionTagMutedText}>
+                                {reaction === 'nauseous' ? 'Makes me nauseous' : 'Not right now'}
+                              </Text>
+                            </View>
+                          ) : null}
                         </View>
-                      ))}
-                    </View>
+                        <Text style={styles.rowSub}>{copy.food.benefitLine(f.benefit)}</Text>
+                        <View style={styles.nutrientsRow}>
+                          {f.nutrients.slice(0, 4).map((n) => (
+                            <View key={n} style={styles.nutrientChip}>
+                              <Text style={styles.nutrientText}>{n}</Text>
+                            </View>
+                          ))}
+                        </View>
+                      </View>
+                      <Text style={styles.trimesterTag}>{f.trimester === 'all' ? 'ALL' : `T${f.trimester}`}</Text>
+                    </PressScale>
+                    {expanded ? (
+                      <View style={styles.reactionArea}>
+                        <Text style={styles.reactionQuestion}>How is this sitting with you?</Text>
+                        <View style={styles.reactionOptions}>
+                          {REACTION_OPTIONS.map((o) => (
+                            <PressScale
+                              key={o.key}
+                              onPress={() => setReaction(f.name, o.key)}
+                              style={[styles.reactionOption, reaction === o.key && styles.reactionOptionActive]}
+                            >
+                              <Ionicons
+                                name={o.icon}
+                                size={14}
+                                color={reaction === o.key ? colors.accent.terracottaDeep : colors.ink.secondary}
+                              />
+                              <Text
+                                style={[
+                                  styles.reactionOptionLabel,
+                                  reaction === o.key && { color: colors.accent.terracottaDeep },
+                                ]}
+                              >
+                                {o.label}
+                              </Text>
+                            </PressScale>
+                          ))}
+                        </View>
+                        {negative && swaps.length > 0 ? (
+                          <View style={styles.tryInstead}>
+                            <Text style={styles.tryInsteadLabel}>TRY INSTEAD</Text>
+                            {swaps.map((s) => (
+                              <View key={s.name} style={styles.tryInsteadRow}>
+                                <Ionicons name="arrow-forward" size={13} color={colors.sage.primary} />
+                                <Text style={styles.tryInsteadText}>{s.name}</Text>
+                                <Text style={styles.tryInsteadNote}>{s.note}</Text>
+                              </View>
+                            ))}
+                          </View>
+                        ) : null}
+                      </View>
+                    ) : null}
                   </View>
-                  <Text style={styles.trimesterTag}>{f.trimester === 'all' ? 'ALL' : `T${f.trimester}`}</Text>
-                </View>
-              ))
+                );
+              })
             )}
           </>
         )}
@@ -255,17 +355,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.bg.surfaceWarm,
     borderRadius: radius.full,
-    padding: 3,
+    padding: 4,
     marginTop: spacing.lg,
   },
   segment: {
     flex: 1,
-    minHeight: 36,
+    minHeight: 40,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xs,
+    paddingHorizontal: spacing.md,
   },
   segmentActive: { backgroundColor: colors.accent.terracotta, ...shadow.card },
   segmentLabel: { ...type.labelMD, color: colors.ink.secondary, textAlign: 'center' },
@@ -294,6 +394,60 @@ const styles = StyleSheet.create({
     ...shadow.card,
   },
   sageDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.sage.primary, marginTop: 6, marginRight: spacing.md },
+  foodRow: {
+    backgroundColor: colors.bg.surface,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    ...shadow.card,
+  },
+  foodRowMuted: { opacity: 0.55 },
+  rowMain: { flexDirection: 'row', alignItems: 'flex-start' },
+  foodTitleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  reactionTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.accent.terracottaSoft,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+  },
+  reactionTagText: { ...type.caption, color: colors.accent.terracottaDeep, fontFamily: 'Inter_500Medium' },
+  reactionTagMuted: { backgroundColor: colors.bg.sunken },
+  reactionTagMutedText: { ...type.caption, color: colors.ink.tertiary, fontFamily: 'Inter_500Medium' },
+  reactionArea: {
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.subtle,
+  },
+  reactionQuestion: { ...type.titleSM, color: colors.ink.primary },
+  reactionOptions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.md },
+  reactionOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    minHeight: 34,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.bg.surfaceWarm,
+  },
+  reactionOptionActive: { backgroundColor: colors.accent.terracottaSoft },
+  reactionOptionLabel: { ...type.labelMD, color: colors.ink.secondary },
+  tryInstead: {
+    backgroundColor: colors.sage.soft,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginTop: spacing.md,
+  },
+  tryInsteadLabel: { ...type.labelCaps, color: colors.sage.primary, marginBottom: spacing.xs },
+  tryInsteadRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.xs },
+  tryInsteadText: { ...type.bodySM, color: colors.ink.primary, fontFamily: 'Inter_500Medium' },
+  tryInsteadNote: { ...type.caption, color: colors.ink.secondary, flex: 1, textAlign: 'right' },
   rowTitle: { ...type.titleSM, color: colors.ink.primary },
   rowSub: { ...type.bodySM, color: colors.ink.secondary, marginTop: 2 },
   nutrientsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs, marginTop: spacing.sm },
