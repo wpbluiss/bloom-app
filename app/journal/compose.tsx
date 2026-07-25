@@ -24,12 +24,7 @@ import { PickedMedia, pickMedia, uriToBytes } from '../../lib/media';
 import { currentWeek, formatISODate } from '../../lib/weeks';
 import { colors, radius, spacing, type } from '../../lib/theme';
 
-const ENTRY_TYPES: { key: EntryType; label: string }[] = [
-  { key: 'note', label: 'Note' },
-  { key: 'milestone', label: 'Milestone' },
-  { key: 'craving', label: 'Craving' },
-  { key: 'ultrasound', label: 'Ultrasound' },
-];
+const ENTRY_TYPES: EntryType[] = ['note', 'milestone', 'craving', 'ultrasound'];
 
 export default function ComposeScreen() {
   const router = useRouter();
@@ -104,11 +99,12 @@ export default function ComposeScreen() {
     }
   };
 
-  const applyMilestone = (label: string, prompt: string) => {
+  const applyMilestone = (label: string) => {
     setEntryType('milestone');
     setTitle(label);
-    if (!body) setBody('');
   };
+
+  const activeMilestone = copy.milestones.find((m) => m.label === title);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
@@ -125,7 +121,12 @@ export default function ComposeScreen() {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.chipsRow}>
             {ENTRY_TYPES.map((t) => (
-              <Chip key={t.key} label={t.label} selected={entryType === t.key} onPress={() => setEntryType(t.key)} />
+              <Chip
+                key={t}
+                label={copy.compose.typeLabels[t]}
+                selected={entryType === t}
+                onPress={() => setEntryType(t)}
+              />
             ))}
           </View>
           <TextInput
@@ -157,16 +158,51 @@ export default function ComposeScreen() {
               )}
             </ScrollView>
           ) : null}
-          <PressScale onPress={attach} style={styles.attachRow}>
-            <Ionicons name="image-outline" size={20} color={colors.accent.terracotta} />
-            <Text style={styles.attachText}>Add photos or a video</Text>
-          </PressScale>
-          <Text style={styles.milestoneLabel}>MILESTONES</Text>
-          <View style={styles.chipsWrap}>
-            {copy.milestones.map((m) => (
-              <Chip key={m.label} label={m.label} selected={title === m.label} onPress={() => applyMilestone(m.label, m.prompt)} />
-            ))}
-          </View>
+          {entryType !== 'ultrasound' ? (
+            <PressScale onPress={attach} style={styles.attachRow}>
+              <Ionicons name="image-outline" size={20} color={colors.accent.terracotta} />
+              <Text style={styles.attachText}>Add photos or a video</Text>
+            </PressScale>
+          ) : null}
+
+          {/* Type-aware quick picks — one tap starts the memory */}
+          {entryType === 'milestone' ? (
+            <View>
+              <Text style={styles.picksLabel}>{copy.compose.quickPicksEyebrow.milestone}</Text>
+              <View style={styles.chipsWrap}>
+                {copy.milestones.map((m) => (
+                  <Chip key={m.label} label={m.label} selected={title === m.label} onPress={() => applyMilestone(m.label)} />
+                ))}
+              </View>
+              {activeMilestone ? <Text style={styles.promptHint}>{activeMilestone.prompt}</Text> : null}
+            </View>
+          ) : null}
+          {entryType === 'craving' ? (
+            <View>
+              <Text style={styles.picksLabel}>{copy.compose.quickPicksEyebrow.craving}</Text>
+              <View style={styles.chipsWrap}>
+                {copy.compose.cravingPicks.map((p) => (
+                  <Chip key={p} label={p} selected={title === p} onPress={() => setTitle(p)} />
+                ))}
+              </View>
+            </View>
+          ) : null}
+          {entryType === 'ultrasound' ? (
+            <View>
+              {media.length === 0 ? (
+                <PressScale onPress={attach} style={styles.photoCta}>
+                  <Ionicons name="image-outline" size={22} color={colors.accent.terracottaDeep} />
+                  <Text style={styles.photoCtaText}>{copy.compose.ultrasoundPhotoCta}</Text>
+                </PressScale>
+              ) : null}
+              <Text style={styles.picksLabel}>{copy.compose.quickPicksEyebrow.ultrasound}</Text>
+              <View style={styles.chipsWrap}>
+                {copy.compose.ultrasoundPicks.map((p) => (
+                  <Chip key={p} label={p} selected={title === p} onPress={() => setTitle(p)} />
+                ))}
+              </View>
+            </View>
+          ) : null}
         </ScrollView>
         <View style={styles.footer}>
           <Button
@@ -204,7 +240,18 @@ const styles = StyleSheet.create({
   videoThumb: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.ink.secondary },
   attachRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.lg, minHeight: 44 },
   attachText: { ...type.titleSM, color: colors.accent.terracotta },
-  milestoneLabel: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.xxl },
+  picksLabel: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.xxl },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.md },
+  promptHint: { ...type.serifQuote, fontSize: 16, lineHeight: 24, color: colors.ink.secondary, marginTop: spacing.lg },
+  photoCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.bg.surfaceWarm,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    marginTop: spacing.xxl,
+  },
+  photoCtaText: { ...type.bodySM, color: colors.accent.terracottaDeep, flex: 1 },
   footer: { padding: spacing.screen, paddingTop: spacing.sm },
 });
