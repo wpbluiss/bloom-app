@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { Linking, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Button } from '../../components/Button';
 import { FadeIn } from '../../components/FadeIn';
 import { PressScale } from '../../components/PressScale';
-import { ARTICLE_CATEGORIES, Article, FEATURED_ARTICLES, articlesByCategory } from '../../lib/articles';
+import { ARTICLE_CATEGORIES, FEATURED_ARTICLES, articlesByCategory } from '../../lib/articles';
 import { copy } from '../../lib/copy';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 /**
  * Learn — calm, institution-sourced reading. A "Most read" rail of featured
- * articles, then category sections. Tapping any article opens a reading sheet
- * with a serif headline, comfortable body measure, the source byline chip,
- * and a link out to the original public guidance.
+ * articles, then category sections. Tapping any article opens the reader as a
+ * native modal page (swipe down to dismiss).
  */
 export default function LearnScreen() {
-  const insets = useSafeAreaInsets();
-  const [open, setOpen] = useState<Article | null>(null);
+  const router = useRouter();
+
+  const openArticle = (id: string) => router.push(`/learn/${id}`);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -38,7 +38,7 @@ export default function LearnScreen() {
           style={styles.railScroll}
         >
           {FEATURED_ARTICLES.map((a) => (
-            <PressScale key={a.id} style={styles.featureCard} onPress={() => setOpen(a)}>
+            <PressScale key={a.id} style={styles.featureCard} onPress={() => openArticle(a.id)}>
               <Text style={styles.featureCaps}>{a.category.toUpperCase()}</Text>
               <Text style={styles.featureTitle}>{a.title}</Text>
               <View style={styles.bylineChip}>
@@ -56,7 +56,7 @@ export default function LearnScreen() {
             <FadeIn key={cat} index={2 + ci}>
               <Text style={styles.categoryTitle}>{cat}</Text>
               {items.map((a) => (
-                <PressScale key={a.id} style={styles.rowCard} onPress={() => setOpen(a)}>
+                <PressScale key={a.id} style={styles.rowCard} onPress={() => openArticle(a.id)}>
                   <View style={styles.rowText}>
                     <Text style={styles.rowTitle}>{a.title}</Text>
                     <Text style={styles.rowSource}>{copy.learn.byline(a.source)}</Text>
@@ -70,51 +70,6 @@ export default function LearnScreen() {
 
         <Text style={styles.disclaimer}>{copy.learn.disclaimer}</Text>
       </ScrollView>
-
-      {/* Article reader — a calm sheet with room to breathe */}
-      <Modal visible={!!open} transparent animationType="slide" onRequestClose={() => setOpen(null)}>
-        <View style={styles.scrim}>
-          <PressScale style={styles.scrimTouch} onPress={() => setOpen(null)} />
-          <View style={styles.sheet}>
-            {open ? (
-              <ScrollView
-                contentContainerStyle={{
-                  padding: spacing.xxl,
-                  paddingBottom: spacing.xxl + insets.bottom,
-                }}
-              >
-                <View style={styles.grabber} />
-                <Text style={styles.readerCaps}>{open.category.toUpperCase()}</Text>
-                <Text style={styles.readerTitle}>{open.title}</Text>
-                <View style={[styles.bylineChip, { alignSelf: 'flex-start', marginTop: spacing.lg }]}>
-                  <Ionicons name="shield-checkmark-outline" size={12} color={colors.sage.primary} />
-                  <Text style={styles.bylineText}>{copy.learn.byline(open.source)}</Text>
-                </View>
-                {open.body.split('\n\n').map((para, i) => (
-                  <Text key={i} style={styles.readerBody}>
-                    {para}
-                  </Text>
-                ))}
-                <PressScale
-                  style={styles.sourceLink}
-                  onPress={() => Linking.openURL(open.sourceUrl).catch(() => {})}
-                  hitSlop={8}
-                >
-                  <Ionicons name="open-outline" size={15} color={colors.accent.terracotta} />
-                  <Text style={styles.sourceLinkText}>{copy.learn.readSource(open.source)}</Text>
-                </PressScale>
-                <Text style={styles.readerDisclaimer}>{copy.learn.disclaimer}</Text>
-                <Button
-                  label={copy.learn.close}
-                  variant="secondary"
-                  onPress={() => setOpen(null)}
-                  style={{ marginTop: spacing.xxl }}
-                />
-              </ScrollView>
-            ) : null}
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 }
@@ -191,32 +146,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screen,
     marginTop: spacing.section,
   },
-  scrim: { flex: 1, backgroundColor: colors.overlay.scrim, justifyContent: 'flex-end' },
-  scrimTouch: { flex: 1 },
-  sheet: {
-    backgroundColor: colors.bg.canvas,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    maxHeight: '92%',
-  },
-  grabber: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.border.strong,
-    alignSelf: 'center',
-    marginBottom: spacing.lg,
-  },
-  readerCaps: { ...type.labelCaps, color: colors.accent.terracotta },
-  readerTitle: { ...type.displayLG, color: colors.ink.primary, marginTop: spacing.sm },
-  readerBody: { ...type.bodyMD, color: colors.ink.secondary, marginTop: spacing.xl },
-  sourceLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginTop: spacing.xxl,
-    minHeight: 44,
-  },
-  sourceLinkText: { ...type.titleSM, color: colors.accent.terracotta, flex: 1 },
-  readerDisclaimer: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.md },
 });
