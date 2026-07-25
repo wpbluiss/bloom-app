@@ -12,6 +12,7 @@ import { PressScale } from '../components/PressScale';
 import { useApp } from '../lib/AppContext';
 import { copy } from '../lib/copy';
 import { Role, updateProfile, updatePregnancy } from '../lib/db';
+import { useEntitlement } from '../lib/entitlements';
 import {
   NotificationPrefs,
   getNotificationPrefs,
@@ -20,6 +21,7 @@ import {
   saveNotificationPrefs,
   scheduleGentleReminders,
 } from '../lib/notifications';
+import { restorePurchases } from '../lib/revenuecat';
 import { supabase } from '../lib/supabase';
 import { formatISODate } from '../lib/weeks';
 import { colors, radius, spacing, type } from '../lib/theme';
@@ -33,6 +35,7 @@ function timeToDate(hour: number, minute: number): Date {
 export default function SettingsScreen() {
   const router = useRouter();
   const { session, profile, household, pregnancy, week, refresh } = useApp();
+  const { pregnancyPass, plus, refresh: refreshEntitlements } = useEntitlement();
   const emailPrefix = session?.user.email?.split('@')[0]?.toLowerCase();
   const storedName = profile?.display_name?.trim() ?? '';
   const nameIsEmailPrefix = storedName.length > 0 && storedName.toLowerCase() === emailPrefix;
@@ -44,6 +47,7 @@ export default function SettingsScreen() {
   const [busy, setBusy] = useState(false);
   const [inviteCode, setInviteCode] = useState<string | null>(household?.invite_code ?? null);
   const [prefs, setPrefs] = useState<NotificationPrefs | null>(null);
+  const [restoring, setRestoring] = useState(false);
 
   useEffect(() => {
     setInviteCode(household?.invite_code ?? null);
@@ -86,6 +90,23 @@ export default function SettingsScreen() {
       }
     }
     await updatePrefs({ ...prefs, dailyEnabled: enabled });
+  };
+
+  const restore = async () => {
+    if (restoring) return;
+    setRestoring(true);
+    try {
+      const restored = await restorePurchases();
+      if (!restored) {
+        Alert.alert(copy.paywall.devNote);
+        return;
+      }
+      await refreshEntitlements();
+      const any = restored.pregnancyPass || restored.plus || restored.memoryBook;
+      Alert.alert(any ? copy.paywall.restoreDone : copy.paywall.restoreNone);
+    } finally {
+      setRestoring(false);
+    }
   };
 
   const signOut = () => {
@@ -183,6 +204,29 @@ export default function SettingsScreen() {
           </Card>
         ) : null}
 
+        {/* Bloom Pass — status, upgrade path, and Apple's required restore */}
+        <Card style={{ marginTop: spacing.xl }}>
+          <View style={styles.passRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.label}>BLOOM PASS</Text>
+              <Text style={styles.passStatus}>
+                {pregnancyPass ? copy.paywall.passActive : 'One payment for your whole pregnancy.'}
+              </Text>
+              {plus ? <Text style={styles.passPlus}>{copy.paywall.plusActive}</Text> : null}
+            </View>
+            {pregnancyPass ? (
+              <Ionicons name="checkmark-circle" size={24} color={colors.sage.primary} />
+            ) : (
+              <PressScale onPress={() => router.push('/paywall')} hitSlop={8} style={styles.passCta}>
+                <Text style={styles.passCtaText}>Get the Pass</Text>
+              </PressScale>
+            )}
+          </View>
+          <PressScale onPress={restore} disabled={restoring} hitSlop={8} style={styles.restoreRow}>
+            <Text style={styles.restoreText}>{restoring ? 'Restoring…' : copy.paywall.restore}</Text>
+          </PressScale>
+        </Card>
+
         {inviteCode ? (
           <View style={{ marginTop: spacing.xl }}>
             <InviteCard
@@ -230,5 +274,19 @@ const styles = StyleSheet.create({
   namePrompt: { ...type.bodySM, color: colors.ink.secondary },
   reminderRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   reminderHint: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xs },
+  passRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  passStatus: { ...type.bodySM, color: colors.ink.secondary, marginTop: spacing.sm },
+  passPlus: { ...type.caption, color: colors.sage.primary, marginTop: spacing.xs },
+  passCta: {
+    backgroundColor: colors.accent.terracotta,
+    borderRadius: radius.full,
+    height: 40,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  passCtaText: { ...type.titleSM, color: colors.accent.onAccent },
+  restoreRow: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center', marginTop: spacing.sm },
+  restoreText: { ...type.titleSM, color: colors.accent.terracotta },
   footer: { ...type.caption, color: colors.ink.tertiary, textAlign: 'center', marginTop: spacing.xxl },
 });
