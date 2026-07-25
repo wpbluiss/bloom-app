@@ -289,6 +289,34 @@ export async function createMediaRow(media: Omit<Media, 'id' | 'created_at' | 's
   if (error) throw error;
 }
 
+/**
+ * Total media items (photos + videos) in a household's journal — drives the
+ * free-tier cap (25 items). Fails open (0) so a network blip never blocks a memory.
+ */
+export async function countHouseholdMedia(householdId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('media')
+    .select('id', { count: 'exact', head: true })
+    .eq('household_id', householdId);
+  if (error) return 0;
+  return count ?? 0;
+}
+
+/**
+ * Media items added since an ISO timestamp — drives the free-tier +Moment
+ * monthly cap (10/month, counted from the first of the calendar month).
+ * Fails open (0) for the same reason.
+ */
+export async function countMediaSince(householdId: string, sinceISO: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('media')
+    .select('id', { count: 'exact', head: true })
+    .eq('household_id', householdId)
+    .gte('created_at', sinceISO);
+  if (error) return 0;
+  return count ?? 0;
+}
+
 // ---------- Wishlist ----------
 
 export async function fetchWishlist(householdId: string): Promise<WishlistItem[]> {
