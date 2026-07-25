@@ -87,9 +87,14 @@ export default function TodayScreen() {
   // outside the 280-day window — e.g. past the due date).
   const selectedPoint = pregnancy ? pregnancyDay(pregnancy.due_date, selectedDate) : null;
   const selectedInfo = selectedPoint ? weekInfo(selectedPoint.week) : null;
-  const selectedTip =
-    pregnancy && selectedInfo ? dailyTip(selectedInfo.momTips, pregnancy.due_date, selectedDate) : null;
   const isSelectedToday = stripTime(selectedDate).getTime() === stripTime(new Date()).getTime();
+  // Deterministic rotation by day-of-pregnancy — offset by 2 when the selected
+  // day IS today, so the day card never repeats the This Week "FOR YOU" tip
+  // (which uses the un-offset rotation for today).
+  const selectedTip =
+    pregnancy && selectedInfo && selectedPoint
+      ? selectedInfo.momTips[(selectedPoint.dayIndex + (isSelectedToday ? 2 : 0)) % selectedInfo.momTips.length]
+      : null;
 
   // "Today, for you" — the exact day plus composed insights. The expectation
   // tip is offset one day from the This Week card's rotation so the two cards
@@ -403,15 +408,16 @@ export default function TodayScreen() {
           </FadeIn>
         ) : null}
 
-        {/* Today, for you — baby/expectation-focused daily insights, composed
-            from weeks.json so every day says something exact. Symptom relief
-            stays with the check-in card; nothing here duplicates it. */}
+        {/* Today, for you — the exact day plus expectation/common-now insights,
+            composed from weeks.json so every day says something exact. The size
+            comparison lives in the hero and day card, development in the YOUR
+            BABY card; nothing here duplicates them. Symptom relief stays with
+            the check-in card. */}
         {pregnancy && todayPoint ? (
           <FadeIn index={3}>
             <Card style={{ marginTop: spacing.xl }}>
               <Text style={styles.eyebrow}>{copy.today.forYouEyebrow}</Text>
               <Text style={styles.insightDay}>{copy.today.dayLine(todayPoint.day)}</Text>
-              <Text style={styles.tipBody}>{`Size of ${info.sizeComparison}. ${info.development}`}</Text>
               {expectTip ? (
                 <View style={styles.insightBlock}>
                   <Text style={styles.insightLabel}>{copy.today.expectEyebrow}</Text>
