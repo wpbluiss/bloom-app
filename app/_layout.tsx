@@ -18,6 +18,8 @@ import {
 } from '@expo-google-fonts/inter';
 import { AppProvider } from '../lib/AppContext';
 import { EntitlementProvider } from '../lib/entitlements';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { initErrorReporting } from '../lib/errorReporting';
 import { track } from '../lib/events';
 import { colors } from '../lib/theme';
 
@@ -38,8 +40,10 @@ export default function RootLayout() {
     }
   }, [frauncesLoaded, interLoaded]);
 
-  // One heartbeat per cold start — the DAU/WAU/MAU denominator.
+  // One heartbeat per cold start — the DAU/WAU/MAU denominator — and the safety
+  // net that makes real-user errors visible from day one.
   useEffect(() => {
+    initErrorReporting();
     track('app_open');
   }, []);
 
@@ -49,27 +53,29 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.canvas }}>
       <AppProvider>
         <EntitlementProvider>
-          <StatusBar style="dark" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.bg.canvas },
-              animation: 'fade',
-            }}
-          >
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(auth)/login" />
-            <Stack.Screen name="(onboarding)" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="journal/compose" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="journal/player" options={{ presentation: 'fullScreenModal' }} />
-            <Stack.Screen name="wishlist/new" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="wishlist/[id]" />
-            <Stack.Screen name="learn/[id]" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="week-unlock" options={{ presentation: 'fullScreenModal' }} />
-            <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
-          </Stack>
+          <ErrorBoundary>
+            <StatusBar style="dark" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.bg.canvas },
+                animation: 'fade',
+              }}
+            >
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(auth)/login" />
+              <Stack.Screen name="(onboarding)" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="journal/compose" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="journal/player" options={{ presentation: 'fullScreenModal' }} />
+              <Stack.Screen name="wishlist/new" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="wishlist/[id]" />
+              <Stack.Screen name="learn/[id]" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="week-unlock" options={{ presentation: 'fullScreenModal' }} />
+              <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
+            </Stack>
+          </ErrorBoundary>
         </EntitlementProvider>
       </AppProvider>
     </GestureHandlerRootView>
