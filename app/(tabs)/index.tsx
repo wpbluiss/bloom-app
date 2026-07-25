@@ -18,6 +18,7 @@ import {
   Checkin,
   PartnerActivity,
   Profile,
+  countMediaSince,
   createJournalEntry,
   createMediaRow,
   fetchHouseholdMemberCount,
@@ -28,6 +29,7 @@ import {
   upsertCheckin,
   uploadToBucket,
 } from '../../lib/db';
+import { FREE_MOMENTS_PER_MONTH, promptForPass, useEntitlement } from '../../lib/entitlements';
 import { capturePhoto, pickMedia, uriToBytes } from '../../lib/media';
 import { scheduleGentleReminders } from '../../lib/notifications';
 import { prefetchIllustrations } from '../../lib/illustrations';
@@ -41,6 +43,7 @@ const MOOD_ICONS = ['rainy-outline', 'moon-outline', 'remove-outline', 'happy-ou
 export default function TodayScreen() {
   const router = useRouter();
   const { session, profile, household, pregnancy, week, loading, refresh } = useApp();
+  const { pregnancyPass } = useEntitlement();
   const [checkin, setCheckin] = useState<Checkin | null>(null);
   const [mood, setMood] = useState<string | null>(null);
   const [symptoms, setSymptoms] = useState<string[]>([]);
@@ -213,13 +216,33 @@ export default function TodayScreen() {
     })();
   };
 
-  const openMomentPicker = () => {
-    if (momentBusy) return;
+  const showMomentPicker = () => {
     Alert.alert(copy.moment.title, undefined, [
       { text: copy.moment.take, onPress: () => keepMoment('camera') },
       { text: copy.moment.choose, onPress: () => keepMoment('library') },
       { text: copy.moment.cancel, style: 'cancel' },
     ]);
+  };
+
+  const openMomentPicker = () => {
+    if (momentBusy) return;
+    // Free tier: 10 one-tap Moments per calendar month. The Pass lifts the
+    // cap. (Dev mode: always entitled, never gated.)
+    if (!pregnancyPass && household) {
+      void (async () => {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+        const used = await countMediaSince(household.id, startOfMonth.toISOString());
+        if (used >= FREE_MOMENTS_PER_MONTH) {
+          promptForPass(router, copy.paywall.gateMoment);
+          return;
+        }
+        showMomentPicker();
+      })();
+      return;
+    }
+    showMomentPicker();
   };
 
   const dateLine = useMemo(
