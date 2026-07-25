@@ -53,6 +53,7 @@
     "extra": {
       "supabaseUrl": "https://olqryrntsxglehxyahzf.supabase.co",
       "supabasePublishableKey": "sb_publishable_FLh8kwTvhGMrZXNQxladxw_HX6yP6Rf",
+      "revenueCatAppleKey": "REVENUECAT_API_KEY_HERE",
       "router": {},
       "eas": {
         "projectId": "4be81ef5-1d17-4521-9608-a0981c25adb9"
