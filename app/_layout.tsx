@@ -18,6 +18,7 @@ import {
 } from '@expo-google-fonts/inter';
 import { AppProvider } from '../lib/AppContext';
 import { EntitlementProvider } from '../lib/entitlements';
+import { track } from '../lib/events';
 import { colors } from '../lib/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -36,6 +37,11 @@ export default function RootLayout() {
       SplashScreen.hideAsync().catch(() => {});
     }
   }, [frauncesLoaded, interLoaded]);
+
+  // One heartbeat per cold start — the DAU/WAU/MAU denominator.
+  useEffect(() => {
+    track('app_open');
+  }, []);
 
   if (!frauncesLoaded || !interLoaded) return null;
 

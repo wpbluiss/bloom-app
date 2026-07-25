@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Image, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { PressScale } from '../../components/PressScale';
 import { ARTICLE_CATEGORIES, FEATURED_ARTICLES, articlesByCategory } from '../../lib/articles';
 import { copy } from '../../lib/copy';
+import { track } from '../../lib/events';
 import { weekIllustration } from '../../lib/illustrations';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
@@ -39,6 +40,11 @@ export default function ArticleReader() {
     const all = [...FEATURED_ARTICLES, ...ARTICLE_CATEGORIES.flatMap((c) => articlesByCategory(c))];
     return all.find((a) => a.id === id) ?? null;
   }, [id]);
+
+  // Content analytics: which topics actually get read (drives the Learn roadmap).
+  useEffect(() => {
+    if (article) track('learn_open', { article: article.id, category: article.category });
+  }, [article]);
 
   if (!article) {
     return (
@@ -81,7 +87,10 @@ export default function ArticleReader() {
         ))}
         <PressScale
           style={styles.sourceCard}
-          onPress={() => Linking.openURL(article.sourceUrl).catch(() => {})}
+          onPress={() => {
+            track('learn_source_open', { article: article.id });
+            Linking.openURL(article.sourceUrl).catch(() => {});
+          }}
           hitSlop={8}
         >
           <View style={{ flex: 1 }}>
