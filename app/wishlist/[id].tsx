@@ -146,7 +146,7 @@ export default function WishlistDetail() {
         />
         <View style={styles.altHeader}>
           <Text style={styles.altTitle}>Lookalikes & deals</Text>
-          <Button label="Find lookalikes & deals" onPress={find} loading={finding} variant="secondary" style={{ height: 44 }} />
+          <Button label="Find lookalikes & deals" onPress={find} loading={finding} variant="secondary" style={{ minHeight: 44 }} />
         </View>
         {alternatives && alternatives.length > 0 ? (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.md }}>
