@@ -12,7 +12,7 @@ import { InviteCard } from '../components/InviteCard';
 import { PressScale } from '../components/PressScale';
 import { useApp } from '../lib/AppContext';
 import { copy } from '../lib/copy';
-import { Role, signedUrl, updateProfile, updatePregnancy, uploadToBucket } from '../lib/db';
+import { Role, deleteAccount, signedUrl, updateProfile, updatePregnancy, uploadToBucket } from '../lib/db';
 import { useEntitlement } from '../lib/entitlements';
 import { capturePhoto, pickMedia, uriToBytes } from '../lib/media';
 import {
@@ -205,6 +205,55 @@ export default function SettingsScreen() {
     ]);
   };
 
+  // The compassionate off-ramp (panel: "design it before the day it's needed").
+  const closePregnancy = () => {
+    if (!pregnancy) return;
+    Alert.alert(copy.danger.pregnancyEndedTitle, copy.danger.pregnancyEndedBody, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: copy.danger.pregnancyEndedConfirm,
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await updatePregnancy(pregnancy.id, { is_active: false });
+            await refresh();
+            router.replace('/');
+          } catch {
+            Alert.alert(copy.global.error);
+          }
+        },
+      },
+    ]);
+  };
+
+  // App Review 5.1.1(v): full in-app account deletion, two explicit confirms.
+  const deleteMyAccount = () => {
+    Alert.alert(copy.danger.deleteConfirmTitle, copy.danger.deleteConfirmBody, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: copy.danger.deleteConfirmConfirm,
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert(copy.danger.deleteConfirmTitle, copy.danger.deleteFinalBody, [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: copy.danger.deleteConfirmConfirm,
+              style: 'destructive',
+              onPress: async () => {
+                try {
+                  await deleteAccount();
+                  router.replace('/(auth)/login');
+                } catch {
+                  Alert.alert(copy.global.error);
+                }
+              },
+            },
+          ]);
+        },
+      },
+    ]);
+  };
+
   const nameMissing = !storedName || nameIsEmailPrefix;
   const initials = (name.trim() || storedName || session?.user.email?.[0] || '?')[0].toUpperCase();
   const avatarIcon = profile?.avatar_path?.startsWith('icon:')
@@ -327,6 +376,11 @@ export default function SettingsScreen() {
           {pregnancy?.baby_nickname ? (
             <Text style={styles.nickname}>For {pregnancy.baby_nickname}</Text>
           ) : null}
+          {pregnancy ? (
+            <PressScale onPress={closePregnancy} hitSlop={8} style={styles.endedRow}>
+              <Text style={styles.endedText}>{copy.settings.pregnancyEnded}</Text>
+            </PressScale>
+          ) : null}
         </Card>
 
         {/* ── Reminders ───────────────────────────────────── */}
@@ -421,6 +475,18 @@ export default function SettingsScreen() {
               {buildNumber ? ` (${buildNumber})` : ''}
             </Text>
           </View>
+        </Card>
+
+        {/* ── Danger zone ─────────────────────────────────── */}
+        <Text style={styles.section}>{copy.settings.sectionDanger}</Text>
+        <Card>
+          <PressScale onPress={deleteMyAccount} hitSlop={8} style={styles.deleteRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.deleteLabel}>{copy.settings.deleteAccount}</Text>
+              <Text style={styles.deleteHint}>{copy.settings.deleteHint}</Text>
+            </View>
+            <Ionicons name="trash-outline" size={18} color="#B3402A" />
+          </PressScale>
         </Card>
 
         <Button label="Save" onPress={save} loading={busy} style={{ marginTop: spacing.xl }} />
@@ -530,5 +596,10 @@ const styles = StyleSheet.create({
   aboutDivider: { height: 1, backgroundColor: colors.border.subtle },
   aboutLabel: { ...type.bodyMD, color: colors.ink.primary },
   aboutValue: { ...type.bodySM, color: colors.ink.tertiary },
+  endedRow: { marginTop: spacing.xl, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: colors.border.subtle, minHeight: 44 },
+  endedText: { ...type.bodySM, color: colors.ink.tertiary },
+  deleteRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 44 },
+  deleteLabel: { ...type.bodyMD, fontWeight: '600', color: '#B3402A' },
+  deleteHint: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xs },
   footer: { ...type.caption, color: colors.ink.tertiary, textAlign: 'center', marginTop: spacing.xxl },
 });

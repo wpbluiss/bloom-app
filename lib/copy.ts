@@ -168,6 +168,9 @@ export const copy = {
     weeklyBody: (comparison: string) => `Your baby is now the size of ${comparison}. See what's growing this week.`,
     dailyTitle: 'A minute for the two of you',
     dailyBody: 'How was today? One sentence is enough.',
+    // The Chloe-window rescue: fires only after three days without an open.
+    rescueTitle: 'Whenever you’re ready',
+    rescueBody: 'Everything is kept safe — your week will be right here when you are.',
   },
   onboarding: {
     join: {
@@ -297,6 +300,7 @@ export const copy = {
     sectionPass: 'BLOOM PASS',
     sectionPartner: 'PARTNER',
     sectionAbout: 'ABOUT',
+    sectionDanger: 'DANGER ZONE',
     avatarTitle: 'Your photo',
     takePhoto: 'Take a photo',
     choosePhoto: 'Choose from library',
@@ -308,9 +312,29 @@ export const copy = {
     aboutPrivacy: 'Privacy Policy',
     aboutTerms: 'Terms of Use',
     versionLabel: (v: string) => `Bloom ${v}`,
+    pregnancyEnded: 'This pregnancy has ended',
+    deleteAccount: 'Delete my account',
+    deleteHint: 'Removes your account and everything you authored. Cannot be undone.',
   },
   wishlist: {
     viewDeal: 'View deal',
+  },
+  review: {
+    promptTitle: 'Enjoying Bloom?',
+    promptBody: 'A few kind words on the App Store help another family find these nine months.',
+    promptConfirm: 'Leave a review',
+    promptLater: 'Not now',
+  },
+  danger: {
+    deleteConfirmTitle: 'Delete your account?',
+    deleteConfirmBody:
+      'This permanently removes your account and everything you wrote, saved, and checked in. Shared memories stay with your partner. This cannot be undone.',
+    deleteFinalBody: 'This is forever. The moment you confirm, your account, your words, and your saves are gone.',
+    deleteConfirmConfirm: 'Delete forever',
+    pregnancyEndedTitle: 'We are so sorry',
+    pregnancyEndedBody:
+      'However it ended, we are sorry. Closing this pregnancy ends the weekly journey here — anything you wrote stays private on this device for as long as you keep Bloom. Take all the time you need.',
+    pregnancyEndedConfirm: 'Close this pregnancy',
   },
   paywall: {
     eyebrow: 'BLOOM PREGNANCY PASS',
