@@ -91,6 +91,12 @@ export default function TodayScreen() {
     pregnancy && selectedInfo ? dailyTip(selectedInfo.momTips, pregnancy.due_date, selectedDate) : null;
   const isSelectedToday = stripTime(selectedDate).getTime() === stripTime(new Date()).getTime();
 
+  // "Today, for you" — the exact day plus composed insights. The expectation
+  // tip is offset one day from the This Week card's rotation so the two cards
+  // never repeat each other on the same screen.
+  const todayPoint = pregnancy ? pregnancyDay(pregnancy.due_date, new Date()) : null;
+  const expectTip = pregnancy && todayPoint ? info.momTips[(todayPoint.dayIndex + 1) % info.momTips.length] : null;
+
   // Greeting name: profiles.display_name from onboarding/settings — but never
   // an email-prefix leftover from older signups; then we stay neutral.
   const firstName = useMemo(() => {
@@ -397,9 +403,32 @@ export default function TodayScreen() {
           </FadeIn>
         ) : null}
 
+        {/* Today, for you — baby/expectation-focused daily insights, composed
+            from weeks.json so every day says something exact. Symptom relief
+            stays with the check-in card; nothing here duplicates it. */}
+        {pregnancy && todayPoint ? (
+          <FadeIn index={3}>
+            <Card style={{ marginTop: spacing.xl }}>
+              <Text style={styles.eyebrow}>{copy.today.forYouEyebrow}</Text>
+              <Text style={styles.insightDay}>{copy.today.dayLine(todayPoint.day)}</Text>
+              <Text style={styles.tipBody}>{`Size of ${info.sizeComparison}. ${info.development}`}</Text>
+              {expectTip ? (
+                <View style={styles.insightBlock}>
+                  <Text style={styles.insightLabel}>{copy.today.expectEyebrow}</Text>
+                  <Text style={styles.tipBody}>{expectTip}</Text>
+                </View>
+              ) : null}
+              <View style={styles.insightBlock}>
+                <Text style={styles.insightLabel}>{copy.today.commonEyebrow}</Text>
+                <Text style={styles.tipBody}>{copy.today.commonAroundNow[trimesterOf(week ?? 4) - 1]}</Text>
+              </View>
+            </Card>
+          </FadeIn>
+        ) : null}
+
         {/* Name prompt — Bloom should greet her properly */}
         {!firstName ? (
-          <FadeIn index={3}>
+          <FadeIn index={4}>
             <Card style={{ marginTop: spacing.xl }}>
               <Text style={styles.tipBody}>{copy.namePrompt.body}</Text>
               <View style={styles.nameRow}>
@@ -425,7 +454,7 @@ export default function TodayScreen() {
 
         {/* Today in your pregnancy — the daily fresh card */}
         {today ? (
-          <FadeIn index={4}>
+          <FadeIn index={5}>
             <Card style={{ marginTop: spacing.xl }}>
               <View style={styles.dailyHeader}>
                 <Text style={styles.eyebrow}>{copy.today.dailyEyebrow}</Text>
@@ -447,7 +476,7 @@ export default function TodayScreen() {
 
         {/* For you both — the partner ping-pong hook */}
         {partnerLine ? (
-          <FadeIn index={5}>
+          <FadeIn index={6}>
             <Card style={{ marginTop: spacing.xl }}>
               <Text style={styles.eyebrow}>{copy.pingpong.eyebrow}</Text>
               <View style={styles.pingRow}>
@@ -462,7 +491,7 @@ export default function TodayScreen() {
 
         {/* Share with your partner — only while the household is a party of one */}
         {memberCount === 1 && household?.invite_code ? (
-          <FadeIn index={6}>
+          <FadeIn index={7}>
             <View style={{ marginTop: spacing.xl }}>
               <InviteCard code={household.invite_code} />
             </View>
@@ -470,7 +499,7 @@ export default function TodayScreen() {
         ) : null}
 
         {/* Daily check-in — after she checks in, the card answers back */}
-        <FadeIn index={7}>
+        <FadeIn index={8}>
           <Card style={{ marginTop: spacing.xl }}>
             <Text style={styles.eyebrow}>{copy.today.checkinEyebrow}</Text>
             {checkin && !editingCheckin ? (
@@ -557,7 +586,7 @@ export default function TodayScreen() {
         </FadeIn>
 
         {/* This week */}
-        <FadeIn index={8}>
+        <FadeIn index={9}>
           <Text style={[styles.eyebrow, { marginTop: spacing.section }]}>{copy.today.thisWeek}</Text>
           <TipCard eyebrow={copy.today.babyEyebrow} body={info.development} />
           {isPartner ? (
@@ -658,6 +687,14 @@ const styles = StyleSheet.create({
   dayArt: { width: 48, height: 48 },
   dayTextWrap: { flex: 1 },
   dayTitle: { ...type.titleSM, color: colors.ink.primary },
+  insightDay: { ...type.displayMD, color: colors.ink.primary, marginTop: spacing.sm },
+  insightBlock: {
+    marginTop: spacing.lg,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.subtle,
+  },
+  insightLabel: { ...type.labelCaps, color: colors.ink.tertiary },
   checkinQuestion: { ...type.displayMD, color: colors.ink.primary, marginTop: spacing.sm },
   moodRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.lg },
   moodItem: { alignItems: 'center', gap: spacing.xs, minWidth: 52 },
