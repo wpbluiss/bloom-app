@@ -9,10 +9,15 @@ export type MediaType = 'photo' | 'video';
 export type WishlistStatus = 'wanted' | 'purchased' | 'archived';
 export type FoodKind = 'craving' | 'meal' | 'avoided';
 
+/** Storage buckets the app can read/write (signed URLs for private ones). */
+export type BucketName = 'journal-media' | 'wishlist-photos' | 'avatars';
+
 export interface Profile {
   id: string;
   display_name: string | null;
   role: Role | null;
+  phone?: string | null; // added by migration 003 — absent until applied
+  avatar_path?: string | null; // 'icon:<name>' sentinel or a storage path in `avatars`
   created_at?: string;
 }
 
@@ -461,14 +466,14 @@ export async function fetchLatestPartnerActivity(
 
 // ---------- Storage ----------
 
-export async function signedUrl(bucket: 'journal-media' | 'wishlist-photos', path: string): Promise<string | undefined> {
+export async function signedUrl(bucket: BucketName, path: string): Promise<string | undefined> {
   const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60);
   if (error) return undefined;
   return data.signedUrl;
 }
 
 export async function uploadToBucket(
-  bucket: 'journal-media' | 'wishlist-photos',
+  bucket: BucketName,
   householdId: string,
   bytes: ArrayBuffer | Uint8Array,
   ext: string,
