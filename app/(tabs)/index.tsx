@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Image, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { InviteCard } from '../../components/InviteCard';
 import { PressScale } from '../../components/PressScale';
 import { CardSkeleton } from '../../components/Skeleton';
 import { WeekArt } from '../../components/WeekArt';
+import { WeekStrip } from '../../components/WeekStrip';
 import { useApp } from '../../lib/AppContext';
 import { copy, MOOD_ACKNOWLEDGMENTS, SYMPTOM_RELIEF_TIPS } from '../../lib/copy';
 import { dailyEntry, DAILY_KIND_LABEL } from '../../lib/daily';
@@ -32,9 +33,20 @@ import {
 import { FREE_MOMENTS_PER_MONTH, promptForPass, useEntitlement } from '../../lib/entitlements';
 import { capturePhoto, pickMedia, uriToBytes } from '../../lib/media';
 import { scheduleGentleReminders } from '../../lib/notifications';
-import { prefetchIllustrations } from '../../lib/illustrations';
+import { prefetchIllustrations, weekIllustration } from '../../lib/illustrations';
 import { consumeWeekUnlock } from '../../lib/rituals';
-import { currentWeek, dailyTip, daysUntilDue, formatISODate, formatLength, formatWeight, trimesterOf, weekInfo } from '../../lib/weeks';
+import {
+  currentWeek,
+  dailyTip,
+  daysUntilDue,
+  formatISODate,
+  formatLength,
+  formatWeight,
+  pregnancyDay,
+  stripTime,
+  trimesterOf,
+  weekInfo,
+} from '../../lib/weeks';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 const SYMPTOMS = ['Nausea', 'Fatigue', 'Heartburn', 'Headache', 'Swelling', 'Cramping', 'Insomnia', 'Backache'];
@@ -60,6 +72,8 @@ export default function TodayScreen() {
   const [momentSaved, setMomentSaved] = useState(false);
   const [nameDraft, setNameDraft] = useState('');
   const [nameSaving, setNameSaving] = useState(false);
+  // Week strip selection — session-only; resets to today on reload by design.
+  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const unlockCheckedFor = useRef<number | null>(null);
 
   const info = weekInfo(week ?? 4);
@@ -68,6 +82,14 @@ export default function TodayScreen() {
   const partnerTip = pregnancy ? dailyTip(info.partnerTips, pregnancy.due_date) : info.partnerTips[0];
   const isPartner = profile?.role === 'partner';
   const daysLeft = pregnancy ? daysUntilDue(pregnancy.due_date) : null;
+
+  // The selected strip day's place in the pregnancy (null when the day falls
+  // outside the 280-day window — e.g. past the due date).
+  const selectedPoint = pregnancy ? pregnancyDay(pregnancy.due_date, selectedDate) : null;
+  const selectedInfo = selectedPoint ? weekInfo(selectedPoint.week) : null;
+  const selectedTip =
+    pregnancy && selectedInfo ? dailyTip(selectedInfo.momTips, pregnancy.due_date, selectedDate) : null;
+  const isSelectedToday = stripTime(selectedDate).getTime() === stripTime(new Date()).getTime();
 
   // Greeting name: profiles.display_name from onboarding/settings — but never
   // an email-prefix leftover from older signups; then we stay neutral.
@@ -336,9 +358,48 @@ export default function TodayScreen() {
           </View>
         </FadeIn>
 
+        {/* Week strip — the calendar week, day by day; tap any day for its card */}
+        {pregnancy ? (
+          <FadeIn index={2}>
+            <Text style={[styles.eyebrow, styles.stripEyebrow]}>{copy.today.weekStripEyebrow}</Text>
+            <View style={styles.stripCard}>
+              <WeekStrip dueDate={pregnancy.due_date} selected={selectedDate} onSelect={setSelectedDate} />
+            </View>
+            <Card style={{ marginTop: spacing.md }}>
+              {selectedPoint && selectedInfo ? (
+                <View style={styles.dayRow}>
+                  <View style={styles.dayThumb}>
+                    <Image
+                      source={weekIllustration(selectedPoint.week)}
+                      style={styles.dayArt}
+                      resizeMode="contain"
+                      accessibilityLabel={`Watercolor illustration for week ${selectedPoint.week}`}
+                    />
+                  </View>
+                  <View style={styles.dayTextWrap}>
+                    <Text style={styles.dayTitle}>
+                      {(isSelectedToday ? 'Today · ' : '') +
+                        copy.today.weekDayLine(selectedPoint.week, selectedPoint.dayOfWeek)}
+                    </Text>
+                    <Text style={styles.tipBody}>
+                      {`Size of ${selectedInfo.sizeComparison}. ${selectedTip}`}
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <Text style={styles.tipBody}>
+                  {daysUntilDue(pregnancy.due_date, selectedDate) > 279
+                    ? copy.today.beforeWindow
+                    : copy.today.afterWindow}
+                </Text>
+              )}
+            </Card>
+          </FadeIn>
+        ) : null}
+
         {/* Name prompt — Bloom should greet her properly */}
         {!firstName ? (
-          <FadeIn index={2}>
+          <FadeIn index={3}>
             <Card style={{ marginTop: spacing.xl }}>
               <Text style={styles.tipBody}>{copy.namePrompt.body}</Text>
               <View style={styles.nameRow}>
@@ -364,7 +425,7 @@ export default function TodayScreen() {
 
         {/* Today in your pregnancy — the daily fresh card */}
         {today ? (
-          <FadeIn index={3}>
+          <FadeIn index={4}>
             <Card style={{ marginTop: spacing.xl }}>
               <View style={styles.dailyHeader}>
                 <Text style={styles.eyebrow}>{copy.today.dailyEyebrow}</Text>
@@ -386,7 +447,7 @@ export default function TodayScreen() {
 
         {/* For you both — the partner ping-pong hook */}
         {partnerLine ? (
-          <FadeIn index={4}>
+          <FadeIn index={5}>
             <Card style={{ marginTop: spacing.xl }}>
               <Text style={styles.eyebrow}>{copy.pingpong.eyebrow}</Text>
               <View style={styles.pingRow}>
@@ -401,7 +462,7 @@ export default function TodayScreen() {
 
         {/* Share with your partner — only while the household is a party of one */}
         {memberCount === 1 && household?.invite_code ? (
-          <FadeIn index={5}>
+          <FadeIn index={6}>
             <View style={{ marginTop: spacing.xl }}>
               <InviteCard code={household.invite_code} />
             </View>
@@ -409,7 +470,7 @@ export default function TodayScreen() {
         ) : null}
 
         {/* Daily check-in — after she checks in, the card answers back */}
-        <FadeIn index={6}>
+        <FadeIn index={7}>
           <Card style={{ marginTop: spacing.xl }}>
             <Text style={styles.eyebrow}>{copy.today.checkinEyebrow}</Text>
             {checkin && !editingCheckin ? (
@@ -496,7 +557,7 @@ export default function TodayScreen() {
         </FadeIn>
 
         {/* This week */}
-        <FadeIn index={7}>
+        <FadeIn index={8}>
           <Text style={[styles.eyebrow, { marginTop: spacing.section }]}>{copy.today.thisWeek}</Text>
           <TipCard eyebrow={copy.today.babyEyebrow} body={info.development} />
           {isPartner ? (
@@ -571,6 +632,32 @@ const styles = StyleSheet.create({
   },
   progressFill: { height: 2, backgroundColor: colors.accent.terracotta },
   eyebrow: { ...type.labelCaps, color: colors.ink.tertiary },
+  stripEyebrow: { marginTop: spacing.xl },
+  stripCard: {
+    backgroundColor: colors.bg.surface,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    marginTop: spacing.sm,
+    ...shadow.card,
+  },
+  dayRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  dayThumb: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.md,
+    backgroundColor: colors.bg.paper,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  dayArt: { width: 48, height: 48 },
+  dayTextWrap: { flex: 1 },
+  dayTitle: { ...type.titleSM, color: colors.ink.primary },
   checkinQuestion: { ...type.displayMD, color: colors.ink.primary, marginTop: spacing.sm },
   moodRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.lg },
   moodItem: { alignItems: 'center', gap: spacing.xs, minWidth: 52 },
