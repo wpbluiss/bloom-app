@@ -20,6 +20,7 @@ import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
 import { EntryType, countHouseholdMedia, createJournalEntry, createMediaRow, updateJournalEntry, uploadToBucket } from '../../lib/db';
 import { FREE_MEDIA_LIMIT, promptForPass, useEntitlement } from '../../lib/entitlements';
+import { track } from '../../lib/events';
 import { PickedMedia, pickMedia, uriToBytes } from '../../lib/media';
 import { currentWeek, formatISODate } from '../../lib/weeks';
 import { colors, radius, spacing, type } from '../../lib/theme';
@@ -102,6 +103,7 @@ export default function ComposeScreen() {
   const applyMilestone = (label: string) => {
     setEntryType('milestone');
     setTitle(label);
+    track('journal_quick_pick', { type: 'milestone', pick: label });
   };
 
   const activeMilestone = copy.milestones.find((m) => m.label === title);
@@ -146,7 +148,7 @@ export default function ComposeScreen() {
             textAlignVertical="top"
           />
           {media.length > 0 ? (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: spacing.md }}>
+            <ScrollView horizontal showsVerticalScrollIndicator={false} style={{ marginTop: spacing.md }}>
               {media.map((m, i) =>
                 m.mediaType === 'photo' ? (
                   <Image key={i} source={{ uri: m.uri }} style={styles.thumb} />
@@ -182,7 +184,15 @@ export default function ComposeScreen() {
               <Text style={styles.picksLabel}>{copy.compose.quickPicksEyebrow.craving}</Text>
               <View style={styles.chipsWrap}>
                 {copy.compose.cravingPicks.map((p) => (
-                  <Chip key={p} label={p} selected={title === p} onPress={() => setTitle(p)} />
+                  <Chip
+                    key={p}
+                    label={p}
+                    selected={title === p}
+                    onPress={() => {
+                      setTitle(p);
+                      track('journal_quick_pick', { type: 'craving', pick: p });
+                    }}
+                  />
                 ))}
               </View>
             </View>
@@ -198,7 +208,15 @@ export default function ComposeScreen() {
               <Text style={styles.picksLabel}>{copy.compose.quickPicksEyebrow.ultrasound}</Text>
               <View style={styles.chipsWrap}>
                 {copy.compose.ultrasoundPicks.map((p) => (
-                  <Chip key={p} label={p} selected={title === p} onPress={() => setTitle(p)} />
+                  <Chip
+                    key={p}
+                    label={p}
+                    selected={title === p}
+                    onPress={() => {
+                      setTitle(p);
+                      track('journal_quick_pick', { type: 'ultrasound', pick: p });
+                    }}
+                  />
                 ))}
               </View>
             </View>

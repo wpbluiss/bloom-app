@@ -15,6 +15,7 @@ import {
   signedUrl,
   updateWishlistItem,
 } from '../../lib/db';
+import { track } from '../../lib/events';
 import { supabase } from '../../lib/supabase';
 import { wishlistCategoryArt } from '../../lib/wishlistArt';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
@@ -68,6 +69,7 @@ export default function WishlistDetail() {
 
   const find = async () => {
     if (!item) return;
+    track('deal_finder_tap', { item: item.id, name: item.name });
     setFinding(true);
     try {
       const alts = await findAlternatives(item.id);
@@ -163,7 +165,11 @@ export default function WishlistDetail() {
                   key={a.id}
                   style={styles.altCard}
                   disabled={!openable}
-                  onPress={() => a.url && Linking.openURL(a.url).catch(() => {})}
+                  onPress={() => {
+                    if (!a.url) return;
+                    track('deal_open', { item: item.id, retailer: a.retailer, price: a.price });
+                    Linking.openURL(a.url).catch(() => {});
+                  }}
                 >
                   {a.image_url ? (
                     <Image source={{ uri: a.image_url }} style={styles.altImg} resizeMode="contain" />
