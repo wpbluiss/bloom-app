@@ -1,209 +1,195 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Image, Linking, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
+import { Card } from '../../components/Card';
+import { Chip } from '../../components/Chip';
 import { PressScale } from '../../components/PressScale';
-import { CardSkeleton } from '../../components/Skeleton';
+import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
 import {
-  WishlistAlternative,
-  WishlistItem,
-  fetchAlternatives,
+  deleteWishlistItem,
   findAlternatives,
-  signedUrl,
   updateWishlistItem,
+  type DealAlternative,
+  type WishlistItem,
 } from '../../lib/db';
+import { colors, spacing, type } from '../../lib/theme';
 import { track } from '../../lib/events';
-import { supabase } from '../../lib/supabase';
-import { wishlistCategoryArt } from '../../lib/wishlistArt';
-import { colors, radius, shadow, spacing, type } from '../../lib/theme';
+
+/**
+ * External links leave the app exactly how a careful parent expects:
+ * a small "Open this link?" confirmation naming where they're headed
+ * (Luis QA — previously taps failed silently on scheme-less URLs).
+ */
+function openExternal(url: string, retailer?: string | null) {
+  const normalized = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+  const m = /^https?:\/\/([^/]+)/i.exec(normalized);
+  const host = (m?.[1] ?? normalized).replace(/^www\./, '');
+  Alert.alert(copy.wishlist.openLinkTitle, `${retailer ? `${retailer} — ` : ''}${host}`, [
+    { text: copy.wishlist.openLinkCancel, style: 'cancel' },
+    {
+      text: copy.wishlist.openLinkConfirm,
+      onPress: () =>
+        Linking.openURL(normalized).catch(() =>
+          Alert.alert(copy.wishlist.openLinkError, normalized),
+        ),
+    },
+  ]);
+}
 
 export default function WishlistDetail() {
-  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [item, setItem] = useState<WishlistItem | null>(null);
-  const [notes, setNotes] = useState('');
-  const [alternatives, setAlternatives] = useState<WishlistAlternative[] | null>(null);
-  const [finding, setFinding] = useState(false);
-
-  const load = useCallback(async () => {
-    if (!id) return;
-    const { data, error } = await supabase.from('wishlist_items').select('*').eq('id', id).single();
-    if (error) {
-      console.warn(error);
-      return;
+  const { item: raw } = useLocalSearchParams<{ item: string }>();
+  const { refreshWishlist } = useApp();
+  const [item, setItem] = useState<WishlistItem | null>(() => {
+    try {
+      return raw ? (JSON.parse(raw) as WishlistItem) : null;
+    } catch {
+      return null;
     }
-    const it = data as WishlistItem;
-    if (it.photo_path) it.signedUrl = await signedUrl('wishlist-photos', it.photo_path);
-    setItem(it);
-    setNotes(it.notes ?? '');
-    setAlternatives(await fetchAlternatives(id));
-  }, [id]);
+  });
+  const [notes, setNotes] = useState(item?.notes ?? '');
+  const [deals, setDeals] = useState<DealAlternative[]>(item?.alternatives ?? []);
+  const [hunting, setHunting] = useState(false);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (item && deals.length === 0) void hunt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const toggleStatus = async () => {
+  const hunt = async () => {
     if (!item) return;
-    const next = item.status === 'purchased' ? 'wanted' : 'purchased';
-    setItem({ ...item, status: next }); // optimistic
+    setHunting(true);
     try {
-      await updateWishlistItem(item.id, { status: next });
+      const found = await findAlternatives(item);
+      setDeals(found);
     } catch {
-      setItem(item);
-      Alert.alert(copy.global.error);
+      // Silent: the deals section simply stays empty; the item itself is what matters.
+    } finally {
+      setHunting(false);
     }
   };
 
   const saveNotes = async () => {
     if (!item) return;
     try {
-      await updateWishlistItem(item.id, { notes: notes.trim() || null });
+      await updateWishlistItem(item.id, { notes });
+      await refreshWishlist();
     } catch {
       Alert.alert(copy.global.error);
     }
   };
 
-  const find = async () => {
+  const toggleBought = async () => {
     if (!item) return;
-    track('deal_finder_tap', { item: item.id, name: item.name });
-    setFinding(true);
     try {
-      const alts = await findAlternatives(item.id);
-      if (alts.length > 0) setAlternatives(alts);
-      else setAlternatives(await fetchAlternatives(item.id));
-    } catch (e) {
-      // Function not deployed yet — fall back to whatever exists in the table
-      console.warn('find-alternatives unavailable', e);
-      setAlternatives((prev) => prev ?? []);
-    } finally {
-      setFinding(false);
+      await updateWishlistItem(item.id, { status: item.status === 'bought' ? 'wanted' : 'bought' });
+      await refreshWishlist();
+      router.back();
+    } catch {
+      Alert.alert(copy.global.error);
     }
+  };
+
+  const remove = () => {
+    if (!item) return;
+    Alert.alert(copy.global.deleteConfirm, undefined, [
+      { text: copy.global.keepIt, style: 'cancel' },
+      {
+        text: copy.global.letItGo,
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteWishlistItem(item.id);
+            await refreshWishlist();
+            router.back();
+          } catch {
+            Alert.alert(copy.global.error);
+          }
+        },
+      },
+    ]);
   };
 
   if (!item) {
     return (
       <SafeAreaView style={styles.safe}>
-        <View style={{ padding: spacing.screen }}>
-          <CardSkeleton height={260} />
-        </View>
+        <Text style={styles.missing}>This item wandered off.</Text>
       </SafeAreaView>
     );
   }
 
-  const savings = (price: number | null) =>
-    price != null && item.target_price != null ? item.target_price - price : null;
-  const art = wishlistCategoryArt(item.category);
-
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+      <View style={styles.topBar}>
+        <PressScale onPress={() => router.back()} hitSlop={8}>
+          <Ionicons name="chevron-down" size={26} color={colors.ink.secondary} />
+        </PressScale>
+        <PressScale onPress={remove} hitSlop={8}>
+          <Ionicons name="trash-outline" size={22} color={colors.ink.tertiary} />
+        </PressScale>
+      </View>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.topBar}>
-          <PressScale onPress={() => router.back()} hitSlop={8}>
-            <Ionicons name="chevron-back" size={26} color={colors.ink.secondary} />
-          </PressScale>
-          <PressScale onPress={toggleStatus} style={styles.statusPill}>
-            <Ionicons
-              name={item.status === 'purchased' ? 'checkmark-circle' : 'ellipse-outline'}
-              size={16}
-              color={item.status === 'purchased' ? colors.sage.primary : colors.ink.tertiary}
-            />
-            <Text
-              style={[
-                styles.statusText,
-                { color: item.status === 'purchased' ? colors.sage.primary : colors.ink.tertiary },
-              ]}
-            >
-              {item.status === 'purchased' ? 'Purchased' : 'Mark as purchased'}
-            </Text>
-          </PressScale>
-        </View>
-        {item.signedUrl ? (
-          <Image source={{ uri: item.signedUrl }} style={styles.photo} />
-        ) : art ? (
-          <View style={[styles.photo, styles.photoArt]}>
-            <Image source={art} style={styles.photoArtImg} resizeMode="contain" />
-          </View>
-        ) : (
-          <View style={[styles.photo, styles.photoPlaceholder]}>
-            <Ionicons name="cube-outline" size={48} color={colors.ink.tertiary} />
-          </View>
-        )}
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.price}>
-          {item.target_price != null ? `$${Number(item.target_price).toFixed(2)}` : 'No target price'}
-          {item.category ? `  ·  ${item.category}` : ''}
-        </Text>
+        {item.price_estimate != null ? (
+          <Text style={styles.price}>${Number(item.price_estimate).toFixed(0)}</Text>
+        ) : null}
+
         {item.source_url ? (
-          <PressScale onPress={() => Linking.openURL(item.source_url!).catch(() => {})} style={{ marginTop: spacing.sm }}>
+          <PressScale onPress={() => openExternal(item.source_url!)} style={{ marginTop: spacing.sm }}>
             <Text style={styles.link}>View where you found it</Text>
           </PressScale>
         ) : null}
-        <TextInput
-          style={styles.notes}
-          placeholder="Notes — color, size, who mentioned it…"
-          placeholderTextColor={colors.ink.tertiary}
-          value={notes}
-          onChangeText={setNotes}
-          onBlur={saveNotes}
-          multiline
-        />
-        <View style={styles.altHeader}>
-          <Text style={styles.altTitle}>Lookalikes & deals</Text>
-          <Button label="Find lookalikes & deals" onPress={find} loading={finding} variant="secondary" style={{ minHeight: 44 }} />
+
+        <Card style={{ marginTop: spacing.xl }}>
+          <Text style={styles.cardLabel}>NOTES</Text>
+          <Text style={styles.notesPlaceholder}>{notes || 'Which color? Which size? Who mentioned it?'}</Text>
+          <Button label="Save notes" variant="secondary" onPress={saveNotes} style={{ marginTop: spacing.md }} />
+        </Card>
+
+        <View style={styles.dealsHead}>
+          <Text style={styles.dealsTitle}>Lookalikes &amp; deals</Text>
+          {hunting ? <Text style={styles.hunting}>{copy.global.findingAlternatives}…</Text> : null}
         </View>
-        {alternatives && alternatives.length > 0 ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.md }}>
-            {alternatives.map((a) => {
-              const save = savings(a.price);
-              const openable = !!a.url;
-              return (
-                <PressScale
-                  key={a.id}
-                  style={styles.altCard}
-                  disabled={!openable}
-                  onPress={() => {
-                    if (!a.url) return;
-                    track('deal_open', { item: item.id, retailer: a.retailer, price: a.price });
-                    Linking.openURL(a.url).catch(() => {});
-                  }}
-                >
-                  {a.image_url ? (
-                    <Image source={{ uri: a.image_url }} style={styles.altImg} resizeMode="contain" />
-                  ) : (
-                    <View style={[styles.altImg, styles.altImgEmpty]}>
-                      <Ionicons name="image-outline" size={22} color={colors.ink.tertiary} />
-                    </View>
-                  )}
-                  <Text style={styles.altName} numberOfLines={2}>
-                    {a.title}
-                  </Text>
-                  {a.retailer ? <Text style={styles.altRetailer}>{a.retailer}</Text> : null}
-                  <View style={styles.altPriceRow}>
-                    <Text style={styles.altPrice}>{a.price != null ? `$${Number(a.price).toFixed(2)}` : '—'}</Text>
-                    {save != null && save > 0 ? <Text style={styles.altSavings}>−${save.toFixed(0)}</Text> : null}
+        {deals.map((a, i) => {
+          const openable = Boolean(a.url);
+          return (
+            <PressScale
+              key={i}
+              style={{ marginTop: spacing.md }}
+              disabled={!openable}
+              onPress={() => {
+                if (!a.url) return;
+                track('deal_open', { item: item.id, retailer: a.retailer, price: a.price });
+                openExternal(a.url, a.retailer);
+              }}
+            >
+              <Card>
+                <View style={styles.dealRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.dealName}>{a.name}</Text>
+                    <Text style={styles.dealMeta}>
+                      {a.retailer ?? '—'}
+                      {a.similarity ? ` · ${a.similarity}` : ''}
+                    </Text>
                   </View>
-                  {openable ? (
-                    <View style={styles.altCta}>
-                      <Text style={styles.altCtaText}>{copy.wishlist.viewDeal}</Text>
-                      <Ionicons name="open-outline" size={13} color={colors.accent.onAccent} />
-                    </View>
-                  ) : null}
-                </PressScale>
-              );
-            })}
-          </ScrollView>
-        ) : (
-          <View style={styles.altEmpty}>
-            <Ionicons name="search-outline" size={24} color={colors.ink.tertiary} />
-            <Text style={styles.altEmptyText}>
-              {finding ? 'Looking…' : copy.global.findingAlternatives}
-            </Text>
-          </View>
-        )}
+                  <Text style={styles.dealPrice}>{a.price != null ? `$${Number(a.price).toFixed(0)}` : ''}</Text>
+                </View>
+                {openable ? <Text style={styles.dealCta}>{copy.wishlist.viewDeal}</Text> : null}
+              </Card>
+            </PressScale>
+          );
+        })}
+
+        <Button
+          label={item.status === 'bought' ? 'Mark as still wanted' : 'We got it'}
+          onPress={toggleBought}
+          variant={item.status === 'bought' ? 'secondary' : 'primary'}
+          style={{ marginTop: spacing.xl }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -211,78 +197,25 @@ export default function WishlistDetail() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg.canvas },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.screen,
+    paddingVertical: spacing.md,
+  },
   scroll: { padding: spacing.screen, paddingBottom: spacing.hero },
-  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.lg },
-  statusPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    backgroundColor: colors.bg.surface,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  statusText: { ...type.labelMD },
-  photo: { width: '100%', aspectRatio: 1, borderRadius: radius.xl, backgroundColor: colors.bg.paper },
-  photoArt: { alignItems: 'center', justifyContent: 'center', padding: spacing.hero },
-  photoArtImg: { width: '100%', height: '100%' },
-  photoPlaceholder: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg.surfaceWarm },
-  name: { ...type.displayLG, color: colors.ink.primary, marginTop: spacing.xl },
-  price: { ...type.bodySM, color: colors.ink.secondary, marginTop: spacing.xs },
-  link: { ...type.titleSM, color: colors.accent.terracotta },
-  notes: {
-    backgroundColor: colors.bg.sunken,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    ...type.bodySM,
-    color: colors.ink.primary,
-    marginTop: spacing.xl,
-    minHeight: 80,
-    textAlignVertical: 'top',
-  },
-  altHeader: { marginTop: spacing.section, gap: spacing.md },
-  altTitle: { ...type.titleMD, color: colors.ink.primary },
-  altCard: {
-    width: 190,
-    backgroundColor: colors.bg.surface,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    padding: spacing.md,
-    ...shadow.card,
-  },
-  altImg: {
-    width: '100%',
-    aspectRatio: 1.15,
-    borderRadius: radius.md,
-    backgroundColor: colors.bg.paper,
-  },
-  altImgEmpty: { alignItems: 'center', justifyContent: 'center' },
-  altName: { ...type.titleSM, color: colors.ink.primary, marginTop: spacing.sm },
-  altRetailer: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xs },
-  altPriceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm },
-  altPrice: { ...type.titleMD, color: colors.ink.primary },
-  altSavings: { ...type.labelMD, color: colors.sage.primary },
-  altCta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
-    backgroundColor: colors.accent.terracotta,
-    borderRadius: radius.full,
-    paddingVertical: spacing.sm,
-    marginTop: spacing.md,
-  },
-  altCtaText: { ...type.titleSM, fontSize: 13, color: colors.accent.onAccent },
-  altEmpty: {
-    alignItems: 'center',
-    gap: spacing.sm,
-    padding: spacing.xxl,
-    backgroundColor: colors.bg.surfaceWarm,
-    borderRadius: radius.lg,
-    marginTop: spacing.md,
-  },
-  altEmptyText: { ...type.bodySM, color: colors.ink.secondary, textAlign: 'center' },
+  missing: { ...type.bodyMD, color: colors.ink.secondary, textAlign: 'center', marginTop: 120 },
+  name: { ...type.displayLG, color: colors.ink.primary },
+  price: { ...type.titleLG, color: colors.accent.terracotta, marginTop: spacing.xs },
+  link: { ...type.titleSM, color: colors.sage.primary, textDecorationLine: 'underline' },
+  cardLabel: { ...type.labelCaps, color: colors.ink.tertiary },
+  notesPlaceholder: { ...type.bodyMD, color: colors.ink.secondary, marginTop: spacing.sm },
+  dealsHead: { marginTop: spacing.xl, flexDirection: 'row', alignItems: 'baseline', gap: spacing.md },
+  dealsTitle: { ...type.titleLG, color: colors.ink.primary },
+  hunting: { ...type.caption, color: colors.ink.tertiary },
+  dealRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  dealName: { ...type.titleMD, color: colors.ink.primary },
+  dealMeta: { ...type.caption, color: colors.ink.tertiary, marginTop: 2 },
+  dealPrice: { ...type.titleLG, color: colors.accent.terracotta },
+  dealCta: { ...type.labelCaps, color: colors.sage.primary, marginTop: spacing.sm },
 });
