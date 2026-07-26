@@ -119,10 +119,21 @@ export const copy = {
   compose: {
     typeLabels: { note: 'Quick note', milestone: 'Milestone', craving: 'Craving', ultrasound: 'Ultrasound' } as const,
     quickPicksEyebrow: {
+      note: 'TAP TO START — OR WRITE YOUR OWN',
       milestone: 'MILESTONES — TAP TO START',
       craving: 'USUAL SUSPECTS',
       ultrasound: 'WHICH SCAN?',
     } as const,
+    // Quick-note starters (Luis QA): the note type had no tap-to-start chips while
+    // milestone/craving/ultrasound did — same idea, tuned for open memories.
+    notePicks: [
+      'Today I felt…',
+      'Note to baby',
+      'A name we love',
+      'Something that made us laugh',
+      'A small win',
+      "A fear I'm letting go",
+    ],
     cravingPicks: [
       'Pickles',
       'Ice cream',
@@ -318,6 +329,10 @@ export const copy = {
   },
   wishlist: {
     viewDeal: 'View deal',
+    openLinkTitle: 'Open this link?',
+    openLinkConfirm: 'Open',
+    openLinkCancel: 'Not now',
+    openLinkError: "Couldn't open that link",
   },
   review: {
     promptTitle: 'Enjoying Bloom?',

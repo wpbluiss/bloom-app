@@ -90,6 +90,7 @@ export function IntroSplash({ onDone }: { onDone: () => void }) {
       >
         Bloom
       </Animated.Text>
+      <Animated.Text style={[styles.byline, { opacity: word }]}>by Conduit AI</Animated.Text>
     </View>
   );
 }
@@ -101,4 +102,14 @@ const styles = StyleSheet.create({
   leafR: { position: 'absolute', left: 64, top: 88 },
   bloom: { position: 'absolute', left: 28, top: 2 },
   word: { ...type.displayXL, fontSize: 40, color: colors.ink.primary, marginTop: 18 },
+  // Faint house mark — SKIMS-quiet (Luis QA): present, never loud.
+  byline: {
+    ...type.caption,
+    position: 'absolute',
+    bottom: 54,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: colors.ink.tertiary,
+    opacity: 0.7,
+  },
 });

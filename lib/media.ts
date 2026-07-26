@@ -9,7 +9,7 @@ export interface PickedMedia {
   contentType: string;
 }
 
-const VIDEO_CAP_BYTES = 50 * 1024 * 1024; // ~50MB
+const VIDEO_CAP_BYTES = 50 * 1024 * 1024; // ~50MB (Supabase free-plan per-file ceiling)
 
 /** Pick an image or video from the library; photos are compressed before upload. */
 export async function pickMedia(opts: { allowsVideo?: boolean } = {}): Promise<PickedMedia | null> {
@@ -21,7 +21,9 @@ export async function pickMedia(opts: { allowsVideo?: boolean } = {}): Promise<P
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: opts.allowsVideo ? ImagePicker.MediaTypeOptions.All : ImagePicker.MediaTypeOptions.Images,
     quality: 0.8,
-    videoMaxDuration: 120,
+    // Ten minutes — a full gender reveal, not a clip of one. (Delia bug report:
+    // the old 2-minute picker cap made her announcement video unselectable.)
+    videoMaxDuration: 600,
   });
   if (result.canceled || !result.assets?.length) return null;
   return processAsset(result.assets[0]);
@@ -44,8 +46,8 @@ async function processAsset(asset: ImagePicker.ImagePickerAsset): Promise<Picked
     const size = asset.fileSize ?? 0;
     if (size > VIDEO_CAP_BYTES) {
       Alert.alert(
-        'That video is quite large',
-        'Videos over about 50MB take a long time to upload. Consider trimming it first — you can still try uploading it.',
+        'A bigger video — that’s okay',
+        'Videos over about 50MB upload slowly on weaker connections. It will still upload — just keep Bloom open while it does.',
       );
     }
     const ext = extFrom(asset.uri, 'mov');
