@@ -1,3 +1,8 @@
+import { Platform } from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
+import Constants from 'expo-constants';
+import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/google-signin';
 import { supabase } from './supabase';
 import { track } from './events';
 import { formatISODate } from './weeks';
@@ -136,6 +141,85 @@ export async function verifyOtp(email: string, token: string) {
   const { data, error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
   if (error) throw error;
   return data.session;
+}
+
+/** True when Sign in with Apple can run on this device (iOS 13+, capable hardware). */
+export async function appleSignInAvailable(): Promise<boolean> {
+  if (Platform.OS !== 'ios') return false;
+  try {
+    return await AppleAuthentication.isAvailableAsync();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Sign in with Apple → Supabase. Apple hands us an identity token; Supabase
+ * verifies it against the app's Services ID. A fresh nonce rides along so the
+ * token can't be replayed. Returns true on success; rethrows 'ERR_REQUEST_CANCELED'
+ * when the sheet is dismissed so the caller can stay quiet.
+ */
+export async function signInWithApple(): Promise<boolean> {
+  const rawNonce = Crypto.randomUUID();
+  const hashedNonce = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, rawNonce);
+  const credential = await AppleAuthentication.signInAsync({
+    requestedScopes: [
+      AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+      AppleAuthentication.AppleAuthenticationScope.EMAIL,
+    ],
+    nonce: hashedNonce,
+  });
+  if (!credential.identityToken) throw new Error('Apple returned no identity token');
+  const { error } = await supabase.auth.signInWithIdToken({
+    provider: 'apple',
+    token: credential.identityToken,
+    nonce: rawNonce,
+  });
+  if (error) throw error;
+  track('login', { method: 'apple' });
+  // Apple only reveals the name on the very first consent — keep it if we got it.
+  const name = [credential.fullName?.givenName, credential.fullName?.familyName]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+  if (name) {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      await supabase.from('profiles').upsert({ id: data.session.user.id, display_name: name });
+    }
+  }
+  return true;
+}
+
+/** True when Google sign-in is configured (keys present in app.json → extra). */
+export function googleSignInConfigured(): boolean {
+  const extra = Constants.expoConfig?.extra ?? {};
+  return !!extra.googleWebClientId;
+}
+
+/**
+ * Sign in with Google → Supabase. Dormant until googleWebClientId (and on iOS,
+ * googleIosClientId + reversed URL scheme) exist in app.json → extra. Returns
+ * true on success, false when the user backs out of the Google sheet.
+ */
+export async function signInWithGoogle(): Promise<boolean> {
+  const extra = Constants.expoConfig?.extra ?? {};
+  if (!extra.googleWebClientId) throw new Error('google-not-configured');
+  GoogleSignin.configure({
+    webClientId: extra.googleWebClientId,
+    iosClientId: extra.googleIosClientId,
+  });
+  if (Platform.OS === 'android') {
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  }
+  const res = await GoogleSignin.signIn();
+  if (!isSuccessResponse(res)) return false; // cancelled — stay silent
+  const idToken = res.data.idToken;
+  if (!idToken) throw new Error('Google returned no id token');
+  const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: idToken });
+  if (error) throw error;
+  track('login', { method: 'google' });
+  return true;
 }
 
 export async function fetchProfile(userId: string): Promise<Profile | null> {
