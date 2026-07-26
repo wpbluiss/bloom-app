@@ -15,7 +15,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Bloom uses your camera to capture moments for your journal and wishlist.",
         "NSPhotoLibraryUsageDescription": "Bloom saves photos to your journal and wishlist, kept privately for your household.",
-        "NSUserNotificationsUsageDescription": "Bloom sends gentle local reminders for your daily check-in and weekly milestone. Nothing is sent to a server."
+        "NSUserNotificationsUsageDescription": "Bloom sends gentle local reminders for your daily check-in and weekly milestone. Nothing is sent to a server.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
