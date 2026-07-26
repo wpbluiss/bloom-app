@@ -9,6 +9,7 @@ import { supabase } from './supabase';
 
 export type BloomEvent =
   | 'app_open'
+  | 'login'
   | 'checkin_done'
   | 'journal_save'
   | 'journal_quick_pick'
