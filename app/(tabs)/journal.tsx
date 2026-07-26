@@ -3,7 +3,6 @@ import { Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Card } from '../../components/Card';
 import { EmptyState } from '../../components/EmptyState';
 import { FadeIn } from '../../components/FadeIn';
 import { PressScale } from '../../components/PressScale';
@@ -12,7 +11,7 @@ import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
 import { JournalEntry, fetchJournalEntries } from '../../lib/db';
 import { formatISODate } from '../../lib/weeks';
-import { colors, radius, shadow, spacing, type } from '../../lib/theme';
+import { GenderAccent, colors, genderAccent, radius, shadow, spacing, type } from '../../lib/theme';
 
 const TYPE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   note: 'pencil-outline',
@@ -22,12 +21,38 @@ const TYPE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
 };
 
 type ViewMode = 'timeline' | 'calendar';
-const VIEW_LABELS: Record<ViewMode, string> = { timeline: 'Timeline', calendar: 'Calendar' };
+const VIEW_LABELS: Record<ViewMode, string> = { timeline: 'Pages', calendar: 'Calendar' };
 const WEEKDAY_LETTERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+/** Chapter ornament — hairline, gem, hairline. */
+function ChapterMark({ accent }: { accent: GenderAccent }) {
+  return (
+    <View style={styles.chapterRuleRow}>
+      <View style={styles.chapterRule} />
+      <View style={[styles.chapterGem, { backgroundColor: accent.primary }]} />
+      <View style={styles.chapterRule} />
+    </View>
+  );
+}
+
+/** Diary-style body: a serif drop cap opens longer entries, like a real book. */
+function PageBody({ body, accent }: { body: string; accent: GenderAccent }) {
+  const first = body.charAt(0);
+  if (!/[A-Za-z]/.test(first) || body.length < 30) {
+    return <Text style={styles.pageBody}>{body}</Text>;
+  }
+  return (
+    <View style={styles.dropCapRow}>
+      <Text style={[styles.dropCap, { color: accent.primary }]}>{first}</Text>
+      <Text style={[styles.pageBody, styles.dropCapRest]}>{body.slice(1)}</Text>
+    </View>
+  );
+}
 
 export default function JournalScreen() {
   const router = useRouter();
-  const { household } = useApp();
+  const { household, pregnancy, week } = useApp();
+  const accent = genderAccent(pregnancy?.baby_sex);
   const [entries, setEntries] = useState<JournalEntry[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [view, setView] = useState<ViewMode>('timeline');
@@ -53,16 +78,24 @@ export default function JournalScreen() {
     }, [load])
   );
 
+  /** Entries grouped into chapters — one per week of the pregnancy. */
   const groups = useMemo(() => {
+    const order: string[] = [];
     const map = new Map<string, JournalEntry[]>();
     (entries ?? []).forEach((e) => {
       const d = new Date(e.entry_date + 'T12:00:00');
-      const month = d.toLocaleDateString(undefined, { month: 'long' }).toUpperCase();
-      const key = e.week_number ? `WEEK ${e.week_number} · ${month}` : month;
-      if (!map.has(key)) map.set(key, []);
+      const month = d.toLocaleDateString(undefined, { month: 'long' });
+      const key = e.week_number ? `W${e.week_number}|${month}` : `M|${month} ${d.getFullYear()}`;
+      if (!map.has(key)) {
+        map.set(key, []);
+        order.push(key);
+      }
       map.get(key)!.push(e);
     });
-    return [...map.entries()];
+    return order.map((key) => {
+      const [w, month] = key.split('|');
+      return { week: w.startsWith('W') ? Number(w.slice(1)) : null, month, items: map.get(key)! };
+    });
   }, [entries]);
 
   // Date → moment count, for the calendar dots and badges.
@@ -102,50 +135,67 @@ export default function JournalScreen() {
       params: { id: e.id, type: e.entry_type, title: e.title ?? '', body: e.body ?? '' },
     });
 
-  const renderEntryCard = (e: JournalEntry, i: number) => (
+  /** One entry = one page of the book. */
+  const renderPage = (e: JournalEntry, i: number) => (
     <FadeIn key={e.id} index={Math.min(i, 5)}>
-      <Card style={{ marginTop: spacing.md }}>
-        <View style={styles.entryHeader}>
-          <View style={styles.typeChip}>
-            <Ionicons
-              name={TYPE_ICONS[e.entry_type] ?? 'pencil-outline'}
-              size={14}
-              color={colors.accent.terracottaDeep}
-            />
+      <View style={styles.page}>
+        <View style={styles.pageTop}>
+          <Text style={styles.pageDate}>
+            {new Date(e.entry_date + 'T12:00:00').toLocaleDateString(undefined, {
+              weekday: 'short',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </Text>
+          <View style={styles.pageTopRight}>
+            <View style={[styles.typeChip, { backgroundColor: accent.soft }]}>
+              <Ionicons
+                name={TYPE_ICONS[e.entry_type] ?? 'pencil-outline'}
+                size={13}
+                color={accent.deep}
+              />
+            </View>
+            <PressScale onPress={() => editEntry(e)} hitSlop={8} style={styles.editButton}>
+              <Ionicons name="pencil-outline" size={14} color={colors.ink.tertiary} />
+            </PressScale>
           </View>
-          {e.title ? <Text style={styles.entryTitle}>{e.title}</Text> : <View style={{ flex: 1 }} />}
-          <PressScale onPress={() => editEntry(e)} hitSlop={8} style={styles.editButton}>
-            <Ionicons name="pencil-outline" size={15} color={colors.ink.tertiary} />
-          </PressScale>
         </View>
-        {e.body ? <Text style={styles.entryBody}>{e.body}</Text> : null}
+        {e.title ? <Text style={styles.pageTitle}>{e.title}</Text> : null}
+        {e.body ? <PageBody body={e.body} accent={accent} /> : null}
         {e.media && e.media.length > 0 ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: spacing.md }}>
-            {e.media.map((m) =>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.scrapRow}
+            contentContainerStyle={{ paddingTop: 10, paddingRight: spacing.sm }}
+          >
+            {e.media.map((m, mi) =>
               m.signedUrl && m.media_type === 'photo' ? (
-                <Image key={m.id} source={{ uri: m.signedUrl }} style={styles.thumb} />
+                <View
+                  key={m.id}
+                  style={[styles.photoFrame, { transform: [{ rotate: mi % 2 === 0 ? '-1.3deg' : '1.1deg' }] }]}
+                >
+                  {mi === 0 ? <View style={styles.tape} /> : null}
+                  <Image source={{ uri: m.signedUrl }} style={styles.thumb} />
+                </View>
               ) : m.signedUrl ? (
                 <Pressable
                   key={m.id}
-                  style={[styles.thumb, styles.videoThumb]}
+                  style={[styles.photoFrame, { transform: [{ rotate: mi % 2 === 0 ? '-1.3deg' : '1.1deg' }] }]}
                   onPress={() => router.push({ pathname: '/journal/player', params: { uri: m.signedUrl! } })}
                   accessibilityLabel="Play video"
                   accessibilityRole="button"
                 >
-                  <Ionicons name="play" size={22} color={colors.accent.onAccent} />
+                  {mi === 0 ? <View style={styles.tape} /> : null}
+                  <View style={[styles.thumb, styles.videoThumb]}>
+                    <Ionicons name="play" size={22} color={colors.accent.onAccent} />
+                  </View>
                 </Pressable>
               ) : null
             )}
           </ScrollView>
         ) : null}
-        <Text style={styles.timestamp}>
-          {new Date(e.entry_date + 'T12:00:00').toLocaleDateString(undefined, {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          })}
-        </Text>
-      </Card>
+      </View>
     </FadeIn>
   );
 
@@ -153,15 +203,15 @@ export default function JournalScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.title}>Journal</Text>
+        <Text style={styles.subtitle}>
+          {week ? `Week ${week} — the story so far` : 'The story so far'}
+        </Text>
         {entries && entries.length > 0 ? (
-          <View style={styles.segmented}>
+          <View style={styles.tabs}>
             {(Object.keys(VIEW_LABELS) as ViewMode[]).map((v) => (
-              <PressScale
-                key={v}
-                onPress={() => setView(v)}
-                style={[styles.segment, view === v && styles.segmentActive]}
-              >
-                <Text style={[styles.segmentLabel, view === v && styles.segmentLabelActive]}>{VIEW_LABELS[v]}</Text>
+              <PressScale key={v} onPress={() => setView(v)} style={styles.tab} hitSlop={6}>
+                <Text style={[styles.tabLabel, view === v && { color: accent.deep }]}>{VIEW_LABELS[v]}</Text>
+                {view === v ? <View style={[styles.tabUnderline, { backgroundColor: accent.primary }]} /> : null}
               </PressScale>
             ))}
           </View>
@@ -191,7 +241,7 @@ export default function JournalScreen() {
                 await load();
                 setRefreshing(false);
               }}
-              tintColor={colors.accent.terracotta}
+              tintColor={accent.primary}
             />
           }
         >
@@ -199,14 +249,14 @@ export default function JournalScreen() {
             <View>
               <View style={styles.calCard}>
                 <View style={styles.calHeader}>
-                  <PressScale onPress={() => shiftMonth(-1)} hitSlop={8} style={styles.calNav}>
-                    <Ionicons name="chevron-back" size={18} color={colors.ink.secondary} />
+                  <PressScale onPress={() => shiftMonth(-1)} hitSlop={8} style={[styles.calNav, { backgroundColor: accent.soft }]}>
+                    <Ionicons name="chevron-back" size={18} color={accent.deep} />
                   </PressScale>
                   <Text style={styles.calTitle}>
                     {calMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
                   </Text>
-                  <PressScale onPress={() => shiftMonth(1)} hitSlop={8} style={styles.calNav}>
-                    <Ionicons name="chevron-forward" size={18} color={colors.ink.secondary} />
+                  <PressScale onPress={() => shiftMonth(1)} hitSlop={8} style={[styles.calNav, { backgroundColor: accent.soft }]}>
+                    <Ionicons name="chevron-forward" size={18} color={accent.deep} />
                   </PressScale>
                 </View>
                 <View style={styles.calRow}>
@@ -231,14 +281,14 @@ export default function JournalScreen() {
                         <View
                           style={[
                             styles.calDay,
-                            isToday && !isSelected && styles.calDayToday,
-                            isSelected && styles.calDaySelected,
+                            isToday && !isSelected && { borderWidth: 1.5, borderColor: accent.primary },
+                            isSelected && { backgroundColor: accent.primary },
                           ]}
                         >
                           <Text
                             style={[
                               styles.calDayText,
-                              isToday && !isSelected && { color: colors.accent.terracottaDeep },
+                              isToday && !isSelected && { color: accent.deep },
                               isSelected && styles.calDayTextSelected,
                             ]}
                           >
@@ -247,9 +297,9 @@ export default function JournalScreen() {
                         </View>
                         <View style={styles.calDotWrap}>
                           {count > 1 ? (
-                            <Text style={styles.calCount}>{count}</Text>
+                            <Text style={[styles.calCount, { color: accent.deep }]}>{count}</Text>
                           ) : count === 1 ? (
-                            <View style={styles.calDot} />
+                            <View style={[styles.calDot, { backgroundColor: accent.primary }]} />
                           ) : null}
                         </View>
                       </PressScale>
@@ -265,7 +315,7 @@ export default function JournalScreen() {
                         .toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
                         .toUpperCase()}
                     </Text>
-                    {entriesForDay.map((e, i) => renderEntryCard(e, i))}
+                    {entriesForDay.map((e, i) => renderPage(e, i))}
                   </View>
                 ) : (
                   <Text style={styles.emptyDay}>Nothing kept on this day yet.</Text>
@@ -275,16 +325,20 @@ export default function JournalScreen() {
               )}
             </View>
           ) : (
-            groups.map(([label, items], gi) => (
-              <View key={label}>
-                <Text style={[styles.groupHeader, gi > 0 && { marginTop: spacing.section }]}>{label}</Text>
-                {items.map((e, i) => renderEntryCard(e, i))}
+            groups.map((g, gi) => (
+              <View key={`${g.week ?? 'm'}-${g.month}`}>
+                <View style={[styles.chapter, gi > 0 && { marginTop: spacing.hero }]}>
+                  <ChapterMark accent={accent} />
+                  <Text style={styles.chapterEyebrow}>{g.week ? g.month.toUpperCase() : 'KEEPSAKES'}</Text>
+                  <Text style={styles.chapterTitle}>{g.week ? `Week ${g.week}` : g.month}</Text>
+                </View>
+                {g.items.map((e, i) => renderPage(e, i))}
               </View>
             ))
           )}
         </ScrollView>
       )}
-      <PressScale style={styles.fab} onPress={() => router.push('/journal/compose')}>
+      <PressScale style={[styles.fab, { backgroundColor: accent.primary }]} onPress={() => router.push('/journal/compose')}>
         <Ionicons name="add" size={28} color={colors.accent.onAccent} />
       </PressScale>
     </SafeAreaView>
@@ -292,52 +346,101 @@ export default function JournalScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg.canvas },
+  safe: { flex: 1, backgroundColor: colors.bg.paper },
   header: { paddingHorizontal: spacing.screen, paddingTop: spacing.lg },
   title: { ...type.displayLG, color: colors.ink.primary },
-  segmented: {
-    flexDirection: 'row',
-    backgroundColor: colors.bg.surfaceWarm,
-    borderRadius: radius.full,
-    padding: 4,
-    marginTop: spacing.lg,
+  subtitle: {
+    ...type.serifQuote,
+    fontSize: 15,
+    lineHeight: 20,
+    color: colors.ink.tertiary,
+    marginTop: spacing.xs,
   },
-  segment: {
-    flex: 1,
-    minHeight: 40,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  segmentActive: { backgroundColor: colors.accent.terracotta, ...shadow.card },
-  segmentLabel: { ...type.labelMD, color: colors.ink.secondary, textAlign: 'center' },
-  segmentLabelActive: { color: colors.accent.onAccent, fontFamily: 'Inter_600SemiBold' },
+  // ── Book tabs ──────────────────────────────────────────────
+  tabs: { flexDirection: 'row', gap: spacing.xl, marginTop: spacing.lg },
+  tab: { paddingBottom: spacing.xs },
+  tabLabel: { ...type.labelCaps, color: colors.ink.tertiary },
+  tabUnderline: { height: 2, borderRadius: 1, marginTop: spacing.xs },
   scroll: { padding: spacing.screen, paddingBottom: 120 },
-  groupHeader: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.lg },
-  entryHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  // ── Chapters ───────────────────────────────────────────────
+  chapter: { alignItems: 'center', marginTop: spacing.lg, marginBottom: spacing.xs },
+  chapterRuleRow: { flexDirection: 'row', alignItems: 'center', alignSelf: 'stretch', gap: spacing.sm },
+  chapterRule: { flex: 1, height: 1, backgroundColor: colors.border.subtle },
+  chapterGem: { width: 6, height: 6, borderRadius: 1, transform: [{ rotate: '45deg' }] },
+  chapterEyebrow: { ...type.labelCaps, fontSize: 10, color: colors.ink.tertiary, marginTop: spacing.md },
+  chapterTitle: { ...type.displayMD, color: colors.ink.primary, marginTop: spacing.xs },
+  // ── Pages ──────────────────────────────────────────────────
+  page: {
+    backgroundColor: colors.bg.surface,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    padding: spacing.lg,
+    marginTop: spacing.lg,
+    ...shadow.card,
+  },
+  pageTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  pageDate: { ...type.labelCaps, fontSize: 10, color: colors.ink.tertiary },
+  pageTopRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   typeChip: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: colors.accent.terracottaSoft,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  entryTitle: { ...type.titleMD, color: colors.ink.primary, flex: 1 },
   editButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.bg.surfaceWarm,
   },
-  entryBody: { ...type.bodyMD, color: colors.ink.secondary, marginTop: spacing.sm },
-  thumb: { width: 180, height: 135, borderRadius: radius.md, marginRight: spacing.sm, backgroundColor: colors.bg.surfaceWarm },
+  pageTitle: {
+    fontFamily: 'Fraunces_500Medium',
+    fontSize: 20,
+    lineHeight: 26,
+    letterSpacing: -0.3,
+    color: colors.ink.primary,
+    marginTop: spacing.sm,
+  },
+  pageBody: { ...type.bodyMD, color: colors.ink.secondary, marginTop: spacing.sm },
+  dropCapRow: { flexDirection: 'row', alignItems: 'flex-start', marginTop: spacing.sm },
+  dropCap: {
+    fontFamily: 'Fraunces_500Medium',
+    fontSize: 44,
+    lineHeight: 44,
+    marginRight: spacing.sm,
+    marginTop: 2,
+  },
+  dropCapRest: { flex: 1, marginTop: 0 },
+  // ── Scrapbook media ────────────────────────────────────────
+  scrapRow: { marginTop: spacing.md },
+  photoFrame: {
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    borderRadius: radius.sm,
+    padding: 5,
+    paddingBottom: 12,
+    marginRight: spacing.md,
+    ...shadow.card,
+  },
+  tape: {
+    position: 'absolute',
+    top: -9,
+    alignSelf: 'center',
+    width: 62,
+    height: 18,
+    backgroundColor: 'rgba(228, 216, 196, 0.92)',
+    borderRadius: 2,
+    transform: [{ rotate: '-4deg' }],
+    zIndex: 1,
+  },
+  thumb: { width: 168, height: 126, borderRadius: 2, backgroundColor: colors.bg.surfaceWarm },
   videoThumb: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.ink.secondary },
-  timestamp: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.md },
+  // ── Calendar (the book's index page) ───────────────────────
   calCard: {
     backgroundColor: colors.bg.surface,
     borderRadius: radius.lg,
@@ -354,9 +457,8 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.bg.surfaceWarm,
   },
-  calTitle: { ...type.titleMD, color: colors.ink.primary },
+  calTitle: { ...type.displayMD, fontSize: 20, lineHeight: 26, color: colors.ink.primary },
   calRow: { flexDirection: 'row', marginTop: spacing.md },
   calWeekday: {
     width: '14.2857%',
@@ -374,20 +476,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  calDayToday: { borderWidth: 1.5, borderColor: colors.accent.blush },
-  calDaySelected: { backgroundColor: colors.accent.terracotta },
   calDayText: { ...type.labelMD, color: colors.ink.primary },
   calDayTextSelected: { color: colors.accent.onAccent, fontFamily: 'Inter_600SemiBold' },
   calDotWrap: { height: 12, alignItems: 'center', justifyContent: 'center' },
-  calDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.accent.terracotta },
-  calCount: { ...type.labelCaps, fontSize: 9, letterSpacing: 0, color: colors.accent.terracottaDeep },
+  calDot: { width: 5, height: 5, borderRadius: 2.5 },
+  calCount: { ...type.labelCaps, fontSize: 9, letterSpacing: 0 },
   dayHeader: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.xl },
   emptyDay: {
-    ...type.bodySM,
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 16,
+    lineHeight: 24,
     color: colors.ink.tertiary,
     textAlign: 'center',
     marginTop: spacing.xl,
-    fontStyle: 'italic',
   },
   fab: {
     position: 'absolute',
@@ -396,7 +497,6 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.accent.terracotta,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadow.fab,
