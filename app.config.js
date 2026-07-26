@@ -1,24 +1,14 @@
-// Bloom app config — wraps app.json and adds native sign-in wiring.
+// Bloom app config — wraps app.json and adds the Apple sign-in entitlement.
 //
 // Apple: always on (the entitlement is required for App Review whenever
 // social sign-in is offered). Activates once the Apple provider is enabled
 // in the Supabase dashboard.
 //
-// Google: dormant until the dashboard keys exist. To light it up, add to
-// app.json → expo.extra:
-//   "googleWebClientId": "…apps.googleusercontent.com"   (OAuth "Web" client)
-//   "googleIosClientId": "…apps.googleusercontent.com"   (OAuth "iOS" client)
-//   "googleIosUrlScheme": "com.googleusercontent.apps.…" (reversed iOS client ID)
-// and drop GoogleService-Info.plist at the repo root, then set
-// ios.googleServicesFile in app.json. Next EAS build picks it all up.
+// Google sign-in was removed from the native build (it crashed startup while
+// unconfigured). To bring it back one day: reinstall
+// @react-native-google-signin/google-signin, add its config plugin here with
+// the reversed iOS client ID, and set the OAuth keys in app.json → extra.
 const base = require('./app.json');
-
-const extra = base.expo.extra ?? {};
-
-const plugins = [...base.expo.plugins, 'expo-apple-authentication'];
-if (extra.googleIosUrlScheme) {
-  plugins.push(['@react-native-google-signin/google-signin', { iosUrlScheme: extra.googleIosUrlScheme }]);
-}
 
 module.exports = {
   expo: {
@@ -26,8 +16,7 @@ module.exports = {
     ios: {
       ...base.expo.ios,
       usesAppleSignIn: true,
-      ...(extra.googleIosUrlScheme ? { googleServicesFile: './GoogleService-Info.plist' } : {}),
     },
-    plugins,
+    plugins: [...base.expo.plugins, 'expo-apple-authentication'],
   },
 };

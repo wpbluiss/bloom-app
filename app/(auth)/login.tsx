@@ -15,14 +15,7 @@ import { Button } from '../../components/Button';
 import { FadeIn } from '../../components/FadeIn';
 import { PressScale } from '../../components/PressScale';
 import { copy } from '../../lib/copy';
-import {
-  appleSignInAvailable,
-  googleSignInConfigured,
-  signInWithApple,
-  signInWithEmail,
-  signInWithGoogle,
-  verifyOtp,
-} from '../../lib/db';
+import { appleSignInAvailable, signInWithApple, signInWithEmail, verifyOtp } from '../../lib/db';
 import { colors, radius, spacing, type } from '../../lib/theme';
 
 export default function Login() {
@@ -31,15 +24,13 @@ export default function Login() {
   const [code, setCode] = useState('');
   const [stage, setStage] = useState<'email' | 'code'>('email');
   const [busy, setBusy] = useState(false);
-  const [socialBusy, setSocialBusy] = useState<'apple' | 'google' | null>(null);
+  const [appleBusy, setAppleBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appleReady, setAppleReady] = useState(false);
 
   useEffect(() => {
     appleSignInAvailable().then(setAppleReady);
   }, []);
-
-  const googleReady = googleSignInConfigured();
 
   const sendCode = async () => {
     setBusy(true);
@@ -68,8 +59,8 @@ export default function Login() {
   };
 
   const apple = async () => {
-    if (socialBusy) return;
-    setSocialBusy('apple');
+    if (appleBusy) return;
+    setAppleBusy(true);
     setError(null);
     try {
       await signInWithApple();
@@ -85,21 +76,7 @@ export default function Login() {
         );
       }
     } finally {
-      setSocialBusy(null);
-    }
-  };
-
-  const google = async () => {
-    if (socialBusy) return;
-    setSocialBusy('google');
-    setError(null);
-    try {
-      const ok = await signInWithGoogle();
-      if (ok) router.replace('/');
-    } catch (e) {
-      setError(copy.global.error);
-    } finally {
-      setSocialBusy(null);
+      setAppleBusy(false);
     }
   };
 
@@ -115,24 +92,14 @@ export default function Login() {
             <Text style={styles.subline}>{copy.welcome.subline}</Text>
           </FadeIn>
 
-          {appleReady || googleReady ? (
+          {appleReady ? (
             <FadeIn index={1}>
-              {appleReady ? (
-                <PressScale style={styles.appleButton} onPress={apple} disabled={socialBusy !== null}>
-                  <Ionicons name="logo-apple" size={19} color="#FFFFFF" />
-                  <Text style={styles.appleLabel}>
-                    {socialBusy === 'apple' ? 'Signing in…' : 'Continue with Apple'}
-                  </Text>
-                </PressScale>
-              ) : null}
-              {googleReady ? (
-                <PressScale style={styles.googleButton} onPress={google} disabled={socialBusy !== null}>
-                  <Ionicons name="logo-google" size={17} color={colors.ink.primary} />
-                  <Text style={styles.googleLabel}>
-                    {socialBusy === 'google' ? 'Signing in…' : 'Continue with Google'}
-                  </Text>
-                </PressScale>
-              ) : null}
+              <PressScale style={styles.appleButton} onPress={apple} disabled={appleBusy}>
+                <Ionicons name="logo-apple" size={19} color="#FFFFFF" />
+                <Text style={styles.appleLabel}>
+                  {appleBusy ? 'Signing in…' : 'Continue with Apple'}
+                </Text>
+              </PressScale>
               <View style={styles.dividerRow}>
                 <View style={styles.divider} />
                 <Text style={styles.dividerText}>or with your email</Text>
@@ -229,19 +196,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   appleLabel: { ...type.titleSM, color: '#FFFFFF' },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.bg.surface,
-    borderWidth: 1,
-    borderColor: colors.border.strong,
-    borderRadius: radius.md,
-    minHeight: 50,
-    marginBottom: spacing.md,
-  },
-  googleLabel: { ...type.titleSM, color: colors.ink.primary },
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
