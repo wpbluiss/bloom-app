@@ -245,3 +245,21 @@ export const FEATURED_ARTICLES: Article[] = ARTICLES.filter((a) => a.featured);
 export function articlesByCategory(category: ArticleCategory): Article[] {
   return ARTICLES.filter((a) => a.category === category);
 }
+
+/** Article-topic → the week watercolor that best illustrates it. */
+const HERO_RULES: { re: RegExp; week: number }[] = [
+  { re: /nausea|morning sickness|sick/i, week: 8 },
+  { re: /prenatal|appointment|visit|provider/i, week: 10 },
+  { re: /building season|growth|grows|growing/i, week: 12 },
+  { re: /food|caffeine|eat|nutrition/i, week: 9 },
+  { re: /worried|mind|calm|anxious|anxiety/i, week: 6 },
+  { re: /sleep|insomnia|rest/i, week: 16 },
+  { re: /kick|movement|flutter/i, week: 20 },
+  { re: /birth|hospital|labor|labour|delivery/i, week: 38 },
+];
+
+export function heroWeekFor(title: string, category: string): number {
+  const hay = `${title} ${category}`;
+  for (const rule of HERO_RULES) if (rule.re.test(hay)) return rule.week;
+  return 12;
+}
