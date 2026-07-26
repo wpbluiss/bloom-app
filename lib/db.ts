@@ -1,8 +1,6 @@
 import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
-import Constants from 'expo-constants';
-import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/google-signin';
 import { supabase } from './supabase';
 import { track } from './events';
 import { formatISODate } from './weeks';
@@ -188,37 +186,6 @@ export async function signInWithApple(): Promise<boolean> {
       await supabase.from('profiles').upsert({ id: data.session.user.id, display_name: name });
     }
   }
-  return true;
-}
-
-/** True when Google sign-in is configured (keys present in app.json → extra). */
-export function googleSignInConfigured(): boolean {
-  const extra = Constants.expoConfig?.extra ?? {};
-  return !!extra.googleWebClientId;
-}
-
-/**
- * Sign in with Google → Supabase. Dormant until googleWebClientId (and on iOS,
- * googleIosClientId + reversed URL scheme) exist in app.json → extra. Returns
- * true on success, false when the user backs out of the Google sheet.
- */
-export async function signInWithGoogle(): Promise<boolean> {
-  const extra = Constants.expoConfig?.extra ?? {};
-  if (!extra.googleWebClientId) throw new Error('google-not-configured');
-  GoogleSignin.configure({
-    webClientId: extra.googleWebClientId,
-    iosClientId: extra.googleIosClientId,
-  });
-  if (Platform.OS === 'android') {
-    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  }
-  const res = await GoogleSignin.signIn();
-  if (!isSuccessResponse(res)) return false; // cancelled — stay silent
-  const idToken = res.data.idToken;
-  if (!idToken) throw new Error('Google returned no id token');
-  const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: idToken });
-  if (error) throw error;
-  track('login', { method: 'google' });
   return true;
 }
 
