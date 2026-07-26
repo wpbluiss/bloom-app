@@ -1,18 +1,19 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { FadeIn } from '../../components/FadeIn';
 import { PressScale } from '../../components/PressScale';
-import { ARTICLE_CATEGORIES, FEATURED_ARTICLES, articlesByCategory } from '../../lib/articles';
+import { ARTICLE_CATEGORIES, FEATURED_ARTICLES, articlesByCategory, heroWeekFor } from '../../lib/articles';
 import { copy } from '../../lib/copy';
+import { weekIllustration } from '../../lib/illustrations';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 /**
- * Learn — calm, institution-sourced reading. A "Most read" rail of featured
- * articles, then category sections. Tapping any article opens the reader as a
- * native modal page (swipe down to dismiss).
+ * Learn — calm, institution-sourced reading. The "Most read" rail is a row of
+ * story rings (Luis QA: Instagram-style); tapping any article opens the story
+ * player as a native modal (swipe down to dismiss).
  */
 export default function LearnScreen() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function LearnScreen() {
           <Text style={styles.subtitle}>{copy.learn.subtitle}</Text>
         </FadeIn>
 
-        {/* Most read — featured rail */}
+        {/* Most read — story rings */}
         <FadeIn index={1}>
           <Text style={[styles.eyebrow, styles.sectionEyebrow]}>{copy.learn.mostRead}</Text>
         </FadeIn>
@@ -38,12 +39,19 @@ export default function LearnScreen() {
           style={styles.railScroll}
         >
           {FEATURED_ARTICLES.map((a) => (
-            <PressScale key={a.id} style={styles.featureCard} onPress={() => openArticle(a.id)}>
-              <Text style={styles.featureCaps}>{a.category.toUpperCase()}</Text>
-              <Text style={styles.featureTitle}>{a.title}</Text>
-              <View style={styles.bylineChip}>
-                <Text style={styles.bylineText}>{copy.learn.byline(a.source)}</Text>
+            <PressScale key={a.id} style={styles.ringItem} onPress={() => openArticle(a.id)}>
+              <View style={styles.ringOuter}>
+                <View style={styles.ringInner}>
+                  <Image
+                    source={weekIllustration(heroWeekFor(a.title, a.category))}
+                    style={styles.ringImg}
+                    resizeMode="contain"
+                  />
+                </View>
               </View>
+              <Text style={styles.ringTitle} numberOfLines={2}>
+                {a.title}
+              </Text>
             </PressScale>
           ))}
         </ScrollView>
@@ -93,29 +101,27 @@ const styles = StyleSheet.create({
   sectionEyebrow: { paddingHorizontal: spacing.screen, marginTop: spacing.section },
   railScroll: { marginTop: spacing.md },
   rail: { paddingHorizontal: spacing.screen, gap: spacing.md },
-  featureCard: {
-    width: 236,
-    backgroundColor: colors.bg.surface,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    padding: spacing.lg,
-    ...shadow.card,
-  },
-  featureCaps: { ...type.labelCaps, fontSize: 9, color: colors.accent.terracotta },
-  featureTitle: { ...type.displayMD, fontSize: 19, lineHeight: 24, color: colors.ink.primary, marginTop: spacing.sm },
-  bylineChip: {
-    flexDirection: 'row',
+  ringItem: { width: 92, alignItems: 'center' },
+  ringOuter: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 2,
+    borderColor: colors.accent.terracotta,
     alignItems: 'center',
-    gap: spacing.xs,
-    backgroundColor: colors.sage.soft,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    marginTop: spacing.lg,
-    alignSelf: 'flex-start',
+    justifyContent: 'center',
   },
-  bylineText: { ...type.labelCaps, fontSize: 8.5, letterSpacing: 0.8, color: colors.sage.primary },
+  ringInner: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.bg.paper,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  ringImg: { width: 50, height: 50 },
+  ringTitle: { ...type.caption, color: colors.ink.secondary, textAlign: 'center', marginTop: spacing.sm },
   categoryTitle: {
     ...type.displayMD,
     color: colors.ink.primary,

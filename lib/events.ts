@@ -13,6 +13,7 @@ export type BloomEvent =
   | 'journal_save'
   | 'journal_quick_pick'
   | 'learn_open'
+  | 'learn_complete'
   | 'learn_source_open'
   | 'wishlist_add'
   | 'deal_finder_tap'
