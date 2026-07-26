@@ -50,6 +50,19 @@ import {
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 const SYMPTOMS = ['Nausea', 'Fatigue', 'Heartburn', 'Headache', 'Swelling', 'Cramping', 'Insomnia', 'Backache'];
+
+/**
+ * Mood-aware symptoms (Luis QA): the chips tune themselves to the mood she
+ * just picked — heavy days surface heavy symptoms, glowing days celebrate the
+ * good signs. 'Okay' is the classic list above.
+ */
+const MOOD_SYMPTOMS: Record<string, string[]> = {
+  Heavy: ['Nausea', 'Cramping', 'Backache', 'Swelling', 'Headache', 'Heartburn', 'Dizzy spells', 'Tender breasts'],
+  Tired: ['Fatigue', 'Insomnia', 'Brain fog', 'Headache', 'Backache', 'Nausea', 'Swelling', 'Short of breath'],
+  Okay: SYMPTOMS,
+  Good: ['Energy returning', 'Appetite up', 'Sleeping better', 'Less nausea', 'Baby kicks', 'Skin glowing', 'Mood steady', 'Feeling strong'],
+  Glowing: ['Baby kicks', 'Energy burst', 'Nesting urge', 'Vivid dreams', 'Appetite up', 'Sleeping deeply', 'Skin glowing', 'Feeling strong'],
+};
 const MOOD_ICONS = ['rainy-outline', 'moon-outline', 'remove-outline', 'happy-outline', 'sparkles-outline'] as const;
 
 export default function TodayScreen() {
@@ -554,8 +567,9 @@ export default function TodayScreen() {
                     </PressScale>
                   ))}
                 </View>
+                {mood ? <Text style={styles.symptomsHint}>Tuned to “{mood.toLowerCase()}” — tap all that fit.</Text> : null}
                 <View style={styles.chipsWrap}>
-                  {SYMPTOMS.map((s) => (
+                  {(MOOD_SYMPTOMS[mood ?? ''] ?? SYMPTOMS).map((s) => (
                     <Chip key={s} label={s} selected={symptoms.includes(s)} onPress={() => toggleSymptom(s)} />
                   ))}
                 </View>
@@ -714,6 +728,7 @@ const styles = StyleSheet.create({
   moodRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.lg },
   moodItem: { alignItems: 'center', gap: spacing.xs, minWidth: 52 },
   moodLabel: { ...type.caption, color: colors.ink.tertiary },
+  symptomsHint: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.md, marginBottom: spacing.sm },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.lg },
   noteInput: {
     backgroundColor: colors.bg.sunken,
