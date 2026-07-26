@@ -53,13 +53,26 @@ async function processAsset(asset: ImagePicker.ImagePickerAsset): Promise<Picked
     const ext = extFrom(asset.uri, 'mov');
     return { uri: asset.uri, mediaType: 'video', ext, contentType: `video/${ext === 'mov' ? 'quicktime' : ext}` };
   }
-  // Compress photos before upload
-  const manipulated = await ImageManipulator.manipulateAsync(
-    asset.uri,
-    [{ resize: { width: 1600 } }],
-    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
-  );
-  return { uri: manipulated.uri, mediaType: 'photo', ext: 'jpg', contentType: 'image/jpeg' };
+  // Compress before upload (Luis/Delia: phones shoot 4–8MB photos; at family
+  // scale that's the difference between a 2GB and a 14GB cloud bill). Long
+  // edge capped at 1920 — plenty for a memory book page — JPEG ~0.72.
+  // Never lose a memory to a compression hiccup: fall back to the original.
+  try {
+    const w = asset.width ?? 0;
+    const h = asset.height ?? 0;
+    const LONG_EDGE = 1920;
+    const resize =
+      w >= h ? [{ resize: { width: LONG_EDGE } }] : [{ resize: { height: LONG_EDGE } }];
+    const manipulated = await ImageManipulator.manipulateAsync(asset.uri, resize, {
+      compress: 0.72,
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
+    return { uri: manipulated.uri, mediaType: 'photo', ext: 'jpg', contentType: 'image/jpeg' };
+  } catch (e) {
+    console.warn('photo compression failed, keeping original', e);
+    const ext = extFrom(asset.uri, 'jpg');
+    return { uri: asset.uri, mediaType: 'photo', ext, contentType: `image/${ext === 'jpg' ? 'jpeg' : ext}` };
+  }
 }
 
 function extFrom(uri: string, fallback: string): string {
