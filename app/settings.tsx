@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Linking, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  LayoutAnimation,
+  Linking,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  UIManager,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -28,8 +41,8 @@ import { supabase } from '../lib/supabase';
 import { formatISODate } from '../lib/weeks';
 import { colors, radius, spacing, type } from '../lib/theme';
 
-const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
-const PRIVACY_URL = 'https://conduitai.io/bloom/privacy';
+const TERMS_URL = 'https://bloom.conduitai.io/terms.html';
+const PRIVACY_URL = 'https://bloom.conduitai.io/privacy.html';
 
 const AVATAR_ICONS = [
   'flower-outline',
@@ -46,6 +59,45 @@ function timeToDate(hour: number, minute: number): Date {
   const d = new Date();
   d.setHours(hour, minute, 0, 0);
   return d;
+}
+
+
+// Accordions animate on Android only when explicitly enabled.
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+/**
+ * Collapsible settings section (Luis QA: the page was "blocks and blocks of
+ * information"). Tap the header to open, tap again to put it away. Profile
+ * opens by default — and stays open while a name is still missing.
+ */
+function Section({
+  title,
+  defaultOpen = false,
+  forceOpen = false,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  forceOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const open = isOpen || forceOpen;
+  const toggle = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsOpen((v) => !v);
+  };
+  return (
+    <View style={styles.sectionWrap}>
+      <PressScale onPress={toggle} style={styles.sectionHeader} hitSlop={6}>
+        <Text style={[styles.section, styles.sectionInHeader]}>{title}</Text>
+        <Ionicons name={open ? 'chevron-down' : 'chevron-forward'} size={16} color={colors.ink.tertiary} />
+      </PressScale>
+      {open ? <View>{children}</View> : null}
+    </View>
+  );
 }
 
 export default function SettingsScreen() {
@@ -281,7 +333,7 @@ export default function SettingsScreen() {
         ) : null}
 
         {/* ── Profile ─────────────────────────────────────── */}
-        <Text style={styles.section}>{copy.settings.sectionProfile}</Text>
+        <Section title={copy.settings.sectionProfile} defaultOpen forceOpen={nameMissing}>
         <Card>
           <View style={styles.avatarRow}>
             <PressScale onPress={chooseAvatar} style={styles.avatarWrap} disabled={avatarBusy}>
@@ -347,14 +399,22 @@ export default function SettingsScreen() {
           />
           <Text style={[styles.label, { marginTop: spacing.lg }]}>{copy.settings.emailLabel}</Text>
           <View style={styles.readonlyRow}>
-            <Text style={styles.readonlyText} numberOfLines={1}>
+            <Text style={[styles.readonlyText, { flex: 1 }]} numberOfLines={1}>
               {session?.user.email ?? '—'}
             </Text>
+            {session?.user.email_confirmed_at ? (
+              <View style={styles.verifiedBadge}>
+                <Ionicons name="checkmark-circle" size={14} color={colors.sage.primary} />
+                <Text style={styles.verifiedText}>Verified</Text>
+              </View>
+            ) : null}
           </View>
         </Card>
 
+        </Section>
+
         {/* ── Pregnancy ───────────────────────────────────── */}
-        <Text style={styles.section}>{copy.settings.sectionPregnancy}</Text>
+        <Section title={copy.settings.sectionPregnancy}>
         <Card>
           <Text style={styles.label}>ROLE</Text>
           <View style={styles.chipsRow}>
@@ -383,10 +443,12 @@ export default function SettingsScreen() {
           ) : null}
         </Card>
 
+        </Section>
+
         {/* ── Reminders ───────────────────────────────────── */}
         {prefs ? (
           <>
-            <Text style={styles.section}>{copy.settings.sectionReminders}</Text>
+            <Section title={copy.settings.sectionReminders}>
             <Card>
               <View style={styles.reminderRow}>
                 <View style={{ flex: 1 }}>
@@ -414,11 +476,12 @@ export default function SettingsScreen() {
                 </View>
               ) : null}
             </Card>
+            </Section>
           </>
         ) : null}
 
         {/* ── Bloom Pass ──────────────────────────────────── */}
-        <Text style={styles.section}>{copy.settings.sectionPass}</Text>
+        <Section title={copy.settings.sectionPass}>
         <Card>
           <View style={styles.passRow}>
             <View style={{ flex: 1 }}>
@@ -441,10 +504,12 @@ export default function SettingsScreen() {
           </PressScale>
         </Card>
 
+        </Section>
+
         {/* ── Partner ─────────────────────────────────────── */}
         {inviteCode ? (
           <>
-            <Text style={styles.section}>{copy.settings.sectionPartner}</Text>
+            <Section title={copy.settings.sectionPartner}>
             <InviteCard
               code={inviteCode}
               onRegenerated={(next) => {
@@ -452,11 +517,12 @@ export default function SettingsScreen() {
                 refresh().catch(() => {});
               }}
             />
+            </Section>
           </>
         ) : null}
 
         {/* ── About ───────────────────────────────────────── */}
-        <Text style={styles.section}>{copy.settings.sectionAbout}</Text>
+        <Section title={copy.settings.sectionAbout}>
         <Card>
           <PressScale style={styles.aboutRow} onPress={() => Linking.openURL(PRIVACY_URL).catch(() => {})} hitSlop={4}>
             <Text style={styles.aboutLabel}>{copy.settings.aboutPrivacy}</Text>
@@ -477,8 +543,10 @@ export default function SettingsScreen() {
           </View>
         </Card>
 
+        </Section>
+
         {/* ── Danger zone ─────────────────────────────────── */}
-        <Text style={styles.section}>{copy.settings.sectionDanger}</Text>
+        <Section title={copy.settings.sectionDanger}>
         <Card>
           <PressScale onPress={deleteMyAccount} hitSlop={8} style={styles.deleteRow}>
             <View style={{ flex: 1 }}>
@@ -488,6 +556,7 @@ export default function SettingsScreen() {
             <Ionicons name="trash-outline" size={18} color="#B3402A" />
           </PressScale>
         </Card>
+        </Section>
 
         <Button label="Save" onPress={save} loading={busy} style={{ marginTop: spacing.xl }} />
         <Button label={copy.global.signOut} variant="tertiary" onPress={signOut} style={{ marginTop: spacing.md }} />
@@ -510,6 +579,25 @@ const styles = StyleSheet.create({
   scroll: { padding: spacing.screen },
   weekCaps: { ...type.labelCaps, color: colors.accent.terracotta },
   section: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.xl, marginBottom: spacing.sm },
+  sectionWrap: { marginTop: spacing.xl },
+  sectionInHeader: { marginTop: 0, marginBottom: 0 },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minHeight: 32,
+    marginBottom: spacing.sm,
+  },
+  verifiedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.sage.soft,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+  },
+  verifiedText: { ...type.caption, color: colors.sage.primary },
   label: { ...type.labelCaps, color: colors.ink.tertiary },
   input: {
     backgroundColor: colors.bg.sunken,
@@ -521,11 +609,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   readonlyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
     backgroundColor: colors.bg.surfaceWarm,
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
     minHeight: 48,
-    justifyContent: 'center',
     marginTop: spacing.sm,
   },
   readonlyText: { ...type.bodyMD, color: colors.ink.secondary },
