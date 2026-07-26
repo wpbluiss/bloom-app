@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import {
   useFonts as useFraunces,
   Fraunces_400Regular,
@@ -22,6 +23,24 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 import { initErrorReporting } from '../lib/errorReporting';
 import { track } from '../lib/events';
 import { colors } from '../lib/theme';
+
+/**
+ * One light, warm navigation theme for the whole app (Luis QA: dismissing a
+ * modal flashed an ugly system-gray backdrop). React Navigation's default
+ * theme owns the pixels *behind* and *between* screens — modal swipe-downs,
+ * fades, the lot — so it now wears Bloom's canvas instead of gray.
+ */
+const BloomNavTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: colors.bg.canvas,
+    card: colors.bg.canvas,
+    text: colors.ink.primary,
+    border: colors.border.subtle,
+    primary: colors.accent.terracotta,
+  },
+};
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -55,6 +74,7 @@ export default function RootLayout() {
         <EntitlementProvider>
           <ErrorBoundary>
             <StatusBar style="dark" />
+            <ThemeProvider value={BloomNavTheme}>
             <Stack
               screenOptions={{
                 headerShown: false,
@@ -75,6 +95,7 @@ export default function RootLayout() {
               <Stack.Screen name="week-unlock" options={{ presentation: 'fullScreenModal' }} />
               <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
             </Stack>
+            </ThemeProvider>
           </ErrorBoundary>
         </EntitlementProvider>
       </AppProvider>

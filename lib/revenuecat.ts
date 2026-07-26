@@ -13,8 +13,7 @@ import type { CustomerInfo, PurchasesPackage } from 'react-native-purchases';
  * CRITICAL: this module must never break a build that ships without purchases.
  * The iOS API key lives in app.json → expo.extra.revenueCatAppleKey. While it is
  * still the placeholder (REVENUECAT_API_KEY_HERE) — or the native module is
- * missing (Expo Go, or a build made before `npx expo install
- * react-native-purchases`) — everything here no-ops and useEntitlement()
+ * missing (Expo Go, pre-IAP TestFlight builds) — everything here no-ops and useEntitlement()
  * reports devMode, where every feature is free. Tonight's TestFlight build is
  * therefore byte-for-byte behavior-identical until Luis pastes a real key.
  */
@@ -28,6 +27,13 @@ export const ENTITLEMENT_IDS = {
 export const PRODUCT_IDS = {
   pregnancyPass: 'bloom_pregnancy_pass_v1',
   plusMonthly: 'bloom_plus_monthly_v1',
+  /**
+   * Optional exit-offer SKU (Luis: "backing out → limited-time discount").
+   * Create the product in App Store Connect and attach it to the RevenueCat
+   * offering, and the paywall's before-you-go popup automatically offers it;
+   * until then the popup falls back to honest launch-pricing urgency copy.
+   */
+  pregnancyPassLaunch: 'bloom_pregnancy_pass_launch_v1',
 } as const;
 
 export const API_KEY_PLACEHOLDER = 'REVENUECAT_API_KEY_HERE';
@@ -135,6 +141,8 @@ export interface PassOfferings {
   plusPackage: PurchasesPackage | null;
   passPrice: string | null;
   plusPrice: string | null;
+  launchPackage: PurchasesPackage | null;
+  launchPrice: string | null;
 }
 
 const EMPTY_OFFERINGS: PassOfferings = {
@@ -142,6 +150,8 @@ const EMPTY_OFFERINGS: PassOfferings = {
   plusPackage: null,
   passPrice: null,
   plusPrice: null,
+  launchPackage: null,
+  launchPrice: null,
 };
 
 /** Live StoreKit prices/packages via RevenueCat offerings; nulls when offline/unconfigured. */
@@ -154,11 +164,14 @@ export async function fetchPassOfferings(): Promise<PassOfferings> {
     if (offerings.current) packages.push(...offerings.current.availablePackages);
     const passPackage = packages.find((p) => p.product.identifier === PRODUCT_IDS.pregnancyPass) ?? null;
     const plusPackage = packages.find((p) => p.product.identifier === PRODUCT_IDS.plusMonthly) ?? null;
+    const launchPackage = packages.find((p) => p.product.identifier === PRODUCT_IDS.pregnancyPassLaunch) ?? null;
     return {
       passPackage,
       plusPackage,
       passPrice: passPackage?.product.priceString ?? null,
       plusPrice: plusPackage?.product.priceString ?? null,
+      launchPackage,
+      launchPrice: launchPackage?.product.priceString ?? null,
     };
   } catch (e) {
     console.warn('RevenueCat offerings failed', e);
