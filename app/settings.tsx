@@ -113,6 +113,7 @@ export default function SettingsScreen() {
   const [dueDate, setDueDate] = useState<Date>(
     pregnancy ? new Date(pregnancy.due_date + 'T12:00:00') : new Date()
   );
+  const [babySex, setBabySex] = useState<'boy' | 'girl' | null>(pregnancy?.baby_sex ?? null);
   const [busy, setBusy] = useState(false);
   const [inviteCode, setInviteCode] = useState<string | null>(household?.invite_code ?? null);
   const [prefs, setPrefs] = useState<NotificationPrefs | null>(null);
@@ -197,7 +198,7 @@ export default function SettingsScreen() {
         phone: phone.trim() || null,
       });
       if (pregnancy) {
-        await updatePregnancy(pregnancy.id, { due_date: formatISODate(dueDate) });
+        await updatePregnancy(pregnancy.id, { due_date: formatISODate(dueDate), baby_sex: babySex });
       }
       await refresh();
       router.back();
@@ -431,6 +432,15 @@ export default function SettingsScreen() {
                 onChange={(_: DateTimePickerEvent, d?: Date) => d && setDueDate(d)}
                 accentColor={colors.accent.terracotta}
               />
+              <Text style={[styles.label, { marginTop: spacing.lg }]}>BABY</Text>
+              <View style={styles.chipsRow}>
+                <Chip label="It's a boy" selected={babySex === 'boy'} onPress={() => setBabySex(babySex === 'boy' ? null : 'boy')} />
+                <Chip label="It's a girl" selected={babySex === 'girl'} onPress={() => setBabySex(babySex === 'girl' ? null : 'girl')} />
+                <Chip label="Surprise" selected={babySex === null} onPress={() => setBabySex(null)} />
+              </View>
+              {babySex ? (
+                <Text style={styles.nickname}>Your journal will dress in {babySex === 'boy' ? 'blue' : 'rose'}.</Text>
+              ) : null}
             </>
           ) : null}
           {pregnancy?.baby_nickname ? (
