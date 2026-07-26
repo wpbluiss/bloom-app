@@ -25,6 +25,18 @@ export const tokens = {
       primary: '#7C8B6F',
       soft: '#E4E9DC',
     },
+    // Gender-reactive accents — dusty, never candy. Used on journal/book
+    // surfaces once the parents share what they're having.
+    boy: {
+      primary: '#5B84A8',
+      deep: '#42648A',
+      soft: '#DCE7F0',
+    },
+    girl: {
+      primary: '#C97B92',
+      deep: '#A85A73',
+      soft: '#F3DEE5',
+    },
     border: {
       subtle: '#E8DFD2',
       strong: '#D8CBB9',
@@ -78,3 +90,29 @@ export const type = tokens.type;
 export const spacing = tokens.spacing;
 export const radius = tokens.radius;
 export const shadow = tokens.shadow;
+
+// ── Gender-reactive accent ────────────────────────────────────────────────
+// Cream/terracotta until the parents share the sex, then dusty blue or rose.
+export type BabySex = 'boy' | 'girl' | null | undefined;
+
+export interface GenderAccent {
+  primary: string;
+  deep: string;
+  soft: string;
+  onAccent: string;
+}
+
+export function genderAccent(sex: BabySex): GenderAccent {
+  if (sex === 'boy') {
+    return { primary: colors.boy.primary, deep: colors.boy.deep, soft: colors.boy.soft, onAccent: colors.accent.onAccent };
+  }
+  if (sex === 'girl') {
+    return { primary: colors.girl.primary, deep: colors.girl.deep, soft: colors.girl.soft, onAccent: colors.accent.onAccent };
+  }
+  return {
+    primary: colors.accent.terracotta,
+    deep: colors.accent.terracottaDeep,
+    soft: colors.accent.terracottaSoft,
+    onAccent: colors.accent.onAccent,
+  };
+}

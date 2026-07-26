@@ -40,6 +40,7 @@ export interface Pregnancy {
   household_id: string;
   due_date: string; // ISO date
   baby_nickname: string | null;
+  baby_sex?: 'boy' | 'girl' | null; // optional; NULL until the parents know or share
   is_active: boolean;
   created_at?: string;
 }
