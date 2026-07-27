@@ -233,7 +233,7 @@ async function searchWithSerpApi(
     const matches = Array.isArray(data?.shopping_results) ? data.shopping_results : [];
     results = matches.map((m: Record<string, unknown>) => ({
       title: String(m.title ?? ''),
-      url: (m.link as string) ?? null,
+      url: (m.link as string) ?? (m.product_link as string) ?? null,
       price: parsePrice(m.extracted_price ?? m.price),
       retailer: (m.source as string) ?? null,
       image_url: (m.thumbnail as string) ?? null,

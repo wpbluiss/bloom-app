@@ -100,7 +100,9 @@ const styles = StyleSheet.create({
   eyebrow: { ...type.labelCaps, color: colors.ink.tertiary },
   sectionEyebrow: { paddingHorizontal: spacing.screen, marginTop: spacing.section },
   railScroll: { marginTop: spacing.md },
-  rail: { paddingHorizontal: spacing.screen, gap: spacing.md },
+  // Center the rings when they fit; flexGrow keeps horizontal scrolling intact
+  // when the rail overflows (Luis QA: rail sat shifted left).
+  rail: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: spacing.screen, gap: spacing.md },
   ringItem: { width: 92, alignItems: 'center' },
   ringOuter: {
     width: 76,

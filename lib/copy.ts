@@ -36,6 +36,7 @@ export const copy = {
       headline: "Nothing written yet — and that's okay.",
       body: 'The first entry can be one sentence. Even "we found out today" is enough.',
       cta: 'Write the first entry',
+      tint: 'Psst — pick boy or girl under Settings → Pregnancy, and these pages dress in their color.',
     },
     wishlist: {
       headline: 'A place for every tiny thing.',

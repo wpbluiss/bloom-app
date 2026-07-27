@@ -263,3 +263,28 @@ export function heroWeekFor(title: string, category: string): number {
   for (const rule of HERO_RULES) if (rule.re.test(hay)) return rule.week;
   return 12;
 }
+
+/**
+ * Card-by-card watercolor decks for the visual story player (Luis QA: text-only
+ * cards "killed the whole idea"). Each deck loosely tracks its article's
+ * timeline through the existing week-illustration set; card i shows deck[i % n].
+ * Bespoke per-topic art can replace these later without touching the player.
+ */
+const STORY_ART: Record<string, number[]> = {
+  'morning-sickness-relief': [6, 7, 8, 9, 10],
+  'first-prenatal-visit': [8, 9, 10, 11, 12],
+  'babys-growth-weeks-4-12': [5, 6, 8, 10, 12],
+  'when-to-call-your-provider': [10, 16, 22, 28, 36],
+  'foods-to-pause': [8, 9, 10, 11, 12],
+  'safe-exercise': [14, 18, 22, 26, 30],
+  'caffeine-real-numbers': [8, 9, 10, 11, 12],
+  'first-trimester-sleep': [8, 12, 16, 24, 28],
+  'prenatal-vitamins': [4, 5, 6, 7, 8],
+  'early-pregnancy-anxiety': [6, 8, 10, 12, 14],
+  'partner-first-trimester': [6, 8, 9, 10, 12],
+  'hydration-quiet-hero': [12, 16, 20, 24, 28],
+};
+
+export function storyArtFor(article: Article): number[] {
+  return STORY_ART[article.id] ?? [heroWeekFor(article.title, article.category)];
+}

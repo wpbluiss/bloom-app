@@ -5,34 +5,53 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
 import { PressScale } from '../../components/PressScale';
-import { ARTICLE_CATEGORIES, FEATURED_ARTICLES, articlesByCategory, heroWeekFor } from '../../lib/articles';
+import { ARTICLE_CATEGORIES, FEATURED_ARTICLES, articlesByCategory, storyArtFor } from '../../lib/articles';
 import { copy } from '../../lib/copy';
 import { track } from '../../lib/events';
 import { weekIllustration } from '../../lib/illustrations';
-import { colors, radius, spacing, type } from '../../lib/theme';
+import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
 /**
- * Learn, told as stories (Luis QA: "Instagram/TikTok style — a mom doesn't
- * need too much info at once"). Each article becomes a short deck: a cover,
- * one idea per card, and a source card. Tap the right edge (or the card) to
- * continue, the left edge to go back, swipe down to leave. No auto-advance —
- * reading pace is hers.
+ * Learn, told as VISUAL stories (Luis QA: text-only cards "killed the whole
+ * idea"). Each article becomes a short deck — cover, one idea per card, source
+ * — and every card leads with a watercolor from the week-illustration set
+ * (storyArtFor curates the sequence per article). Art is dominant, the caption
+ * is short. Tap the right edge (or the card) to continue, the left edge to go
+ * back, swipe down to leave. No auto-advance — reading pace is hers.
  */
 
-/** Group paragraphs into glanceable cards — one idea (~≤2 short paragraphs) per screen. */
+/** A card never exceeds this many characters, so the art stays the hero. */
+const MAX_CARD = 260;
+
+/** Split a long paragraph at sentence boundaries — never mid-sentence. */
+function splitSentences(p: string): string[] {
+  // Split where terminal punctuation is followed by a new sentence
+  // (whitespace + capital/quote). Abbreviations like "2 a.m." survive because
+  // what follows them is lowercase.
+  return p.replace(/([.!?])\s+(?=[A-Z"“'‘(])/g, '$1\u0001').split('\u0001');
+}
+
+/** Group sentences into glanceable caption cards — one idea per screen. */
 function buildCards(body: string): string[] {
   const paragraphs = body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
   const cards: string[] = [];
-  let current = '';
   for (const p of paragraphs) {
-    if (current && (current + '\n\n' + p).length > 380) {
-      cards.push(current);
-      current = p;
-    } else {
-      current = current ? current + '\n\n' + p : p;
+    if (p.length <= MAX_CARD) {
+      cards.push(p);
+      continue;
     }
+    let current = '';
+    for (const s of splitSentences(p)) {
+      const candidate = current ? `${current} ${s}` : s;
+      if (current && candidate.length > MAX_CARD) {
+        cards.push(current);
+        current = s;
+      } else {
+        current = candidate;
+      }
+    }
+    if (current) cards.push(current);
   }
-  if (current) cards.push(current);
   return cards;
 }
 
@@ -45,6 +64,7 @@ export default function ArticleStory() {
   }, [id]);
 
   const cards = useMemo(() => (article ? buildCards(article.body) : []), [article]);
+  const deck = useMemo(() => (article ? storyArtFor(article) : [12]), [article]);
   // Deck = cover + content cards + source card.
   const total = cards.length + 2;
   const [index, setIndex] = useState(0);
@@ -127,12 +147,8 @@ export default function ArticleStory() {
           <Animated.View style={[{ flex: 1 }, cardAnim]}>
             {onCover ? (
               <View style={styles.cover}>
-                <View style={styles.coverArt}>
-                  <Image
-                    source={weekIllustration(heroWeekFor(article.title, article.category))}
-                    style={styles.coverImg}
-                    resizeMode="contain"
-                  />
+                <View style={styles.artFrame}>
+                  <Image source={weekIllustration(deck[0])} style={styles.artImg} resizeMode="cover" />
                 </View>
                 <Text style={styles.coverTitle}>{article.title}</Text>
                 <View style={styles.bylineChip}>
@@ -159,6 +175,13 @@ export default function ArticleStory() {
               </View>
             ) : (
               <PressScale onPress={next} style={styles.bodyCard} accessibilityLabel="Continue">
+                <View style={[styles.artFrame, { transform: [{ rotate: index % 2 === 0 ? '1.1deg' : '-1.2deg' }] }]}>
+                  <Image
+                    source={weekIllustration(deck[(index - 1) % deck.length])}
+                    style={styles.artImg}
+                    resizeMode="cover"
+                  />
+                </View>
                 <Text style={styles.bodyText}>{body}</Text>
                 <Text style={styles.tapHintBody}>Tap for the next one</Text>
               </PressScale>
@@ -197,32 +220,39 @@ const styles = StyleSheet.create({
   backZone: { width: 54, justifyContent: 'center' },
   forwardZone: { width: 54, justifyContent: 'center' },
   cardWrap: { flex: 1, paddingBottom: spacing.xl },
-  cover: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
-  coverArt: {
-    width: 190,
-    height: 190,
-    borderRadius: 95,
-    backgroundColor: colors.bg.paper,
+  // Watercolor, framed like a print — the hero of every card.
+  artFrame: {
+    width: '100%',
+    aspectRatio: 1,
+    backgroundColor: colors.bg.surface,
     borderWidth: 1,
     borderColor: colors.border.subtle,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+    borderRadius: radius.lg,
+    padding: 10,
+    ...shadow.card,
   },
-  coverImg: { width: 150, height: 150 },
-  coverTitle: { ...type.displayMD, color: colors.ink.primary, textAlign: 'center', marginTop: spacing.xl },
+  artImg: { flex: 1, borderRadius: radius.sm },
+  cover: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
+  coverTitle: { ...type.displayMD, color: colors.ink.primary, textAlign: 'center', marginTop: spacing.lg },
   bylineChip: {
     backgroundColor: colors.sage.soft,
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    marginTop: spacing.lg,
+    marginTop: spacing.md,
   },
   bylineText: { ...type.caption, color: colors.sage.primary },
-  tapHint: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xxl },
-  tapHintBody: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xxl, textAlign: 'center' },
+  tapHint: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xl },
+  tapHintBody: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.lg, textAlign: 'center' },
   bodyCard: { flex: 1, justifyContent: 'center', paddingHorizontal: spacing.xs },
-  bodyText: { ...type.serifQuote, fontSize: 21, lineHeight: 34, color: colors.ink.primary },
+  bodyText: {
+    ...type.serifQuote,
+    fontSize: 19,
+    lineHeight: 30,
+    color: colors.ink.primary,
+    textAlign: 'center',
+    marginTop: spacing.lg,
+  },
   sourceCard: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
   sourceIconWrap: {
     width: 56,

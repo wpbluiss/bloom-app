@@ -187,16 +187,18 @@ export default function WishlistDetail() {
         ) : null}
         {!scanning &&
           alts.map((a) => {
-            const reachable = !!a.url;
+            // No dead rows (Luis QA: rows with no product URL did nothing on
+            // tap): fall back to a Google Shopping search for the match, so
+            // every card opens something useful.
+            const altUrl =
+              a.url ?? `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(a.title ?? item.name)}`;
             return (
               <PressScale
                 key={a.id}
                 style={styles.altCard}
-                disabled={!reachable}
                 onPress={() => {
-                  if (!a.url) return;
                   track('deal_open', { item: item.id, retailer: a.retailer, price: a.price });
-                  openExternal(a.url, a.retailer);
+                  openExternal(altUrl, a.retailer);
                 }}
               >
                 {a.image_url ? (
@@ -214,7 +216,7 @@ export default function WishlistDetail() {
                 </View>
                 <View style={{ alignItems: 'flex-end' }}>
                   <Text style={styles.altPrice}>{a.price != null ? `$${Number(a.price).toFixed(2)}` : '—'}</Text>
-                  {reachable ? <Text style={styles.altOpen}>{copy.wishlist.viewDeal}</Text> : null}
+                  <Text style={styles.altOpen}>{copy.wishlist.viewDeal}</Text>
                 </View>
               </PressScale>
             );

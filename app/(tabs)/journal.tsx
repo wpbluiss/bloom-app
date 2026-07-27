@@ -3,13 +3,14 @@ import { Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { EmptyState } from '../../components/EmptyState';
+import { Button } from '../../components/Button';
 import { FadeIn } from '../../components/FadeIn';
 import { PressScale } from '../../components/PressScale';
 import { CardSkeleton } from '../../components/Skeleton';
 import { useApp } from '../../lib/AppContext';
 import { copy } from '../../lib/copy';
 import { JournalEntry, fetchJournalEntries } from '../../lib/db';
+import { weekIllustration } from '../../lib/illustrations';
 import { formatISODate } from '../../lib/weeks';
 import { GenderAccent, colors, genderAccent, radius, shadow, spacing, type } from '../../lib/theme';
 
@@ -223,13 +224,27 @@ export default function JournalScreen() {
           <CardSkeleton height={140} />
         </View>
       ) : entries.length === 0 ? (
-        <EmptyState
-          icon="book-outline"
-          headline={copy.empty.journal.headline}
-          body={copy.empty.journal.body}
-          cta={copy.empty.journal.cta}
-          onCta={() => router.push('/journal/compose')}
-        />
+        // The book before page one — the journal look must be unmistakable
+        // even with zero entries (Luis QA: empty journal read as "the old app").
+        <ScrollView contentContainerStyle={styles.emptyScroll}>
+          <View style={styles.emptyPage}>
+            <ChapterMark accent={accent} />
+            <Text style={styles.chapterEyebrow}>{week ? `WEEK ${week}` : 'KEEPSAKES'}</Text>
+            <Text style={styles.chapterTitle}>Chapter one</Text>
+            <View style={[styles.photoFrame, styles.emptyArtFrame, { transform: [{ rotate: '-1.4deg' }] }]}>
+              <View style={styles.tape} />
+              <Image source={weekIllustration(week ?? 8)} style={styles.emptyArtImg} resizeMode="cover" />
+            </View>
+            <Text style={styles.emptyHeadline}>{copy.empty.journal.headline}</Text>
+            <Text style={styles.emptyBody}>{copy.empty.journal.body}</Text>
+            <Button
+              label={copy.empty.journal.cta}
+              onPress={() => router.push('/journal/compose')}
+              style={styles.emptyCta}
+            />
+            {!pregnancy?.baby_sex ? <Text style={styles.emptyTint}>{copy.empty.journal.tint}</Text> : null}
+          </View>
+        </ScrollView>
       ) : (
         <ScrollView
           contentContainerStyle={styles.scroll}
@@ -369,6 +384,22 @@ const styles = StyleSheet.create({
   chapterGem: { width: 6, height: 6, borderRadius: 1, transform: [{ rotate: '45deg' }] },
   chapterEyebrow: { ...type.labelCaps, fontSize: 10, color: colors.ink.tertiary, marginTop: spacing.md },
   chapterTitle: { ...type.displayMD, color: colors.ink.primary, marginTop: spacing.xs },
+  // ── Empty book ─────────────────────────────────────────────
+  emptyScroll: { flexGrow: 1, justifyContent: 'center', padding: spacing.screen, paddingBottom: 140 },
+  emptyPage: { alignItems: 'center', paddingVertical: spacing.xl },
+  emptyArtFrame: { marginRight: 0, marginTop: spacing.xl },
+  emptyArtImg: { width: 188, height: 188, borderRadius: 2, backgroundColor: colors.bg.surfaceWarm },
+  emptyHeadline: {
+    ...type.serifQuote,
+    fontSize: 18,
+    lineHeight: 26,
+    color: colors.ink.primary,
+    textAlign: 'center',
+    marginTop: spacing.xl,
+  },
+  emptyBody: { ...type.bodySM, color: colors.ink.secondary, textAlign: 'center', marginTop: spacing.sm, maxWidth: 280 },
+  emptyCta: { marginTop: spacing.lg, alignSelf: 'stretch' },
+  emptyTint: { ...type.caption, color: colors.ink.tertiary, textAlign: 'center', marginTop: spacing.lg, maxWidth: 260 },
   // ── Pages ──────────────────────────────────────────────────
   page: {
     backgroundColor: colors.bg.surface,

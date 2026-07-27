@@ -358,7 +358,7 @@ export default function TodayScreen() {
               WEEK {week} · TRIMESTER {trimesterOf(week ?? 4)}
             </Text>
             <Text style={styles.heroHeadline}>{info.headline}</Text>
-            <WeekArt week={week ?? 4} height={236} style={{ marginTop: spacing.xl }} />
+            <WeekArt week={week ?? 4} height={260} style={{ marginTop: spacing.xl, alignSelf: 'stretch' }} />
             <Text style={styles.sizeQuote}>Size of {info.sizeComparison}</Text>
             <View style={styles.statsRow}>
               <View style={styles.stat}>
@@ -382,143 +382,10 @@ export default function TodayScreen() {
           </View>
         </FadeIn>
 
-        {/* Week strip — the calendar week, day by day; tap any day for its card */}
-        {pregnancy ? (
-          <FadeIn index={2}>
-            <Text style={[styles.eyebrow, styles.stripEyebrow]}>{copy.today.weekStripEyebrow}</Text>
-            <View style={styles.stripCard}>
-              <WeekStrip dueDate={pregnancy.due_date} selected={selectedDate} onSelect={setSelectedDate} />
-            </View>
-            <Card style={{ marginTop: spacing.md }}>
-              {selectedPoint && selectedInfo ? (
-                <View style={styles.dayRow}>
-                  <View style={styles.dayThumb}>
-                    <Image
-                      source={weekIllustration(selectedPoint.week)}
-                      style={styles.dayArt}
-                      resizeMode="contain"
-                      accessibilityLabel={`Watercolor illustration for week ${selectedPoint.week}`}
-                    />
-                  </View>
-                  <View style={styles.dayTextWrap}>
-                    <Text style={styles.dayTitle}>
-                      {(isSelectedToday ? 'Today · ' : '') +
-                        copy.today.weekDayLine(selectedPoint.week, selectedPoint.dayOfWeek)}
-                    </Text>
-                    <Text style={styles.tipBody}>
-                      {`Size of ${selectedInfo.sizeComparison}. ${selectedTip}`}
-                    </Text>
-                  </View>
-                </View>
-              ) : (
-                <Text style={styles.tipBody}>
-                  {daysUntilDue(pregnancy.due_date, selectedDate) > 279
-                    ? copy.today.beforeWindow
-                    : copy.today.afterWindow}
-                </Text>
-              )}
-            </Card>
-          </FadeIn>
-        ) : null}
-
-        {/* Today, for you — the exact day plus expectation/common-now insights,
-            composed from weeks.json so every day says something exact. The size
-            comparison lives in the hero and day card, development in the YOUR
-            BABY card; nothing here duplicates them. Symptom relief stays with
-            the check-in card. */}
-        {pregnancy && todayPoint ? (
-          <FadeIn index={3}>
-            <Card style={{ marginTop: spacing.xl }}>
-              <Text style={styles.eyebrow}>{copy.today.forYouEyebrow}</Text>
-              <Text style={styles.insightDay}>{copy.today.dayLine(todayPoint.day)}</Text>
-              {expectTip ? (
-                <View style={styles.insightBlock}>
-                  <Text style={styles.insightLabel}>{copy.today.expectEyebrow}</Text>
-                  <Text style={styles.tipBody}>{expectTip}</Text>
-                </View>
-              ) : null}
-              <View style={styles.insightBlock}>
-                <Text style={styles.insightLabel}>{copy.today.commonEyebrow}</Text>
-                <Text style={styles.tipBody}>{copy.today.commonAroundNow[trimesterOf(week ?? 4) - 1]}</Text>
-              </View>
-            </Card>
-          </FadeIn>
-        ) : null}
-
-        {/* Name prompt — Bloom should greet her properly */}
-        {!firstName ? (
-          <FadeIn index={4}>
-            <Card style={{ marginTop: spacing.xl }}>
-              <Text style={styles.tipBody}>{copy.namePrompt.body}</Text>
-              <View style={styles.nameRow}>
-                <TextInput
-                  style={styles.nameInput}
-                  placeholder="Your name"
-                  placeholderTextColor={colors.ink.tertiary}
-                  value={nameDraft}
-                  onChangeText={setNameDraft}
-                  maxLength={40}
-                />
-                <Button
-                  label={copy.namePrompt.cta}
-                  onPress={saveName}
-                  loading={nameSaving}
-                  disabled={!nameDraft.trim()}
-                  style={{ minHeight: 44, paddingHorizontal: spacing.xl }}
-                />
-              </View>
-            </Card>
-          </FadeIn>
-        ) : null}
-
-        {/* Today in your pregnancy — the daily fresh card */}
-        {today ? (
-          <FadeIn index={5}>
-            <Card style={{ marginTop: spacing.xl }}>
-              <View style={styles.dailyHeader}>
-                <Text style={styles.eyebrow}>{copy.today.dailyEyebrow}</Text>
-                <View style={styles.dailyKindPill}>
-                  <Text style={styles.dailyKindText}>{DAILY_KIND_LABEL[today.kind]}</Text>
-                </View>
-              </View>
-              <Text style={styles.dailyTitle}>{today.title}</Text>
-              <Text style={styles.tipBody}>{today.body}</Text>
-              {today.cta ? (
-                <PressScale onPress={() => router.push(today.cta!.route as never)} hitSlop={8} style={styles.dailyCta}>
-                  <Text style={styles.dailyCtaText}>{today.cta.label}</Text>
-                  <Ionicons name="arrow-forward" size={16} color={colors.accent.terracotta} />
-                </PressScale>
-              ) : null}
-            </Card>
-          </FadeIn>
-        ) : null}
-
-        {/* For you both — the partner ping-pong hook */}
-        {partnerLine ? (
-          <FadeIn index={6}>
-            <Card style={{ marginTop: spacing.xl }}>
-              <Text style={styles.eyebrow}>{copy.pingpong.eyebrow}</Text>
-              <View style={styles.pingRow}>
-                <View style={styles.pingIconWrap}>
-                  <Ionicons name={partnerLine.icon} size={20} color={colors.accent.terracotta} />
-                </View>
-                <Text style={[styles.tipBody, { flex: 1, marginTop: 0 }]}>{partnerLine.text}</Text>
-              </View>
-            </Card>
-          </FadeIn>
-        ) : null}
-
-        {/* Share with your partner — only while the household is a party of one */}
-        {memberCount === 1 && household?.invite_code ? (
-          <FadeIn index={7}>
-            <View style={{ marginTop: spacing.xl }}>
-              <InviteCard code={household.invite_code} />
-            </View>
-          </FadeIn>
-        ) : null}
-
-        {/* Daily check-in — after she checks in, the card answers back */}
-        <FadeIn index={8}>
+        {/* Daily check-in — the day's ritual, right under the hero (Luis QA:
+            new layout; it used to sit eighth under a stack of reading cards).
+            After she checks in, the card answers back. */}
+        <FadeIn index={2}>
           <Card style={{ marginTop: spacing.xl }}>
             <Text style={styles.eyebrow}>{copy.today.checkinEyebrow}</Text>
             {checkin && !editingCheckin ? (
@@ -605,8 +472,140 @@ export default function TodayScreen() {
           </Card>
         </FadeIn>
 
+        {/* Week strip — the calendar week, day by day; tap any day for its card */}
+        {pregnancy ? (
+          <FadeIn index={3}>
+            <Text style={[styles.eyebrow, styles.stripEyebrow]}>{copy.today.weekStripEyebrow}</Text>
+            <View style={styles.stripCard}>
+              <WeekStrip dueDate={pregnancy.due_date} selected={selectedDate} onSelect={setSelectedDate} />
+            </View>
+            <Card style={{ marginTop: spacing.md }}>
+              {selectedPoint && selectedInfo ? (
+                <View style={styles.dayRow}>
+                  <View style={styles.dayThumb}>
+                    <Image
+                      source={weekIllustration(selectedPoint.week)}
+                      style={styles.dayArt}
+                      resizeMode="contain"
+                      accessibilityLabel={`Watercolor illustration for week ${selectedPoint.week}`}
+                    />
+                  </View>
+                  <View style={styles.dayTextWrap}>
+                    <Text style={styles.dayTitle}>
+                      {(isSelectedToday ? 'Today · ' : '') +
+                        copy.today.weekDayLine(selectedPoint.week, selectedPoint.dayOfWeek)}
+                    </Text>
+                    <Text style={styles.tipBody}>
+                      {`Size of ${selectedInfo.sizeComparison}. ${selectedTip}`}
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <Text style={styles.tipBody}>
+                  {daysUntilDue(pregnancy.due_date, selectedDate) > 279
+                    ? copy.today.beforeWindow
+                    : copy.today.afterWindow}
+                </Text>
+              )}
+            </Card>
+          </FadeIn>
+        ) : null}
+
+        {/* Today, for you — ONE digest instead of a stack of lookalike cards
+            (Luis QA: new layout): the exact day, the daily fresh drop, what to
+            expect, and what's common now, separated by hairlines. The size
+            comparison lives in the hero and day card, development in the YOUR
+            BABY card; nothing here duplicates them. Symptom relief stays with
+            the check-in card. */}
+        {pregnancy && (todayPoint || today) ? (
+          <FadeIn index={4}>
+            <Card style={{ marginTop: spacing.xl }}>
+              <Text style={styles.eyebrow}>{copy.today.forYouEyebrow}</Text>
+              {todayPoint ? <Text style={styles.insightDay}>{copy.today.dayLine(todayPoint.day)}</Text> : null}
+              {today ? (
+                <View style={styles.insightBlock}>
+                  <View style={styles.dailyHeader}>
+                    <Text style={styles.insightLabel}>{copy.today.dailyEyebrow}</Text>
+                    <View style={styles.dailyKindPill}>
+                      <Text style={styles.dailyKindText}>{DAILY_KIND_LABEL[today.kind]}</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.dailyTitle}>{today.title}</Text>
+                  <Text style={styles.tipBody}>{today.body}</Text>
+                  {today.cta ? (
+                    <PressScale onPress={() => router.push(today.cta!.route as never)} hitSlop={8} style={styles.dailyCta}>
+                      <Text style={styles.dailyCtaText}>{today.cta.label}</Text>
+                      <Ionicons name="arrow-forward" size={16} color={colors.accent.terracotta} />
+                    </PressScale>
+                  ) : null}
+                </View>
+              ) : null}
+              {expectTip ? (
+                <View style={styles.insightBlock}>
+                  <Text style={styles.insightLabel}>{copy.today.expectEyebrow}</Text>
+                  <Text style={styles.tipBody}>{expectTip}</Text>
+                </View>
+              ) : null}
+              <View style={styles.insightBlock}>
+                <Text style={styles.insightLabel}>{copy.today.commonEyebrow}</Text>
+                <Text style={styles.tipBody}>{copy.today.commonAroundNow[trimesterOf(week ?? 4) - 1]}</Text>
+              </View>
+            </Card>
+          </FadeIn>
+        ) : null}
+
+        {/* Name prompt — Bloom should greet her properly */}
+        {!firstName ? (
+          <FadeIn index={5}>
+            <Card style={{ marginTop: spacing.xl }}>
+              <Text style={styles.tipBody}>{copy.namePrompt.body}</Text>
+              <View style={styles.nameRow}>
+                <TextInput
+                  style={styles.nameInput}
+                  placeholder="Your name"
+                  placeholderTextColor={colors.ink.tertiary}
+                  value={nameDraft}
+                  onChangeText={setNameDraft}
+                  maxLength={40}
+                />
+                <Button
+                  label={copy.namePrompt.cta}
+                  onPress={saveName}
+                  loading={nameSaving}
+                  disabled={!nameDraft.trim()}
+                  style={{ minHeight: 44, paddingHorizontal: spacing.xl }}
+                />
+              </View>
+            </Card>
+          </FadeIn>
+        ) : null}
+
+        {/* For you both — the partner ping-pong hook */}
+        {partnerLine ? (
+          <FadeIn index={6}>
+            <Card style={{ marginTop: spacing.xl }}>
+              <Text style={styles.eyebrow}>{copy.pingpong.eyebrow}</Text>
+              <View style={styles.pingRow}>
+                <View style={styles.pingIconWrap}>
+                  <Ionicons name={partnerLine.icon} size={20} color={colors.accent.terracotta} />
+                </View>
+                <Text style={[styles.tipBody, { flex: 1, marginTop: 0 }]}>{partnerLine.text}</Text>
+              </View>
+            </Card>
+          </FadeIn>
+        ) : null}
+
+        {/* Share with your partner — only while the household is a party of one */}
+        {memberCount === 1 && household?.invite_code ? (
+          <FadeIn index={7}>
+            <View style={{ marginTop: spacing.xl }}>
+              <InviteCard code={household.invite_code} />
+            </View>
+          </FadeIn>
+        ) : null}
+
         {/* This week */}
-        <FadeIn index={9}>
+        <FadeIn index={8}>
           <Text style={[styles.eyebrow, { marginTop: spacing.section }]}>{copy.today.thisWeek}</Text>
           <TipCard eyebrow={copy.today.babyEyebrow} body={info.development} />
           {isPartner ? (
@@ -623,7 +622,7 @@ export default function TodayScreen() {
         </FadeIn>
 
         {/* The day closes on purpose — no dead space at the bottom */}
-        <FadeIn index={10}>
+        <FadeIn index={9}>
           <View style={styles.dayClose}>
             <View style={styles.dayCloseDot} />
             <Text style={styles.dayCloseText}>{copy.today.dayClose}</Text>
@@ -664,19 +663,22 @@ const styles = StyleSheet.create({
   headerRow: { flexDirection: 'row', alignItems: 'center' },
   dateCaps: { ...type.labelCaps, color: colors.ink.tertiary },
   greeting: { ...type.displayLG, color: colors.ink.primary, marginTop: spacing.xs },
-  hero: {
-    backgroundColor: colors.bg.surface,
-    borderRadius: radius.xl,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    padding: spacing.xxl,
-    marginTop: spacing.xl,
-    ...shadow.raised,
-  },
+  // Hero — borderless editorial page, not another boxed card (Luis QA: new
+  // layout). The watercolor is the centerpiece; stats sit in a hairline band.
+  hero: { marginTop: spacing.xl, alignItems: 'center' },
   heroEyebrow: { ...type.labelCaps, color: colors.accent.terracotta },
-  heroHeadline: { ...type.displayXL, color: colors.ink.primary, marginTop: spacing.sm },
+  heroHeadline: { ...type.displayXL, color: colors.ink.primary, marginTop: spacing.sm, textAlign: 'center' },
   sizeQuote: { ...type.serifQuote, color: colors.ink.secondary, marginTop: spacing.lg, textAlign: 'center' },
-  statsRow: { flexDirection: 'row', marginTop: spacing.xl, alignItems: 'center' },
+  statsRow: {
+    flexDirection: 'row',
+    marginTop: spacing.xl,
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    paddingVertical: spacing.lg,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: colors.border.subtle,
+  },
   stat: { flex: 1, alignItems: 'center' },
   statValue: { ...type.displayMD, color: colors.ink.primary },
   statLabel: { ...type.labelCaps, color: colors.ink.tertiary, marginTop: spacing.xs },
@@ -687,6 +689,7 @@ const styles = StyleSheet.create({
     borderRadius: 1,
     marginTop: spacing.xl,
     overflow: 'hidden',
+    alignSelf: 'stretch',
   },
   progressFill: { height: 2, backgroundColor: colors.accent.terracotta },
   eyebrow: { ...type.labelCaps, color: colors.ink.tertiary },
