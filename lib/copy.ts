@@ -162,6 +162,9 @@ export const copy = {
     swapTry: (swap: string) => `Try ${swap}`,
     disclaimer: 'Everyday guidance, not medical advice. Your provider knows you best.',
   },
+  common: {
+    done: 'Done',
+  },
   global: {
     keep: 'Keep',
     keepMemory: 'Keep this memory',
@@ -300,6 +303,7 @@ export const copy = {
     title: 'Learn',
     subtitle: 'Quiet, plain-language guides — every one grounded in published guidance from trusted health institutions.',
     mostRead: 'MOST READ',
+    notFound: "That guide isn't here anymore — but the others are.",
     byline: (source: string) => `Based on guidance from ${source}`,
     readSource: (source: string) => `Read the original guidance from ${source}`,
     disclaimer: 'Everyday guidance, not medical advice. Your provider knows you and your pregnancy best.',

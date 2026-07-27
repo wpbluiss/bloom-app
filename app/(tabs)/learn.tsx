@@ -10,14 +10,8 @@ import { copy } from '../../lib/copy';
 import { weekIllustration } from '../../lib/illustrations';
 import { colors, radius, shadow, spacing, type } from '../../lib/theme';
 
-/**
- * Learn — calm, institution-sourced reading. The "Most read" rail is a row of
- * story rings (Luis QA: Instagram-style); tapping any article opens the story
- * player as a native modal (swipe down to dismiss).
- */
 export default function LearnScreen() {
   const router = useRouter();
-
   const openArticle = (id: string) => router.push(`/learn/${id}`);
 
   return (
@@ -28,35 +22,25 @@ export default function LearnScreen() {
           <Text style={styles.subtitle}>{copy.learn.subtitle}</Text>
         </FadeIn>
 
-        {/* Most read — story rings */}
         <FadeIn index={1}>
           <Text style={[styles.eyebrow, styles.sectionEyebrow]}>{copy.learn.mostRead}</Text>
         </FadeIn>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.rail}
-          style={styles.railScroll}
-        >
-          {FEATURED_ARTICLES.map((a) => (
-            <PressScale key={a.id} style={styles.ringItem} onPress={() => openArticle(a.id)}>
-              <View style={styles.ringOuter}>
-                <View style={styles.ringInner}>
-                  <Image
-                    source={weekIllustration(heroWeekFor(a.title, a.category))}
-                    style={styles.ringImg}
-                    resizeMode="contain"
-                  />
-                </View>
-              </View>
-              <Text style={styles.ringTitle} numberOfLines={2}>
-                {a.title}
-              </Text>
-            </PressScale>
-          ))}
-        </ScrollView>
 
-        {/* Category sections */}
+        <View style={styles.railWrap}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.rail}>
+            {FEATURED_ARTICLES.map((a) => (
+              <PressScale key={a.id} style={styles.ringItem} onPress={() => openArticle(a.id)}>
+                <View style={styles.ringOuter}>
+                  <View style={styles.ringInner}>
+                    <Image source={weekIllustration(heroWeekFor(a.title, a.category))} style={styles.ringImg} resizeMode="contain" />
+                  </View>
+                </View>
+                <Text style={styles.ringTitle} numberOfLines={2}>{a.title}</Text>
+              </PressScale>
+            ))}
+          </ScrollView>
+        </View>
+
         {ARTICLE_CATEGORIES.map((cat, ci) => {
           const items = articlesByCategory(cat);
           if (items.length === 0) return null;
@@ -75,8 +59,6 @@ export default function LearnScreen() {
             </FadeIn>
           );
         })}
-
-        <Text style={styles.disclaimer}>{copy.learn.disclaimer}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -84,74 +66,21 @@ export default function LearnScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg.canvas },
-  scroll: { paddingBottom: spacing.hero },
-  title: {
-    ...type.displayLG,
-    color: colors.ink.primary,
-    paddingHorizontal: spacing.screen,
-    paddingTop: spacing.lg,
-  },
-  subtitle: {
-    ...type.bodySM,
-    color: colors.ink.secondary,
-    paddingHorizontal: spacing.screen,
-    marginTop: spacing.sm,
-  },
-  eyebrow: { ...type.labelCaps, color: colors.ink.tertiary },
-  sectionEyebrow: { paddingHorizontal: spacing.screen, marginTop: spacing.section },
-  railScroll: { marginTop: spacing.md },
-  // Center the rings when they fit; flexGrow keeps horizontal scrolling intact
-  // when the rail overflows (Luis QA: rail sat shifted left).
-  rail: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: spacing.screen, gap: spacing.md },
-  ringItem: { width: 92, alignItems: 'center' },
-  ringOuter: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    borderWidth: 2,
-    borderColor: colors.accent.terracotta,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ringInner: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: colors.bg.paper,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  ringImg: { width: 50, height: 50 },
-  ringTitle: { ...type.caption, color: colors.ink.secondary, textAlign: 'center', marginTop: spacing.sm },
-  categoryTitle: {
-    ...type.displayMD,
-    color: colors.ink.primary,
-    paddingHorizontal: spacing.screen,
-    marginTop: spacing.section,
-    marginBottom: spacing.sm,
-  },
-  rowCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.bg.surface,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    padding: spacing.lg,
-    marginHorizontal: spacing.screen,
-    marginTop: spacing.sm,
-    ...shadow.card,
-  },
+  scroll: { paddingBottom: spacing.xxl },
+  title: { ...type.displayLG, color: colors.ink.primary, marginHorizontal: spacing.lg, marginTop: spacing.md, textAlign: 'center' },
+  subtitle: { ...type.bodyMD, color: colors.ink.secondary, marginHorizontal: spacing.lg, marginTop: spacing.xs, marginBottom: spacing.lg, textAlign: 'center' },
+  eyebrow: { ...type.labelCaps, color: colors.ink.tertiary, textTransform: 'uppercase', letterSpacing: 1.2 },
+  sectionEyebrow: { marginHorizontal: spacing.lg, marginBottom: spacing.sm, marginTop: spacing.lg, textAlign: 'center' },
+  railWrap: { alignItems: 'center' },
+  rail: { paddingHorizontal: spacing.lg, alignItems: 'center' },
+  ringItem: { alignItems: 'center', marginRight: spacing.lg, width: 88 },
+  ringOuter: { width: 80, height: 80, borderRadius: 40, borderWidth: 2, borderColor: colors.accent.terracotta, padding: 3, justifyContent: 'center', alignItems: 'center' },
+  ringInner: { width: 70, height: 70, borderRadius: 35, backgroundColor: colors.bg.paper, overflow: 'hidden', justifyContent: 'center', alignItems: 'center' },
+  ringImg: { width: 60, height: 60 },
+  ringTitle: { ...type.caption, color: colors.ink.primary, marginTop: spacing.sm, textAlign: 'center', width: 88 },
+  categoryTitle: { ...type.titleMD, color: colors.ink.primary, marginHorizontal: spacing.lg, marginTop: spacing.xl, marginBottom: spacing.sm },
+  rowCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.bg.paper, marginHorizontal: spacing.lg, padding: spacing.md, borderRadius: radius.md, marginBottom: spacing.sm, ...shadow.card },
   rowText: { flex: 1 },
-  rowTitle: { ...type.titleSM, color: colors.ink.primary },
-  rowSource: { ...type.caption, color: colors.ink.tertiary, marginTop: spacing.xs },
-  disclaimer: {
-    ...type.caption,
-    color: colors.ink.tertiary,
-    textAlign: 'center',
-    paddingHorizontal: spacing.screen,
-    marginTop: spacing.section,
-  },
+  rowTitle: { ...type.bodyMD, color: colors.ink.primary, fontWeight: '600' },
+  rowSource: { ...type.caption, color: colors.ink.tertiary, marginTop: 2 },
 });

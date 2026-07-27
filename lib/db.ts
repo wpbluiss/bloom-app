@@ -67,6 +67,7 @@ export interface JournalEntry {
   entry_type: EntryType;
   title: string | null;
   body: string | null;
+  mood?: string | null;
   entry_date: string;
   created_at?: string;
   media?: Media[];
