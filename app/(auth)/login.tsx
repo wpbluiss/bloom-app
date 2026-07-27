@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,11 +11,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 import { Button } from '../../components/Button';
 import { FadeIn } from '../../components/FadeIn';
 import { PressScale } from '../../components/PressScale';
 import { copy } from '../../lib/copy';
-import { appleSignInAvailable, signInWithApple, signInWithEmail, verifyOtp } from '../../lib/db';
+import { signInWithApple, signInWithEmail, verifyOtp } from '../../lib/db';
 import { colors, radius, spacing, type } from '../../lib/theme';
 
 export default function Login() {
@@ -26,11 +27,10 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [appleBusy, setAppleBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [appleReady, setAppleReady] = useState(false);
-
-  useEffect(() => {
-    appleSignInAvailable().then(setAppleReady);
-  }, []);
+  // Apple sign-in stays hidden until the Supabase Apple provider is enabled —
+  // and it must never touch the native module at startup (iOS 26 crash).
+  const appleReady =
+    Platform.OS === 'ios' && Constants.expoConfig?.extra?.appleSignInEnabled === true;
 
   const sendCode = async () => {
     setBusy(true);

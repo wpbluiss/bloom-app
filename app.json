@@ -52,6 +52,7 @@
       "expo-video"
     ],
     "extra": {
+      "appleSignInEnabled": false,
       "supabaseUrl": "https://olqryrntsxglehxyahzf.supabase.co",
       "supabasePublishableKey": "sb_publishable_FLh8kwTvhGMrZXNQxladxw_HX6yP6Rf",
       "revenueCatAppleKey": "appl_PQKDAxabEBYSaLQrYsyDvCGoiyg",
